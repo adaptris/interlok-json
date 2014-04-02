@@ -37,7 +37,7 @@ public class SimpleXmlToJsonTransformService extends ServiceImp {
   public void doService(AdaptrisMessage msg) throws ServiceException {
     try {
       JSONObject object = XML.toJSONObject(msg.getStringPayload());
-      msg.setStringPayload(object.get(JSON_TAG).toString());
+      msg.setStringPayload(object.get(JSON_TAG).toString(), msg.getCharEncoding());
     } catch (Exception e) {
       throw new ServiceException("Failed to convert XML to JSON", e);
     }
