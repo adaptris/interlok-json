@@ -7,21 +7,26 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.util.license.License;
+import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Simple XML to JSCON converter.
- *
+ * 
  * <p>
  * This uses the default <a href="http://www.json.org/java/index.html">json.org implementation</a> to convert from XML to JSON. The
  * XML input should contain a &lt;json> element that wraps the elements that need to be converted to JSON.
  * </p>
- *
+ * 
  * <p>
  * In the adapter configuration file this class is aliased as <b>simple-xml-to-json-transform-service</b> which is the preferred
  * alternative to the fully qualified classname when building your configuration.
  * </p>
- *
+ * <p>
+ * Requires a Basic License
+ * </p>
+ * 
  * @author sellidge
  */
 @XStreamAlias("simple-xml-to-json-transform-service")
@@ -53,4 +58,8 @@ public class SimpleXmlToJsonTransformService extends ServiceImp {
 
   }
 
+  @Override
+  public boolean isEnabled(License license) throws CoreException {
+    return license.isEnabled(LicenseType.Basic);
+  }
 }

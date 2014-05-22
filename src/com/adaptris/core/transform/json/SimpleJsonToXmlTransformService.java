@@ -7,6 +7,8 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.util.license.License;
+import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -20,6 +22,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * In the adapter configuration file this class is aliased as <b>simple-json-to-xml-transform-service</b> which is the preferred
  * alternative to the fully qualified classname when building your configuration.
+ * </p>
+ * <p>
+ * Requires a Basic License
  * </p>
  * 
  * @author sellidge
@@ -54,4 +59,8 @@ public class SimpleJsonToXmlTransformService extends ServiceImp {
 
   }
 
+  @Override
+  public boolean isEnabled(License license) throws CoreException {
+    return license.isEnabled(LicenseType.Basic);
+  }
 }
