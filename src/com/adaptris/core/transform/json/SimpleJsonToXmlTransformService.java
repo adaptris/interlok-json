@@ -19,13 +19,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * JSON input will be wrapped by a &lt;json> element when it is exported to XML.
  * </p>
  * 
- * <p>
- * In the adapter configuration file this class is aliased as <b>simple-json-to-xml-transform-service</b> which is the preferred
- * alternative to the fully qualified classname when building your configuration.
- * </p>
- * <p>
- * Requires a Basic License
- * </p>
+ * @config simple-json-to-xml-transform-service
+ * @license BASIC
  * 
  * @author sellidge
  */

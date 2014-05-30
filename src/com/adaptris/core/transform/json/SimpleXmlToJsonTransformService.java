@@ -19,13 +19,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * XML input should contain a &lt;json> element that wraps the elements that need to be converted to JSON.
  * </p>
  * 
- * <p>
- * In the adapter configuration file this class is aliased as <b>simple-xml-to-json-transform-service</b> which is the preferred
- * alternative to the fully qualified classname when building your configuration.
- * </p>
- * <p>
- * Requires a Basic License
- * </p>
+ * 
+ * @config simple-xml-to-json-transform-service
+ * @license BASIC
  * 
  * @author sellidge
  */
