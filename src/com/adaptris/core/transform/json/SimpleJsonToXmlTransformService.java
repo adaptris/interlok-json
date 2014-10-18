@@ -25,12 +25,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author sellidge
  */
 @XStreamAlias("simple-json-to-xml-transform-service")
+@Deprecated
 public class SimpleJsonToXmlTransformService extends ServiceImp {
 
   private static final String JSON_TAG = "json";
 
   public SimpleJsonToXmlTransformService() {
-
+    log.warn("This service is deprecated, please upgrade to " + JsonXmlTransformService.class.getName());
   }
 
   @Override
