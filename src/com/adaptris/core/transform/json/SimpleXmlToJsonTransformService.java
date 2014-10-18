@@ -1,12 +1,11 @@
 package com.adaptris.core.transform.json;
 
-import org.json.JSONObject;
-import org.json.XML;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
+import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.adaptris.util.license.License;
 import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -29,7 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @Deprecated
 public class SimpleXmlToJsonTransformService extends ServiceImp {
 
-  private static final String JSON_TAG = "json";
+  private final TransformationDriver driver = new SimpleJsonTransformationDriver();
 
   public SimpleXmlToJsonTransformService() {
     log.warn("This service is deprecated, please upgrade to " + JsonXmlTransformService.class.getName());
@@ -38,8 +37,7 @@ public class SimpleXmlToJsonTransformService extends ServiceImp {
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
     try {
-      JSONObject object = XML.toJSONObject(msg.getStringPayload());
-      msg.setStringPayload(object.get(JSON_TAG).toString(), msg.getCharEncoding());
+      msg.setStringPayload(driver.transform(msg.getStringPayload(), DIRECTION.XML_TO_JSON), msg.getCharEncoding());
     } catch (Exception e) {
       throw new ServiceException("Failed to convert XML to JSON", e);
     }
