@@ -77,7 +77,8 @@ public class JsonXmlTransformService extends ServiceImp {
     
     @Override 
     public String toString() {
-      return WordUtils.capitalizeFully(name(), new char[] {'_'}).replace('_', ' ');
+      return name();
+      // return WordUtils.capitalizeFully(name(), new char[] {'_'}).replace('_', ' ');
     }
   }
   
