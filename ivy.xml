@@ -31,11 +31,11 @@
     <dependency org="net.sf.json-lib" name="json-lib" rev="2.4" conf="compile->default">
         <artifact name="json-lib" type="jar" ext="jar" m:classifier="jdk15"/>
     </dependency>
-    <dependency org="xom" name="xom" rev="1.2.5" />
-    
+    <dependency org="xom" name="xom" rev="1.2.5" conf="compile->default" />
+
     <!-- Simple driver dependency -->
     <dependency org="org.json" name="json" rev="20090211" conf="compile->default"/>
-    
+
     <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default" changing="true"/>
     <dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
     <dependency org="com.adaptris" name="adp-core-apt" rev="${adp-core-version}" conf="compile->default;ant->default" changing="true"/>
