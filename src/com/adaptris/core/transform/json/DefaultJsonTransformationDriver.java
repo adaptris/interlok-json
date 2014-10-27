@@ -9,6 +9,13 @@ import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
 import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/**
+ * Default Transformation Driver.
+ * 
+ * @config default-transformation-driver
+ * 
+ * @author gdries
+ */
 @XStreamAlias("default-transformation-driver")
 public class DefaultJsonTransformationDriver implements TransformationDriver {
 

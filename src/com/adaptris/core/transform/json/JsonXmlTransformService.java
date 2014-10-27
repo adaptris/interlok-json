@@ -1,7 +1,5 @@
 package com.adaptris.core.transform.json;
 
-import org.apache.commons.lang.WordUtils;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -11,14 +9,19 @@ import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * XML to JSON converter and vice versa. This service requires BOTH json.jar and json-lib-2.4-jdk15.jar on the classpath, since it supports
- * both libraries to perform the conversion. Select a transformation driver to determine which library to use. The "simple" library (json.jar)
- * yields simpler looking and cleaner Xml, but will sometimes cause problems transforming Xml elements into JSON arrays. The simple driver will
- * behave exactly like the legacy JSON services, including requiring and generating an Xml element names "json" to wrap the generated Xml.
+ * XML to JSON converter and vice versa.
  * <p>
- * The Default transformation driver uses json-lib-2.4-jdk15.jar and has a more complicated, but more information rich Xml format. This format
- * can then be used to precisely control the JSON output when converting to JSON, resolving issues like improper array generation. This driver
- * always takes the entire message body as input and does not support converting only a part of it.
+ * This service requires BOTH json.jar and json-lib-2.4-jdk15.jar on the classpath, since it supports both libraries to perform the
+ * conversion. Select a transformation driver to determine which library to use. The "simple" library (json.jar) yields simpler
+ * looking and cleaner XML, but will sometimes cause problems transforming XML elements into JSON arrays. The simple driver will
+ * behave exactly like the legacy JSON services, including requiring and generating an XML element names "json" to wrap the
+ * generated Xml.
+ * </p>
+ * <p>
+ * The Default transformation driver uses json-lib-2.4-jdk15.jar and has a more complicated, but more information rich XML format.
+ * This format can then be used to precisely control the JSON output when converting to JSON, resolving issues like improper array
+ * generation. This driver always takes the entire message body as input and does not support converting only a part of it.
+ * </p>
  * 
  * @config json-xml-transform-service
  * @license BASIC

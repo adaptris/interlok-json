@@ -9,6 +9,17 @@ import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
 import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/**
+ * Simple XML to JSCON converter.
+ * 
+ * <p>
+ * This uses the default <a href="http://www.json.org/java/index.html">json.org implementation</a> to convert between JSON and XML.
+ * </p>
+ * 
+ * @config simple-transformation-driver
+ * 
+ * @author gdries
+ */
 @XStreamAlias("simple-transformation-driver")
 public class SimpleJsonTransformationDriver implements TransformationDriver {
 
