@@ -34,7 +34,7 @@
     <dependency org="xom" name="xom" rev="1.2.5" conf="compile->default" />
 
     <!-- Simple driver dependency -->
-    <dependency org="org.json" name="json" rev="20090211" conf="compile->default"/>
+    <dependency org="org.json" name="json" rev="20140107" conf="compile->default"/>
 
     <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default" changing="true"/>
     <dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>

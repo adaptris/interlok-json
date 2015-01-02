@@ -45,7 +45,7 @@ public class SimpleJsonTransformationDriver implements TransformationDriver {
   
   private String xmlToJSON(String input) throws ServiceException {
     try {
-      return XML.toJSONObject(input).getString(getJsonTag()).toString();
+      return XML.toJSONObject(input).getJSONObject(getJsonTag()).toString();
     } catch (JSONException e) {
       throw new ServiceException("Exception while converting XML to JSON", e);
     }
