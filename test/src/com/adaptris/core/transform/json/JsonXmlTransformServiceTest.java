@@ -3,8 +3,6 @@ package com.adaptris.core.transform.json;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
-import com.adaptris.core.transform.json.JsonXmlTransformService;
-import com.adaptris.core.transform.json.SimpleJsonTransformationDriver;
 import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
 
 public class JsonXmlTransformServiceTest extends TransformServiceExample {
