@@ -4,6 +4,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
 
+@SuppressWarnings("deprecation")
 public class JsonToXmlTransformServiceTest extends TransformServiceExample {
 
   public JsonToXmlTransformServiceTest(String name) {

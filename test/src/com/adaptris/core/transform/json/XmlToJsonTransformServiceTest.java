@@ -4,6 +4,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
 
+@SuppressWarnings("deprecation")
 public class XmlToJsonTransformServiceTest extends TransformServiceExample {
 
   static final String XML_INPUT = "<json>\n" + "<version>0.5</version>\n" + "" + "<entry>\n"
