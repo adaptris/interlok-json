@@ -10,7 +10,7 @@ import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDr
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Simple XML to JSCON converter.
+ * Simple XML to JSON converter.
  * 
  * <p>
  * This uses the default <a href="http://www.json.org/java/index.html">json.org implementation</a> to convert between JSON and XML.
