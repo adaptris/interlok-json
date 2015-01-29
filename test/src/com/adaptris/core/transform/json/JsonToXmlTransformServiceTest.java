@@ -11,11 +11,12 @@ public class JsonToXmlTransformServiceTest extends TransformServiceExample {
     super(name);
   }
 
-  static final String XML_OUTPUT = "<json><entry><location>Seattle</location><name>Production System</name></entry>"
+  public static final String XML_OUTPUT = "<json><entry><location>Seattle</location><name>Production System</name></entry>"
       + "<entry><location>New York</location><name>R&amp;D sandbox</name></entry>"
       + "<notes>Some Notes</notes><version>0.5</version></json>";
 
-  static final String JSON_INPUT = "{\n\"entry\":[\n" + "{\n\"location\":\"Seattle\"," + "\n\"name\":\"Production System\"},\n"
+  public static final String JSON_INPUT = "{\n\"entry\":[\n" + "{\n\"location\":\"Seattle\","
+      + "\n\"name\":\"Production System\"},\n"
       + "{\"location\":\"New York\",\n" + "\"name\":\"R&D sandbox\"\n" + "}\n" + "],\n" + "\"notes\":\"Some Notes\",\n"
       + "\"version\":0.5\n" + "}";
 

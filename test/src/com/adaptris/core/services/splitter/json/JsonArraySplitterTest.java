@@ -4,27 +4,24 @@ import java.util.List;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.BaseCase;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.transform.json.JsonToXmlTransformServiceTest;
 
-public class JsonArraySplitterTest extends BaseCase {
+public class JsonArraySplitterTest extends SplitterServiceExample {
 
   public JsonArraySplitterTest(String name) {
     super(name);
   }
 
-  private static final String JSON_ARRAY = "[{colour: \"red\",value: \"#f00\"},{colour: \"green\",value: \"#0f0\"},{colour: \"blue\",value: \"#00f\"},{colour: \"black\",value: \"#000\"}]";
-  private static final String JSON_OBJ = "{\"colours\" : [{colour: \"red\",value: \"#f00\"},{colour: \"green\",value: \"#0f0\"},{colour: \"blue\",value: \"#00f\"},{colour: \"black\",value: \"#000\"}] }";
-
   public void testSplitArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
-    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     assertEquals(4, s.splitMessage(src).size());
   }
 
   public void testSplitNotArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
-    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_OBJ);
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonToXmlTransformServiceTest.JSON_INPUT);
     assertEquals(1, s.splitMessage(src).size());
   }
 
@@ -38,5 +35,18 @@ public class JsonArraySplitterTest extends BaseCase {
     catch (CoreException expected) {
 
     }
+  }
+
+  @Override
+  JsonArraySplitter createSplitter() {
+    return new JsonArraySplitter();
+  }
+
+  @Override
+  protected String getExampleCommentHeader(Object o) {
+    return super.getExampleCommentHeader(o) + "\n<!-- \n If the incoming document is \n\n" + JsonObjectSplitterTest.JSON_ARRAY
+        + "\n\nthis would create 4 new messages, 1 for each element" + "\nIf the incoming document is\n\n"
+        + JsonToXmlTransformServiceTest.JSON_INPUT
+        + "\n\nthis would create a single message" + "\n-->\n";
   }
 }

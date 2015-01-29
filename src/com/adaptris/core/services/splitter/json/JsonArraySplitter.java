@@ -1,23 +1,14 @@
 package com.adaptris.core.services.splitter.json;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.io.IOUtils;
-
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.services.splitter.MessageSplitterImp;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -34,13 +25,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * would be split into 4 messages whereas
  * <code>{"colours" : [{colour: "red",value: "#f00"},{colour: "green",value: "#0f0"},{colour: "blue",value: "#00f"},{colour: "black",value: "#000"}] }</code>
  * would remain a single message.
+ * </p>
  * 
  * @config json-array-splitter
  * @author lchan
  * 
  */
 @XStreamAlias("json-array-splitter")
-public class JsonArraySplitter extends MessageSplitterImp {
+public class JsonArraySplitter extends JsonObjectSplitter {
 
   @Override
   public List<AdaptrisMessage> splitMessage(AdaptrisMessage msg) throws CoreException {
@@ -49,10 +41,7 @@ public class JsonArraySplitter extends MessageSplitterImp {
       String original = msg.getStringPayload();
       JSON jsonRoot = JSONSerializer.toJSON(original);
       if (jsonRoot.isArray()) {
-        JSONArray array = (JSONArray) jsonRoot;
-        for (Iterator i = array.iterator(); i.hasNext();) {
-          result.add(createSplitMessage((JSONObject) i.next(), msg));
-        }
+        result.addAll(splitMessage((JSONArray) jsonRoot, msg));
       }
       else {
         result.add(msg);
@@ -62,16 +51,5 @@ public class JsonArraySplitter extends MessageSplitterImp {
       throw new CoreException(e);
     }
     return result;
-  }
-
-
-  private AdaptrisMessage createSplitMessage(JSONObject src, AdaptrisMessage original) throws IOException {
-    AdaptrisMessageFactory factory = selectFactory(original);
-    AdaptrisMessage dest = factory.newMessage();
-    try (StringReader in = new StringReader(src.toString()); Writer out = dest.getWriter()) {
-      IOUtils.copy(in, out);
-      copyMetadata(original, dest);
-    }
-    return dest;
   }
 }

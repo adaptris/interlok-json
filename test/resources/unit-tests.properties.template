@@ -1,2 +1,3 @@
-junit.TransformServiceExamples.baseDir=${basedir}/build/example-xml
+junit.TransformServiceExamples.baseDir=${basedir}/build/example-xml/transform/
+junit.SplitterServiceExamples.baseDir=${basedir}/build/example-xml/splitter/
 
