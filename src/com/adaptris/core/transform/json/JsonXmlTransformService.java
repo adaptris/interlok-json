@@ -1,5 +1,9 @@
 package com.adaptris.core.transform.json;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -31,7 +35,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("json-xml-transform-service")
 public class JsonXmlTransformService extends ServiceImp {
 
+  @AutoPopulated
+  @NotNull
   private DIRECTION direction;
+  @NotNull
+  @AutoPopulated
+  @Valid
   private TransformationDriver driver;
   
   public JsonXmlTransformService() {
