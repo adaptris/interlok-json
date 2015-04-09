@@ -33,6 +33,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   static final String SIMPLE_XML_INPUT = "<json><version>0.5</version>\n" + "" + "<entry>\n"
       + "<name>Production System</name>\n" + "<location>Seattle</location>\n" + "" + "</entry>\n" + "<entry>\n"
       + "<name>R&amp;D sandbox</name>\n" + "<location>New York</location>\n" + "</entry>\n" + "<notes>Some Notes</notes>\n</json>";
+
   static final String SIMPLE_JSON_OUTPUT = "{\"entry\":[{\"location\":\"Seattle\",\"name\":\"Production System\"},{\"location\":\"New York\",\"name\":\"R&D sandbox\"}]"
       + ",\"notes\":\"Some Notes\",\"version\":0.5}";
 
@@ -59,9 +60,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     svc.setDirection(DIRECTION.JSON_TO_XML);
     svc.setDriver(new SimpleJsonTransformationDriver());
     execute(svc, msg);
-    System.out.println(msg.getStringPayload());
-    
-    assertEquals(SIMPLE_XML_OUTPUT, msg.getStringPayload());
+    JsonToXmlTransformServiceTest.doAssertions(msg);
   }
   
   public void testTransformSimpleXmlToJson() throws Exception {
@@ -71,7 +70,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     svc.setDirection(DIRECTION.XML_TO_JSON);
     svc.setDriver(new SimpleJsonTransformationDriver());
     execute(svc, msg);
-    assertEquals(SIMPLE_JSON_OUTPUT, msg.getStringPayload());
+    XmlToJsonTransformServiceTest.doAssertions(msg);
   }
 
   @Override

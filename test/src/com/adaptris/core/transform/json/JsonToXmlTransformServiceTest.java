@@ -1,8 +1,12 @@
 package com.adaptris.core.transform.json;
 
+import org.w3c.dom.Document;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
+import com.adaptris.core.util.XmlHelper;
+import com.adaptris.util.text.xml.XPath;
 
 @SuppressWarnings("deprecation")
 public class JsonToXmlTransformServiceTest extends TransformServiceExample {
@@ -26,7 +30,11 @@ public class JsonToXmlTransformServiceTest extends TransformServiceExample {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
     SimpleJsonToXmlTransformService svc = new SimpleJsonToXmlTransformService();
     execute(svc, msg);
-    assertEquals(XML_OUTPUT, msg.getStringPayload());
+    doAssertions(msg);
+    // cannot do a raw comparison.
+    // Due to http://docs.oracle.com/javase/8/docs/technotes/guides/collections/changes8.html
+    // The iteration order has changed for HashMap.keySet()
+    // assertEquals(XML_OUTPUT, msg.getStringPayload());
   }
 
   @Override
@@ -39,6 +47,13 @@ public class JsonToXmlTransformServiceTest extends TransformServiceExample {
     return super.getExampleCommentHeader(o) + "\n<!-- \nThe example JSON input for this could be\n" + JSON_INPUT + "\n"
         + "\n\nThis will generate XML output that looks similar to this (without the formatting...):" + "\n\n"
         + XmlToJsonTransformServiceTest.XML_INPUT + "\n-->\n";
+  }
+
+  public static void doAssertions(AdaptrisMessage msg) throws Exception {
+    Document d = XmlHelper.createDocument(msg);
+    XPath xp = new XPath();
+    assertEquals("Seattle", xp.selectSingleTextItem(d, "/json/entry[1]/location"));
+    assertEquals("New York", xp.selectSingleTextItem(d, "/json/entry[2]/location"));
   }
 
 }

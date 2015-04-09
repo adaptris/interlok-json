@@ -1,5 +1,11 @@
 package com.adaptris.core.transform.json;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
@@ -25,8 +31,11 @@ public class XmlToJsonTransformServiceTest extends TransformServiceExample {
             + "</json>");
     SimpleXmlToJsonTransformService svc = new SimpleXmlToJsonTransformService();
     execute(svc, msg);
-    System.out.println(msg.getStringPayload());
-    assertEquals(JSON_OUTPUT, msg.getStringPayload());
+    doAssertions(msg);
+    // cannot do a raw comparison.
+    // Due to http://docs.oracle.com/javase/8/docs/technotes/guides/collections/changes8.html
+    // The iteration order has changed for HashMap.keySet()
+    // assertEquals(JSON_OUTPUT, msg.getStringPayload());
   }
 
   @Override
@@ -41,4 +50,16 @@ public class XmlToJsonTransformServiceTest extends TransformServiceExample {
         + JsonToXmlTransformServiceTest.JSON_INPUT + "\n-->\n";
   }
 
+  public static void doAssertions(AdaptrisMessage msg) throws Exception {
+    JSONObject obj = new JSONObject(msg.getStringPayload());
+    List<String> names = Arrays.asList(JSONObject.getNames(obj));
+    assertTrue(names.contains("entry"));
+    JSONArray array = obj.getJSONArray("entry");
+    assertEquals(2, array.length());
+    JSONObject seattle = (JSONObject) array.get(0);
+    assertEquals("Seattle", seattle.getString("location"));
+    JSONObject newyork = (JSONObject) array.get(1);
+    assertEquals("New York", newyork.getString("location"));
+
+  }
 }
