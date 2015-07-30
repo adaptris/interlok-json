@@ -45,7 +45,7 @@ public class JsonXmlTransformService extends ServiceImp {
   
   public JsonXmlTransformService() {
     setDirection(DIRECTION.JSON_TO_XML);
-    setDriver(new DefaultJsonTransformationDriver());
+    setDriver(new JsonObjectTransformationDriver());
   }
 
   @Override

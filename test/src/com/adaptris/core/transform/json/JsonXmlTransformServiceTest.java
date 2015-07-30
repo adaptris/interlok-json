@@ -2,6 +2,7 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.ServiceException;
 import com.adaptris.core.transform.TransformServiceExample;
 import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
 
@@ -37,6 +38,11 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   static final String SIMPLE_JSON_OUTPUT = "{\"entry\":[{\"location\":\"Seattle\",\"name\":\"Production System\"},{\"location\":\"New York\",\"name\":\"R&D sandbox\"}]"
       + ",\"notes\":\"Some Notes\",\"version\":0.5}";
 
+  static final String ARRAY_JSON_INPUT = "[ { \"type\": \"Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities\", "
+      + "\"id\": \"victoria\", " + "\"name\": \"Victoria\", " + "\"modeName\": \"tube\", "
+      + "\"created\": \"2015-07-23T14:35:19.787\", " + "\"modified\": \"2015-07-23T14:35:19.787\", " + "\"lineStatuses\": [], "
+      + "\"routeSections\": [] }]";
+
   public void testTransformToXml() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
     JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -45,6 +51,22 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     assertEquals(DEFAULT_XML_OUTPUT, msg.getStringPayload());
   }
   
+  public void testTransformToXml_Array() throws Exception {
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT);
+    JsonXmlTransformService svc = new JsonXmlTransformService();
+    svc.setDirection(DIRECTION.JSON_TO_XML);
+      
+    try {
+      // Shouldn't parse because JsonArray input isn't valid.
+      execute(svc, msg);
+      fail();
+    } catch (ServiceException expected) {
+    }
+    svc.setDriver(new JsonArrayTransformationDriver());
+    // This should be OK.
+    execute(svc, msg);
+  }
+
   public void testTransformToJson() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(DEFAULT_XML_INPUT);
     
