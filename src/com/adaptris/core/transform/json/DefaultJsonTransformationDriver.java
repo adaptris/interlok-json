@@ -8,7 +8,8 @@ import net.sf.json.JSONObject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Default Transformation Driver.
+ * Default Transformation Driver that uses both {@link JSONObject#fromObject(Object)} and
+ * {@link JSONArray#fromObject(Object)} to parse the input.
  * 
  * @config default-transformation-driver
  * @author gdries
