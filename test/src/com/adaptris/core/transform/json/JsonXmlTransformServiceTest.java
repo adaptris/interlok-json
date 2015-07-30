@@ -49,13 +49,14 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     svc.setDirection(DIRECTION.JSON_TO_XML);
     execute(svc, msg);
     assertEquals(DEFAULT_XML_OUTPUT, msg.getStringPayload());
+    execute(svc, AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT));
   }
   
-  public void testTransformToXml_Array() throws Exception {
+  public void testTransformToXml_ArrayNotObject() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT);
     JsonXmlTransformService svc = new JsonXmlTransformService();
+    svc.setDriver(new JsonObjectTransformationDriver());
     svc.setDirection(DIRECTION.JSON_TO_XML);
-      
     try {
       // Shouldn't parse because JsonArray input isn't valid.
       execute(svc, msg);
@@ -63,6 +64,21 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     } catch (ServiceException expected) {
     }
     svc.setDriver(new JsonArrayTransformationDriver());
+    // This should be OK.
+    execute(svc, msg);
+  }
+
+  public void testTransformToXml_ObjectNotArray() throws Exception {
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
+    JsonXmlTransformService svc = new JsonXmlTransformService();
+    svc.setDriver(new JsonArrayTransformationDriver());
+    svc.setDirection(DIRECTION.JSON_TO_XML);
+    try {
+      execute(svc, msg);
+      fail();
+    } catch (ServiceException expected) {
+    }
+    svc.setDriver(new JsonObjectTransformationDriver());
     // This should be OK.
     execute(svc, msg);
   }
