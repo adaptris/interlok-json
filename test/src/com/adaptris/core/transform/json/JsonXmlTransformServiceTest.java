@@ -43,6 +43,11 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
       + "\"created\": \"2015-07-23T14:35:19.787\", " + "\"modified\": \"2015-07-23T14:35:19.787\", " + "\"lineStatuses\": [], "
       + "\"routeSections\": [] }]";
 
+  static final String BAD_JSON_INPUT = "[ { \"$type\": \"Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities\", "
+      + "\"id\": \"victoria\", " + "\"name\": \"Victoria\", " + "\"modeName\": \"tube\", "
+      + "\"created\": \"2015-07-23T14:35:19.787\", " + "\"modified\": \"2015-07-23T14:35:19.787\", " + "\"lineStatuses\": [], "
+      + "\"routeSections\": [] }]";
+
   public void testTransformToXml() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
     JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -52,6 +57,15 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     execute(svc, AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT));
   }
   
+  public void testTransformToXml_StripIllegalXmlElement() throws Exception {
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(BAD_JSON_INPUT);
+    JsonXmlTransformService svc = new JsonXmlTransformService();
+    svc.setDirection(DIRECTION.JSON_TO_XML);
+    execute(svc, msg);
+    System.err.println(msg.getStringPayload());
+  }
+
+
   public void testTransformToXml_ArrayNotObject() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT);
     JsonXmlTransformService svc = new JsonXmlTransformService();

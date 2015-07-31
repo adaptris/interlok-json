@@ -2,7 +2,6 @@ package com.adaptris.core.transform.json;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONException;
-import net.sf.json.xml.XMLSerializer;
 
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
@@ -210,5 +209,6 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
   public Boolean getTypeHintsEnabled() {
     return typeHintsEnabled;
   }
+
 
 }
