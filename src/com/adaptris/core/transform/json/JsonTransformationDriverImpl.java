@@ -1,11 +1,12 @@
 package com.adaptris.core.transform.json;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONException;
-
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
 import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONException;
 
 /**
  * Transformation Driver using the {@code net.sf.json} package.
@@ -17,14 +18,23 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
    * uses an XMLSerializer instance, exposing only SOME of its settings, we don't want the
    * serializer itself to be generated into the XML. There are some issues with the 
    * 'expandedProperties' field that cause it to not (de)serialize correctly. */
+  @AdvancedConfig
   private String arrayName;
+  @AdvancedConfig
   private String elementName;
+  @AdvancedConfig
   private String objectName;
+  @AdvancedConfig
   private String rootName;
+  @AdvancedConfig
   private Boolean forceTopLevelObject;
+  @AdvancedConfig
   private Boolean skipWhitespace;
+  @AdvancedConfig
   private Boolean trimSpaces;
+  @AdvancedConfig
   private Boolean typeHintsCompatibility;
+  @AdvancedConfig
   private Boolean typeHintsEnabled;
   
   private static final boolean DEFAULT_FORCE_TOP_LEVEL_OBJECT;

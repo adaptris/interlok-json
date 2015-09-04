@@ -27,10 +27,16 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @Deprecated
 public class SimpleJsonToXmlTransformService extends ServiceImp {
 
+  private static transient boolean warningLogged;
+
   private final TransformationDriver driver = new SimpleJsonTransformationDriver();
 
   public SimpleJsonToXmlTransformService() {
-    log.warn("This service is deprecated, please upgrade to " + JsonXmlTransformService.class.getName());
+    if (!warningLogged) {
+      log.warn("{} , is deprecated, please upgrade to {}", this.getClass().getSimpleName(),
+          JsonXmlTransformService.class.getName());
+      warningLogged = true;
+    }
   }
 
   @Override
