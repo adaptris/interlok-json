@@ -5,7 +5,6 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
-import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.adaptris.util.license.License;
 import com.adaptris.util.license.License.LicenseType;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -29,7 +28,7 @@ public class SimpleJsonToXmlTransformService extends ServiceImp {
 
   private static transient boolean warningLogged;
 
-  private final TransformationDriver driver = new SimpleJsonTransformationDriver();
+  private transient SimpleJsonTransformationDriver driver = new SimpleJsonTransformationDriver();
 
   public SimpleJsonToXmlTransformService() {
     if (!warningLogged) {
