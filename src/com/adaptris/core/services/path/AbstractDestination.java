@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -39,9 +39,9 @@ public abstract class AbstractDestination implements Destination {
   }
   
   @Override
-  public void execute(AdaptrisMessage message, String jsonContent) {
+  public void execute(AdaptrisMessage message, DocumentContext jsonContent) {
     this.setContent(message, 
-        JsonPath.parse(jsonContent).read(
+        jsonContent.read(
             this.getConfiguredJsonPath().getConfiguredJsonPath(message)).toString());
   }
 

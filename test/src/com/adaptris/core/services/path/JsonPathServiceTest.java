@@ -118,6 +118,21 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals("Sayings of the Century", message.getMetadataValue("JsonResultKey"));
   }
   
+  public void testSimpleResultFromPayloadToMultiplePayloadDestinations() throws Exception {
+    PayloadDestination targetPayloadDestination1 = new PayloadDestination();
+    targetPayloadDestination1.setConfiguredJsonPath(new ConstantJsonPath("$.store.book[0].title"));   // Get the 1st book's title.
+        
+    PayloadDestination targetPayloadDestination2 = new PayloadDestination();
+    targetPayloadDestination2.setConfiguredJsonPath(new ConstantJsonPath("$.store.book[1].title"));   // Get the 1st book's title.
+    
+    jsonPathService.setTargetDestinations(Arrays.asList(new Destination[] { targetPayloadDestination1, targetPayloadDestination2 }));
+    jsonPathService.setSourceDestination(new PayloadDestination());
+    
+    jsonPathService.doService(message);
+    
+    assertEquals("Sword of Honour", message.getStringPayload());
+  }
+  
   public void testComplexResultFromPayloadToPayload() throws Exception {
     PayloadDestination targetPayloadDestination = new PayloadDestination();
     targetPayloadDestination.setConfiguredJsonPath(new ConstantJsonPath("$..book[?(@.isbn)]"));   // Get all books with an ISBN

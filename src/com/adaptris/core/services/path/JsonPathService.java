@@ -8,6 +8,8 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.util.license.License;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -124,8 +126,10 @@ public class JsonPathService extends ServiceImp {
 
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
+    DocumentContext parsedJsonContent = JsonPath.parse(this.getSourceDestination().getContent(message));
+    
     for(Destination targetDestination: this.getTargetDestinations()) {
-      targetDestination.execute(message, this.getSourceDestination().getContent(message));
+      targetDestination.execute(message, parsedJsonContent);
     }
   }
 
