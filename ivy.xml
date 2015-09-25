@@ -38,6 +38,7 @@
     
     <dependency org="com.jayway.jsonpath" name="json-path" rev="2.0.0" conf="compile->default"/>
     <dependency org="com.bazaarvoice.jolt" name="jolt-core" rev="0.0.16"/>
+    <dependency org="com.bazaarvoice.jolt" name="json-utils" rev="0.0.16"/>
     
     <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.6.2"/>
     
