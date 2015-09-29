@@ -8,7 +8,6 @@ import com.adaptris.core.SerializableAdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.XStreamJsonMarshaller;
 import com.adaptris.core.XStreamMarshaller;
-import com.adaptris.interlok.types.DefaultSerializableMessage;
 import com.adaptris.interlok.types.SerializableMessage;
 import com.adaptris.util.GuidGenerator;
 
@@ -23,7 +22,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
 
   public void testToXML() throws Exception {
     XStreamTransformationDriver driver = new XStreamTransformationDriver();
-    SerializableMessage original = configure(new DefaultSerializableMessage());
+    SerializableMessage original = configure(new SerializableAdaptrisMessage());
     String jsonData = jsonMarshaller().marshal(original);
     System.err.println(jsonData);
     String xmlData = driver.transform(jsonData, JsonXmlTransformService.DIRECTION.JSON_TO_XML);
@@ -34,7 +33,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
 
   public void testToJSON() throws Exception {
     XStreamTransformationDriver driver = new XStreamTransformationDriver();
-    SerializableMessage original = configure(new DefaultSerializableMessage());
+    SerializableMessage original = configure(new SerializableAdaptrisMessage());
     String xmlData = xmlMarshaller().marshal(original);
     System.err.println(xmlData);
     String jsonData = driver.transform(xmlData, JsonXmlTransformService.DIRECTION.XML_TO_JSON);
