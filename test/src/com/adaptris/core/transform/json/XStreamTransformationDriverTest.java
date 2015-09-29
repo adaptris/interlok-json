@@ -8,6 +8,8 @@ import com.adaptris.core.SerializableAdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.XStreamJsonMarshaller;
 import com.adaptris.core.XStreamMarshaller;
+import com.adaptris.interlok.types.DefaultSerializableMessage;
+import com.adaptris.interlok.types.SerializableMessage;
 import com.adaptris.util.GuidGenerator;
 
 public class XStreamTransformationDriverTest extends BaseCase {
@@ -21,7 +23,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
 
   public void testToXML() throws Exception {
     XStreamTransformationDriver driver = new XStreamTransformationDriver();
-    SerializableAdaptrisMessage original = configure(new SerializableAdaptrisMessage());
+    SerializableMessage original = configure(new DefaultSerializableMessage());
     String jsonData = jsonMarshaller().marshal(original);
     System.err.println(jsonData);
     String xmlData = driver.transform(jsonData, JsonXmlTransformService.DIRECTION.JSON_TO_XML);
@@ -32,7 +34,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
 
   public void testToJSON() throws Exception {
     XStreamTransformationDriver driver = new XStreamTransformationDriver();
-    SerializableAdaptrisMessage original = configure(new SerializableAdaptrisMessage());
+    SerializableMessage original = configure(new DefaultSerializableMessage());
     String xmlData = xmlMarshaller().marshal(original);
     System.err.println(xmlData);
     String jsonData = driver.transform(xmlData, JsonXmlTransformService.DIRECTION.XML_TO_JSON);
@@ -44,7 +46,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
 
   public void testBadData() throws Exception {
     XStreamTransformationDriver driver = new XStreamTransformationDriver();
-    SerializableAdaptrisMessage original = configure(new SerializableAdaptrisMessage());
+    SerializableMessage original = configure(new SerializableAdaptrisMessage());
     String xmlData = xmlMarshaller().marshal(original);
     try {
       String jsonData = driver.transform(xmlData, JsonXmlTransformService.DIRECTION.JSON_TO_XML);
@@ -55,8 +57,8 @@ public class XStreamTransformationDriverTest extends BaseCase {
   }
 
 
-  private SerializableAdaptrisMessage configure(SerializableAdaptrisMessage msg) {
-    msg.setPayload("Pack my bag with a dozen liqour jugs");
+  private SerializableMessage configure(SerializableMessage msg) {
+    msg.setContent("Pack my bag with a dozen liqour jugs");
     msg.setUniqueId(new GuidGenerator().getUUID());
     int max = ThreadLocalRandom.current().nextInt(10);
     for (int i = 0; i < max; i++) {
