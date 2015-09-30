@@ -7,6 +7,7 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.MetadataElement;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.util.license.License;
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
@@ -552,7 +553,7 @@ public class JsonTransformService extends ServiceImp {
       
       Object transformedOutput = chainr.transform(inputJSON);
       
-      message.setStringPayload(JsonUtils.toJsonString(transformedOutput), message.getCharEncoding());
+      message.setContent(JsonUtils.toJsonString(transformedOutput), message.getCharEncoding());
     } catch (Exception ex) {
       throw new ServiceException(ex);
     }

@@ -3,6 +3,8 @@ package com.adaptris.core.transform.json;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
+import com.adaptris.interlok.config.MetadataDataDestination;
+import com.adaptris.interlok.config.PayloadDataDestination;
 
 public class JsonTransformServiceTest extends TransformServiceExample {
   
@@ -36,12 +38,12 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     service.setSourceSpecDestination(metadataDataDestination);
     service.setTargetResultDestination(payloadDataDestination);
     
-    message.setStringPayload(sampleInput, message.getCharEncoding());
+    message.setContent(sampleInput, message.getCharEncoding());
     message.addMetadata(METADATA_KEY, sampleSpec);
     
     service.doService(message);
     
-    assertEquals(sampleOutput, message.getStringPayload());
+    assertEquals(sampleOutput, message.getContent());
   }
   
   public void testSimpleTransformWithVarSubButNoMetadatMatches() throws Exception {
@@ -51,13 +53,13 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     
     service.setApplyMetadataAsParameters(true);
     
-    message.setStringPayload(sampleInput, message.getCharEncoding());
+    message.setContent(sampleInput, message.getCharEncoding());
     message.addMetadata(METADATA_KEY, sampleSpec);
     message.addMetadata("SomeKey", "SomeValue");
     
     service.doService(message);
     
-    assertEquals(sampleOutput, message.getStringPayload());
+    assertEquals(sampleOutput, message.getContent());
   }
   
   public void testSimpleTransformWithVarSub() throws Exception {
@@ -67,13 +69,13 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     
     service.setApplyMetadataAsParameters(true);
     
-    message.setStringPayload(sampleInput, message.getCharEncoding());
+    message.setContent(sampleInput, message.getCharEncoding());
     message.addMetadata(METADATA_KEY, sampleSpecVarSub);
     message.addMetadata("tertiary-ratings", "TertiaryRatings");
     
     service.doService(message);
     
-    assertEquals(sampleOutputVarSub, message.getStringPayload());
+    assertEquals(sampleOutputVarSub, message.getContent());
   }
   
   @Override

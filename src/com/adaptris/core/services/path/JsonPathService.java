@@ -1,15 +1,27 @@
 package com.adaptris.core.services.path;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.interlok.InterlokException;
+import com.adaptris.interlok.config.DataDestination;
+import com.adaptris.interlok.config.PayloadDataDestination;
+import com.adaptris.interlok.types.InterlokMessage;
 import com.adaptris.util.license.License;
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -113,23 +125,50 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("json-path-service")
 public class JsonPathService extends ServiceImp {
     
-  private Destination sourceDestination;
+  private DataDestination sourceDestination;
   
-  @XStreamImplicit(itemFieldName="target-destination")
-  private List<Destination> targetDestinations;
+  @XStreamImplicit(itemFieldName="json-path-execution")
+  private List<Execution> executions;
   
   public JsonPathService() {
-    sourceDestination = new PayloadDestination();
-    targetDestinations = new ArrayList<Destination>();
-    targetDestinations.add(new PayloadDestination());
+    sourceDestination = new PayloadDataDestination();
+    executions = new ArrayList<>();
+  }
+  
+  static {
+    Configuration.setDefaults(new Configuration.Defaults() {
+        private final JsonProvider jsonProvider = new JacksonJsonProvider();
+        private final MappingProvider mappingProvider = new JacksonMappingProvider();
+        private final Set<Option> options = EnumSet.noneOf(Option.class);
+
+        public JsonProvider jsonProvider() {
+            return jsonProvider;
+        }
+
+        @Override
+        public MappingProvider mappingProvider() {
+            return mappingProvider;
+        }
+
+        @Override
+        public Set<Option> options() {
+            return options;
+        }
+    });
   }
 
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
-    DocumentContext parsedJsonContent = JsonPath.parse(this.getSourceDestination().getContent(message));
-    
-    for(Destination targetDestination: this.getTargetDestinations()) {
-      targetDestination.execute(message, parsedJsonContent);
+    try {
+      DocumentContext parsedJsonContent = JsonPath.parse(this.getSourceDestination().getData(message).toString());
+      
+      for(Execution execution : this.getExecutions()) {
+        execution.getTargetDataDestination().setData(message, 
+            parsedJsonContent.read((String) 
+                execution.getSourceJsonPathExpression().getData(message)).toString());
+      }
+    } catch (InterlokException ex) {
+      throw new ServiceException(ex);
     }
   }
 
@@ -146,20 +185,19 @@ public class JsonPathService extends ServiceImp {
   public void init() throws CoreException {    
   }
 
-  public Destination getSourceDestination() {
+  public DataDestination getSourceDestination() {
     return sourceDestination;
   }
 
-  public void setSourceDestination(Destination sourceDestination) {
+  public void setSourceDestination(DataDestination sourceDestination) {
     this.sourceDestination = sourceDestination;
   }
 
-  public List<Destination> getTargetDestinations() {
-    return targetDestinations;
+  public List<Execution> getExecutions() {
+    return executions;
   }
 
-  public void setTargetDestinations(List<Destination> targetDestinations) {
-    this.targetDestinations = targetDestinations;
+  public void setExecutions(List<Execution> executions) {
+    this.executions = executions;
   }
-
 }
