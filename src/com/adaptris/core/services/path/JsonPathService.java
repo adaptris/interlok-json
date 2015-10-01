@@ -12,7 +12,6 @@ import com.adaptris.core.ServiceImp;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.PayloadDataDestination;
-import com.adaptris.interlok.types.InterlokMessage;
 import com.adaptris.util.license.License;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
