@@ -2,6 +2,7 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
+import com.adaptris.core.metadata.NoOpMetadataFilter;
 import com.adaptris.core.transform.TransformServiceExample;
 import com.adaptris.interlok.config.MetadataDataDestination;
 import com.adaptris.interlok.config.PayloadDataDestination;
@@ -51,7 +52,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     service.setSourceSpecDestination(metadataDataDestination);
     service.setTargetResultDestination(payloadDataDestination);
     
-    service.setApplyMetadataAsParameters(true);
+    service.setMetadataFilter(new NoOpMetadataFilter());
     
     message.setContent(sampleInput, message.getCharEncoding());
     message.addMetadata(METADATA_KEY, sampleSpec);
@@ -67,7 +68,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     service.setSourceSpecDestination(metadataDataDestination);
     service.setTargetResultDestination(payloadDataDestination);
     
-    service.setApplyMetadataAsParameters(true);
+    service.setMetadataFilter(new NoOpMetadataFilter());
     
     message.setContent(sampleInput, message.getCharEncoding());
     message.addMetadata(METADATA_KEY, sampleSpecVarSub);
