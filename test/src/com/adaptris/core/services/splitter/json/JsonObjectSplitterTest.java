@@ -2,13 +2,13 @@ package com.adaptris.core.services.splitter.json;
 
 import java.util.List;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.transform.json.JsonToXmlTransformServiceTest;
+
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 public class JsonObjectSplitterTest extends SplitterServiceExample {
 
@@ -30,11 +30,11 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
     List<AdaptrisMessage> msgs = s.splitMessage(src);
 
     assertEquals(3, msgs.size());
-    JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(0).getStringPayload());
+    JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(0).getContent());
     assertTrue(jsonObj.containsKey("entry"));
-    jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(1).getStringPayload());
+    jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(1).getContent());
     assertTrue(jsonObj.containsKey("notes"));
-    jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(2).getStringPayload());
+    jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(2).getContent());
     assertTrue(jsonObj.containsKey("version"));
   }
 
@@ -44,7 +44,7 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
     List<AdaptrisMessage> msgs = s.splitMessage(src);
 
     assertEquals(1, msgs.size());
-    JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(0).getStringPayload());
+    JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(msgs.get(0).getContent());
     assertTrue(jsonObj.isEmpty());
   }
 

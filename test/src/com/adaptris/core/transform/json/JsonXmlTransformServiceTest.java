@@ -53,7 +53,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     JsonXmlTransformService svc = new JsonXmlTransformService();
     svc.setDirection(DIRECTION.JSON_TO_XML);
     execute(svc, msg);
-    assertEquals(DEFAULT_XML_OUTPUT, msg.getStringPayload());
+    assertEquals(DEFAULT_XML_OUTPUT, msg.getContent());
     execute(svc, AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT));
   }
   
@@ -62,7 +62,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     JsonXmlTransformService svc = new JsonXmlTransformService();
     svc.setDirection(DIRECTION.JSON_TO_XML);
     execute(svc, msg);
-    System.err.println(msg.getStringPayload());
+    System.err.println(msg.getContent());
   }
 
 
@@ -103,7 +103,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     JsonXmlTransformService svc = new JsonXmlTransformService();
     svc.setDirection(DIRECTION.XML_TO_JSON);
     execute(svc, msg);
-    assertEquals(JSON_OUTPUT, msg.getStringPayload());
+    assertEquals(JSON_OUTPUT, msg.getContent());
   }
 
   public void testTransformJsonToSimpleXml() throws Exception {

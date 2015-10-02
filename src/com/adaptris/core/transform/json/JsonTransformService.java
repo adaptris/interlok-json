@@ -1,5 +1,7 @@
 package com.adaptris.core.transform.json;
 
+import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -594,15 +596,13 @@ public class JsonTransformService extends ServiceImp {
       String shiftrContent = (String) this.getSourceSpecDestination().getData(message);
       shiftrContent = this.applyMetadataSubstitution(message, shiftrContent);
       
-      List<Object> chainrSpecJSON = JsonUtils.jsonToList(
-          shiftrContent, 
-          (message.getCharEncoding() != null ? message.getCharEncoding() : "UTF-8"));
+      List<Object> chainrSpecJSON = JsonUtils.jsonToList(shiftrContent, defaultIfEmpty(message.getContentEncoding(), "UTF-8"));
       Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
       Object inputJSON = JsonUtils.jsonToObject((String) this.getSourceJsonDestination().getData(message));
       
       Object transformedOutput = chainr.transform(inputJSON);
       
-      message.setContent(JsonUtils.toJsonString(transformedOutput), message.getCharEncoding());
+      message.setContent(JsonUtils.toJsonString(transformedOutput), message.getContentEncoding());
     } catch (Exception ex) {
       throw new ServiceException(ex);
     }

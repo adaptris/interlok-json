@@ -50,7 +50,7 @@ public class JsonXmlTransformService extends ServiceImp {
 
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
-    msg.setStringPayload(getDriver().transform(msg.getStringPayload(), getDirection()), msg.getCharEncoding());
+    msg.setContent(getDriver().transform(msg.getContent(), getDirection()), msg.getContentEncoding());
   }
   
   @Override

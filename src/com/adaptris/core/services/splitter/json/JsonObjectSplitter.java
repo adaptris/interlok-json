@@ -7,11 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.io.IOUtils;
 
 import com.adaptris.core.AdaptrisMessage;
@@ -19,6 +14,11 @@ import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 /**
  * Message splitter implementation that splits a JSON object so each entry forms a new message.
@@ -48,7 +48,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
   public List<AdaptrisMessage> splitMessage(AdaptrisMessage msg) throws CoreException {
     List<AdaptrisMessage> result = new ArrayList<>();
     try {
-      String original = msg.getStringPayload();
+      String original = msg.getContent();
       JSON jsonRoot = JSONSerializer.toJSON(original);
       if (!jsonRoot.isEmpty()) {
         if (jsonRoot.isArray()) {

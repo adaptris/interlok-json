@@ -39,7 +39,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     service.setSourceSpecDestination(metadataDataDestination);
     service.setTargetResultDestination(payloadDataDestination);
     
-    message.setContent(sampleInput, message.getCharEncoding());
+    message.setContent(sampleInput, message.getContentEncoding());
     message.addMetadata(METADATA_KEY, sampleSpec);
     
     service.doService(message);
@@ -54,7 +54,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     
     service.setMetadataFilter(new NoOpMetadataFilter());
     
-    message.setContent(sampleInput, message.getCharEncoding());
+    message.setContent(sampleInput, message.getContentEncoding());
     message.addMetadata(METADATA_KEY, sampleSpec);
     message.addMetadata("SomeKey", "SomeValue");
     
@@ -70,7 +70,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     
     service.setMetadataFilter(new NoOpMetadataFilter());
     
-    message.setContent(sampleInput, message.getCharEncoding());
+    message.setContent(sampleInput, message.getContentEncoding());
     message.addMetadata(METADATA_KEY, sampleSpecVarSub);
     message.addMetadata("tertiary-ratings", "TertiaryRatings");
     

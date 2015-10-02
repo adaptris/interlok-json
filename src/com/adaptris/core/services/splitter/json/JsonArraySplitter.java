@@ -3,13 +3,13 @@ package com.adaptris.core.services.splitter.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONSerializer;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONSerializer;
 
 /**
  * Message splitter implementation that splits a JSON array so that each element forms a new message.
@@ -38,7 +38,7 @@ public class JsonArraySplitter extends JsonObjectSplitter {
   public List<AdaptrisMessage> splitMessage(AdaptrisMessage msg) throws CoreException {
     List<AdaptrisMessage> result = new ArrayList<>();
     try {
-      String original = msg.getStringPayload();
+      String original = msg.getContent();
       JSON jsonRoot = JSONSerializer.toJSON(original);
       if (jsonRoot.isArray()) {
         result.addAll(splitMessage((JSONArray) jsonRoot, msg));

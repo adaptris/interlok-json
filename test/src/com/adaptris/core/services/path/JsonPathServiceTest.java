@@ -49,7 +49,7 @@ public class JsonPathServiceTest extends ServiceCase {
     
     jsonPathService.doService(message);
     
-    assertTrue(message.containsKey("JsonResultKey"));
+    assertTrue(message.headersContainsKey("JsonResultKey"));
     assertEquals("Sword of Honour", message.getMetadataValue("JsonResultKey"));
   }
   
@@ -71,7 +71,7 @@ public class JsonPathServiceTest extends ServiceCase {
     
     jsonPathService.doService(message);
     
-    assertTrue(message.containsKey("JsonResultKey"));
+    assertTrue(message.headersContainsKey("JsonResultKey"));
     assertEquals("Sword of Honour", message.getMetadataValue("JsonResultKey"));
   }
   
@@ -88,7 +88,7 @@ public class JsonPathServiceTest extends ServiceCase {
     execution.setTargetDataDestination(targetPayloadDestination);
     execution.setSourceJsonPathExpression(constantDataDestination);
     
-    message.setContent("", message.getCharEncoding());
+    message.setContent("", message.getContentEncoding());
     message.addMetadata("JsonResultKey", this.sampleJsonContent());
     
     jsonPathService.setSourceDestination(sourceMetadataDestination);
@@ -111,7 +111,7 @@ public class JsonPathServiceTest extends ServiceCase {
     execution.setTargetDataDestination(new PayloadDataDestination());
     execution.setSourceJsonPathExpression(sourceJsonPathDestination);
     
-    message.setContent("", message.getCharEncoding());
+    message.setContent("", message.getContentEncoding());
     message.addMetadata("JsonResultKey", this.sampleJsonContent());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
