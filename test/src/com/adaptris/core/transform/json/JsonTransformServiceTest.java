@@ -2,10 +2,10 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
+import com.adaptris.core.common.MetadataDataDestination;
+import com.adaptris.core.common.PayloadDataDestination;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
 import com.adaptris.core.transform.TransformServiceExample;
-import com.adaptris.interlok.config.MetadataDataDestination;
-import com.adaptris.interlok.config.PayloadDataDestination;
 
 public class JsonTransformServiceTest extends TransformServiceExample {
   

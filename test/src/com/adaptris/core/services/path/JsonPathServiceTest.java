@@ -5,9 +5,9 @@ import java.util.Arrays;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceCase;
-import com.adaptris.interlok.config.ConstantDataDestination;
-import com.adaptris.interlok.config.MetadataDataDestination;
-import com.adaptris.interlok.config.PayloadDataDestination;
+import com.adaptris.core.common.ConstantDataDestination;
+import com.adaptris.core.common.MetadataDataDestination;
+import com.adaptris.core.common.PayloadDataDestination;
 
 public class JsonPathServiceTest extends ServiceCase {
   

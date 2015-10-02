@@ -9,10 +9,12 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.core.common.PayloadDataDestination;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataDestination;
-import com.adaptris.interlok.config.PayloadDataDestination;
 import com.adaptris.util.license.License;
+import com.adaptris.util.license.License.LicenseType;
+import com.adaptris.util.license.License.LicenseType;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -41,43 +43,38 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * For example, if you have a message with the following payload;
  * <pre>
  * {@code
- * {
- * "store": {
- * "book": [
- * {
- * "category": "reference",
- * "author": "Nigel Rees",
- * "title": "Sayings of the Century",
- * "price": 8.95
- * },
- * {
- * "category": "fiction",
- * "author": "Evelyn Waugh",
- * "title": "Sword of Honour",
- * "price": 12.99
- * },
- * {
- * "category": "fiction",
- * "author": "Herman Melville",
- * "title": "Moby Dick",
- * "isbn": "0-553-21311-3",
- * "price": 8.99
- * },
- * {
- * "category": "fiction",
- * "author": "J. R. R. Tolkien",
- * "title": "The Lord of the Rings",
- * "isbn": "0-395-19395-8",
- * "price": 22.99
- * }
- * ],
- * "bicycle": {
- * "color": "red",
- * "price": 19.95
- * }
- * },
- * "expensive": 10
- * }
+{
+    "store": {
+        "book": [{
+            "category": "reference",
+            "author": "Nigel Rees",
+            "title": "Sayings of the Century",
+            "price": 8.95
+        }, {
+            "category": "fiction",
+            "author": "Evelyn Waugh",
+            "title": "Sword of Honour",
+            "price": 12.99
+        }, {
+            "category": "fiction",
+            "author": "Herman Melville",
+            "title": "Moby Dick",
+            "isbn": "0-553-21311-3",
+            "price": 8.99
+        }, {
+            "category": "fiction",
+            "author": "J. R. R. Tolkien",
+            "title": "The Lord of the Rings",
+            "isbn": "0-395-19395-8",
+            "price": 22.99
+        }],
+        "bicycle": {
+            "color": "red",
+            "price": 19.95
+        }
+    },
+    "expensive": 10
+}
  * }
  * </pre>
  * 
@@ -86,18 +83,18 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * 
  * <pre>
  * {@code
- * <target-destination class="json-metadata-destination">
- * <configured-json-path class="constant-json-path">
- * <json-path>$.store.book[0].title</json-path>
- * </configured-json-path>
- * <key>metadata-key-1</key>
- * </target-destination>
- * <target-destination class="json-metadata-destination">
- * <configured-json-path class="constant-json-path">
- * <json-path>$.store.book[1].title</json-path>
- * </configured-json-path>
- * <key>metadata-key-2</key>
- * </target-destination>
+<target-destination class="json-metadata-destination">
+  <configured-json-path class="constant-json-path">
+    <json-path>$.store.book[0].title</json-path>
+  </configured-json-path>
+  <key>metadata-key-1</key>
+</target-destination>
+<target-destination class="json-metadata-destination">
+  <configured-json-path class="constant-json-path">
+    <json-path>$.store.book[1].title</json-path>
+  </configured-json-path>
+  <key>metadata-key-2</key>
+</target-destination>
  * }
  * </pre>
  * 
@@ -111,16 +108,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * <li>metadata-key-2 = "Sword of Honour"</li>
  * </ul>
  * </p>
- * <p>
- * If you do configure multiple target destinations, you may need to be a little careful, realizing that you may be modifying the
- * source destination as well.</br>
- * For example if you were to specify the payload as the source, then configure 2 targets, the first one a payload destination and
- * the second one a metadata destination,
- * the first target will take the payload, perform the search and set the result back into the payload. When the second target is
- * destination is run, the source destination,
- * the payload, has now been changed.
- * </p>
- * 
+
  * @author amcgrath
  * @config json-path-service
  * @license BASIC
@@ -178,7 +166,7 @@ public class JsonPathService extends ServiceImp {
 
   @Override
   public boolean isEnabled(License license) throws CoreException {
-    return true;
+    return license.isEnabled(LicenseType.Basic);
   }
 
   @Override
