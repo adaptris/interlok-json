@@ -9,9 +9,10 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
-import com.adaptris.core.common.PayloadDataDestination;
+import com.adaptris.core.common.Execution;
+import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.interlok.InterlokException;
-import com.adaptris.interlok.config.DataDestination;
+import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.util.license.License;
 import com.adaptris.util.license.License.LicenseType;
 import com.adaptris.util.license.License.LicenseType;
@@ -117,14 +118,14 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("json-path-service")
 public class JsonPathService extends ServiceImp {
     
-  private DataDestination sourceDestination;
+  private DataInputParameter<String> sourceDestination;
   
   @XStreamImplicit(itemFieldName="json-path-execution")
   private List<Execution> executions;
   
   public JsonPathService() {
-    sourceDestination = new PayloadDataDestination();
-    executions = new ArrayList<>();
+    setSourceDestination(new StringPayloadDataInputParameter());
+    setExecutions(new ArrayList<Execution>());
   }
   
   static {
@@ -152,12 +153,9 @@ public class JsonPathService extends ServiceImp {
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
     try {
-      DocumentContext parsedJsonContent = JsonPath.parse(this.getSourceDestination().getData(message).toString());
-      
-      for(Execution execution : this.getExecutions()) {
-        execution.getTargetDataDestination().setData(message, 
-            parsedJsonContent.read((String) 
-                execution.getSourceJsonPathExpression().getData(message)).toString());
+      DocumentContext parsedJsonContent = JsonPath.parse(this.getSourceDestination().extract(message));
+      for (Execution execution : this.getExecutions()) {
+        execution.getTarget().insert(parsedJsonContent.read((String) execution.getSource().extract(message)).toString(), message);
       }
     } catch (InterlokException ex) {
       throw new ServiceException(ex);
@@ -177,11 +175,11 @@ public class JsonPathService extends ServiceImp {
   public void init() throws CoreException {    
   }
 
-  public DataDestination getSourceDestination() {
+  public DataInputParameter<String> getSourceDestination() {
     return sourceDestination;
   }
 
-  public void setSourceDestination(DataDestination sourceDestination) {
+  public void setSourceDestination(DataInputParameter<String> sourceDestination) {
     this.sourceDestination = sourceDestination;
   }
 
