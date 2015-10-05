@@ -14,11 +14,13 @@ import com.adaptris.core.MetadataCollection;
 import com.adaptris.core.MetadataElement;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
-import com.adaptris.core.common.PayloadDataDestination;
+import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.metadata.MetadataFilter;
 import com.adaptris.core.metadata.RemoveAllMetadataFilter;
 import com.adaptris.core.util.Args;
-import com.adaptris.interlok.config.DataDestination;
+import com.adaptris.interlok.config.DataInputParameter;
+import com.adaptris.interlok.config.DataOutputParameter;
 import com.adaptris.util.license.License;
 import com.adaptris.util.license.License.LicenseType;
 import com.bazaarvoice.jolt.Chainr;
@@ -38,19 +40,19 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * Specify the source of the JSON input content and the source of the transform definition by setting the following 2 options;
  * <ul>
- * <li>source-json-destination</li>
- * <li>source-spec-destination</li>
+ * <li>source-json</li>
+ * <li>mapping-spec</li>
  * </ul>
  * To one of the following;
  * <ul>
- * <li>file-data-destination {@link FileDataDestination}</li>
- * <li>payload-data-destination {@link PayloadDataDestination}</li>
- * <li>metadata-data-destination {@link MetadataDataDestination}</li>
+ * <li>file-data-input-parameter {@link com.adaptris.core.common.FileDataInputParameter}</li>
+ * <li>string-payload-data-input-parameter {@link com.adaptris.core.common.StringPayloadDataInputParameter}</li>
+ * <li>metadata-data-input-parameter {@link com.adaptris.core.common.MetadataDataInputParameter}</li>
+ * <li>metadata-file-input-parameter {@link com.adaptris.core.common.MetadataFileInputParameter}</li>
  * </ul>
  * </p>
  * <p>
- * Using the same destination options above you can also set the destination for the result of the transform by setting
- * "target-result-destination".
+ * Use a {@link DataOutputParameter} to specify where the result of the transform by is stored.
  * </p>
  * <p>
  * The transform definition is called "Shitfr", explained below, but is generally a static block of JSON content. Although
@@ -569,15 +571,16 @@ public class JsonTransformService extends ServiceImp {
   @NotNull
   @Valid
   @AutoPopulated
-  private DataDestination sourceJsonDestination;
+  private DataInputParameter<String> sourceJson;
   
   @NotNull
   @Valid
-  private DataDestination sourceSpecDestination;
+  private DataInputParameter<String> mappingSpec;
   
   @NotNull
   @Valid
-  private DataDestination targetResultDestination;
+  @AutoPopulated
+  private DataOutputParameter<String> targetJson;
 
   @NotNull
   @AutoPopulated
@@ -585,24 +588,22 @@ public class JsonTransformService extends ServiceImp {
   private MetadataFilter metadataFilter;
 
   public JsonTransformService() {
-    setSourceJsonDestination(new PayloadDataDestination());
-    setTargetResultDestination(new PayloadDataDestination());
+    setSourceJson(new StringPayloadDataInputParameter());
+    setTargetJson(new StringPayloadDataOutputParameter());
     setMetadataFilter(new RemoveAllMetadataFilter());
   }
   
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
     try {
-      String shiftrContent = (String) this.getSourceSpecDestination().getData(message);
+      String shiftrContent = this.getMappingSpec().extract(message);
       shiftrContent = this.applyMetadataSubstitution(message, shiftrContent);
       
       List<Object> chainrSpecJSON = JsonUtils.jsonToList(shiftrContent, defaultIfEmpty(message.getContentEncoding(), "UTF-8"));
       Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
-      Object inputJSON = JsonUtils.jsonToObject((String) this.getSourceJsonDestination().getData(message));
-      
+      Object inputJSON = JsonUtils.jsonToObject(this.getSourceJson().extract(message));
       Object transformedOutput = chainr.transform(inputJSON);
-      
-      message.setContent(JsonUtils.toJsonString(transformedOutput), message.getContentEncoding());
+      getTargetJson().insert(JsonUtils.toJsonString(transformedOutput), message);
     } catch (Exception ex) {
       throw new ServiceException(ex);
     }
@@ -629,28 +630,28 @@ public class JsonTransformService extends ServiceImp {
   public void init() throws CoreException {
   }
 
-  public DataDestination getTargetResultDestination() {
-    return targetResultDestination;
+  public DataOutputParameter<String> getTargetJson() {
+    return targetJson;
   }
 
-  public void setTargetResultDestination(DataDestination target) {
-    this.targetResultDestination = Args.notNull(target, "Target");
+  public void setTargetJson(DataOutputParameter<String> target) {
+    this.targetJson = Args.notNull(target, "Target");
   }
 
-  public DataDestination getSourceJsonDestination() {
-    return sourceJsonDestination;
+  public DataInputParameter<String> getSourceJson() {
+    return sourceJson;
   }
 
-  public void setSourceJsonDestination(DataDestination src) {
-    this.sourceJsonDestination = Args.notNull(src, "Source");
+  public void setSourceJson(DataInputParameter<String> src) {
+    this.sourceJson = Args.notNull(src, "Source");
   }
 
-  public DataDestination getSourceSpecDestination() {
-    return sourceSpecDestination;
+  public DataInputParameter<String> getMappingSpec() {
+    return mappingSpec;
   }
 
-  public void setSourceSpecDestination(DataDestination mapping) {
-    this.sourceSpecDestination = Args.notNull(mapping, "Mapping");
+  public void setMappingSpec(DataInputParameter<String> mapping) {
+    this.mappingSpec = Args.notNull(mapping, "Mapping");
   }
 
   public MetadataFilter getMetadataFilter() {

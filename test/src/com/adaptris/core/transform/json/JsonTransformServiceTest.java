@@ -2,8 +2,12 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
-import com.adaptris.core.common.MetadataDataDestination;
-import com.adaptris.core.common.PayloadDataDestination;
+import com.adaptris.core.common.ConstantDataInputParameter;
+import com.adaptris.core.common.FileDataInputParameter;
+import com.adaptris.core.common.MetadataDataInputParameter;
+import com.adaptris.core.common.MetadataDataOutputParameter;
+import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
 import com.adaptris.core.transform.TransformServiceExample;
 
@@ -12,8 +16,11 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   private static final String METADATA_KEY = "data-key";
   
   private JsonTransformService service;
-  private PayloadDataDestination payloadDataDestination;
-  private MetadataDataDestination metadataDataDestination;
+  private StringPayloadDataInputParameter payloadInput;
+  private StringPayloadDataOutputParameter payloadOutput;
+  private MetadataDataOutputParameter metadataOutput;
+  private MetadataDataInputParameter metadataInput;
+  private ConstantDataInputParameter constantInput;
   
   private AdaptrisMessage message;
 
@@ -23,10 +30,11 @@ public class JsonTransformServiceTest extends TransformServiceExample {
 
   public void setUp() throws Exception {
     service = new JsonTransformService();
-    payloadDataDestination = new PayloadDataDestination();
-    metadataDataDestination = new MetadataDataDestination();
-    metadataDataDestination.setMetadataKey(METADATA_KEY);
-    
+    payloadInput = new StringPayloadDataInputParameter();
+    metadataInput = new MetadataDataInputParameter(METADATA_KEY);
+    payloadOutput = new StringPayloadDataOutputParameter();
+    metadataOutput = new MetadataDataOutputParameter(METADATA_KEY);
+    constantInput = new ConstantDataInputParameter(sampleSpec);
     message = DefaultMessageFactory.getDefaultInstance().newMessage();
   }
   
@@ -34,10 +42,10 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     
   }
   
-  public void testSimpleTransform() throws Exception {
-    service.setSourceJsonDestination(payloadDataDestination);
-    service.setSourceSpecDestination(metadataDataDestination);
-    service.setTargetResultDestination(payloadDataDestination);
+  public void testSimpleTransform_MetadataInputMapping() throws Exception {
+    service.setSourceJson(payloadInput);
+    service.setMappingSpec(metadataInput);
+    service.setTargetJson(payloadOutput);
     
     message.setContent(sampleInput, message.getContentEncoding());
     message.addMetadata(METADATA_KEY, sampleSpec);
@@ -47,10 +55,23 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     assertEquals(sampleOutput, message.getContent());
   }
   
+  public void testSimpleTransform_ConstantInputMapping() throws Exception {
+    service.setSourceJson(payloadInput);
+    service.setMappingSpec(constantInput);
+    service.setTargetJson(payloadOutput);
+
+    message.setContent(sampleInput, message.getContentEncoding());
+    message.addMetadata(METADATA_KEY, sampleSpec);
+
+    service.doService(message);
+
+    assertEquals(sampleOutput, message.getContent());
+  }
+
   public void testSimpleTransformWithVarSubButNoMetadatMatches() throws Exception {
-    service.setSourceJsonDestination(payloadDataDestination);
-    service.setSourceSpecDestination(metadataDataDestination);
-    service.setTargetResultDestination(payloadDataDestination);
+    service.setSourceJson(payloadInput);
+    service.setMappingSpec(metadataInput);
+    service.setTargetJson(payloadOutput);
     
     service.setMetadataFilter(new NoOpMetadataFilter());
     
@@ -64,9 +85,9 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   }
   
   public void testSimpleTransformWithVarSub() throws Exception {
-    service.setSourceJsonDestination(payloadDataDestination);
-    service.setSourceSpecDestination(metadataDataDestination);
-    service.setTargetResultDestination(payloadDataDestination);
+    service.setSourceJson(payloadInput);
+    service.setMappingSpec(metadataInput);
+    service.setTargetJson(payloadOutput);
     
     service.setMetadataFilter(new NoOpMetadataFilter());
     
@@ -81,9 +102,11 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   
   @Override
   protected Object retrieveObjectForSampleConfig() {
-    service.setSourceJsonDestination(payloadDataDestination);
-    service.setSourceSpecDestination(metadataDataDestination);
-    service.setTargetResultDestination(new PayloadDataDestination());
+    service.setSourceJson(payloadInput);
+    FileDataInputParameter in = new FileDataInputParameter();
+    in.setUrl("file:///path/to/my/mapping.json");
+    service.setMappingSpec(in);
+    service.setTargetJson(payloadOutput);
     
     return service;
   }
