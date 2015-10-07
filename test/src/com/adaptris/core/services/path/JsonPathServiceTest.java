@@ -1,13 +1,17 @@
 package com.adaptris.core.services.path;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceCase;
-import com.adaptris.interlok.config.ConstantDataDestination;
-import com.adaptris.interlok.config.MetadataDataDestination;
-import com.adaptris.interlok.config.PayloadDataDestination;
+import com.adaptris.core.common.ConstantDataInputParameter;
+import com.adaptris.core.common.Execution;
+import com.adaptris.core.common.MetadataDataInputParameter;
+import com.adaptris.core.common.MetadataDataOutputParameter;
+import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.common.StringPayloadDataOutputParameter;
 
 public class JsonPathServiceTest extends ServiceCase {
   
@@ -34,66 +38,55 @@ public class JsonPathServiceTest extends ServiceCase {
   }
   
   public void testSimpleResultFromPayloadToMetadata() throws Exception {
-    MetadataDataDestination targetMetadataDestination = new MetadataDataDestination();
-    targetMetadataDestination.setMetadataKey("JsonResultKey");
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter("JsonResultKey");
     
-    ConstantDataDestination constantDataDestination = new ConstantDataDestination();
-    constantDataDestination.setValue("$.store.book[1].title");  // Get the 2nd book's title.
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.store.book[1].title");
     
-    Execution execution = new Execution();
-    execution.setTargetDataDestination(targetMetadataDestination);
-    execution.setSourceJsonPathExpression(constantDataDestination);
+    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.setSourceDestination(new PayloadDataDestination());
+    jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
     
-    jsonPathService.doService(message);
+    execute(jsonPathService, message);
     
-    assertTrue(message.containsKey("JsonResultKey"));
+    assertTrue(message.headersContainsKey("JsonResultKey"));
     assertEquals("Sword of Honour", message.getMetadataValue("JsonResultKey"));
   }
   
   public void testSimpleResultFromPayloadToMetadataUsingMetadataJsonPath() throws Exception {
     message.addMetadata("JsonPath", "$.store.book[1].title");
     
-    MetadataDataDestination targetMetadataDestination = new MetadataDataDestination();
-    targetMetadataDestination.setMetadataKey("JsonResultKey");
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter("JsonResultKey");
     
-    MetadataDataDestination jsonMetadataDestination = new MetadataDataDestination();
+    MetadataDataInputParameter jsonMetadataDestination = new MetadataDataInputParameter("JsonPath");
     jsonMetadataDestination.setMetadataKey("JsonPath");
     
-    Execution execution = new Execution();
-    execution.setTargetDataDestination(targetMetadataDestination);
-    execution.setSourceJsonPathExpression(jsonMetadataDestination);
+    Execution execution = new Execution(jsonMetadataDestination, targetMetadataDestination);
         
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.setSourceDestination(new PayloadDataDestination());
+    jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
     
-    jsonPathService.doService(message);
+    execute(jsonPathService, message);
     
-    assertTrue(message.containsKey("JsonResultKey"));
+    assertTrue(message.headersContainsKey("JsonResultKey"));
     assertEquals("Sword of Honour", message.getMetadataValue("JsonResultKey"));
   }
   
   public void testSimpleResultFromMetadataToPayload() throws Exception {
-    MetadataDataDestination sourceMetadataDestination = new MetadataDataDestination();
-    sourceMetadataDestination.setMetadataKey("JsonResultKey");
+    MetadataDataInputParameter sourceMetadataDestination = new MetadataDataInputParameter("JsonResultKey");
     
-    PayloadDataDestination targetPayloadDestination = new PayloadDataDestination();
+    StringPayloadDataOutputParameter targetPayloadDestination = new StringPayloadDataOutputParameter();
     
-    ConstantDataDestination constantDataDestination = new ConstantDataDestination();
-    constantDataDestination.setValue("$.store.book[1].title");  // Get the 2nd book's title.
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.store.book[1].title");
     
-    Execution execution = new Execution();
-    execution.setTargetDataDestination(targetPayloadDestination);
-    execution.setSourceJsonPathExpression(constantDataDestination);
+    Execution execution = new Execution(constantDataDestination, targetPayloadDestination);
     
-    message.setContent("", message.getCharEncoding());
+    message.setContent("", message.getContentEncoding());
     message.addMetadata("JsonResultKey", this.sampleJsonContent());
     
     jsonPathService.setSourceDestination(sourceMetadataDestination);
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.doService(message);
+    execute(jsonPathService, message);
     
     assertEquals("Sword of Honour", message.getContent());
   }
@@ -101,83 +94,61 @@ public class JsonPathServiceTest extends ServiceCase {
   public void testSimpleResultFromMetadataToPayloadUsingMetadataJsonPath() throws Exception {
     message.addMetadata("JsonPath", "$.store.book[1].title");
     
-    MetadataDataDestination sourceMetadataDestination = new MetadataDataDestination();
-    sourceMetadataDestination.setMetadataKey("JsonResultKey");
+    MetadataDataInputParameter sourceMetadataDestination = new MetadataDataInputParameter("JsonResultKey");
     
-    MetadataDataDestination sourceJsonPathDestination = new MetadataDataDestination();
-    sourceJsonPathDestination.setMetadataKey("JsonPath");
+    MetadataDataInputParameter sourceJsonPathDestination = new MetadataDataInputParameter("JsonPath");
     
-    Execution execution = new Execution();
-    execution.setTargetDataDestination(new PayloadDataDestination());
-    execution.setSourceJsonPathExpression(sourceJsonPathDestination);
+    Execution execution = new Execution(sourceJsonPathDestination, new StringPayloadDataOutputParameter());
     
-    message.setContent("", message.getCharEncoding());
+    message.setContent("", message.getContentEncoding());
     message.addMetadata("JsonResultKey", this.sampleJsonContent());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
     jsonPathService.setSourceDestination(sourceMetadataDestination);
     
-    jsonPathService.doService(message);
+    execute(jsonPathService, message);
     
     assertEquals("Sword of Honour", message.getContent());
   }
   
   public void testSimpleResultFromPayloadToMultipleDestinations() throws Exception {
-    MetadataDataDestination targetMetadataDestination = new MetadataDataDestination();
-    targetMetadataDestination.setMetadataKey("JsonResultKey");
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter("JsonResultKey");
             
-    ConstantDataDestination constantDataDestination = new ConstantDataDestination();
-    constantDataDestination.setValue("$.store.book[0].title");  // Get the 2nd book's title.
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.store.book[0].title");
     
-    Execution exec1 = new Execution();
-    exec1.setTargetDataDestination(targetMetadataDestination);
-    exec1.setSourceJsonPathExpression(constantDataDestination);
+    Execution exec1 = new Execution(constantDataDestination, targetMetadataDestination);
     
-    Execution exec2 = new Execution();
-    exec2.setTargetDataDestination(new PayloadDataDestination());
-    exec2.setSourceJsonPathExpression(constantDataDestination);
+    Execution exec2 = new Execution(constantDataDestination, new StringPayloadDataOutputParameter());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { exec1, exec2 }));
-    jsonPathService.setSourceDestination(new PayloadDataDestination());
     
-    jsonPathService.doService(message);
+    execute(jsonPathService, message);
     
     assertEquals("Sayings of the Century", message.getContent());
     assertEquals("Sayings of the Century", message.getMetadataValue("JsonResultKey"));
   }
   
   public void testSimpleResultFromPayloadToMultiplePayloadDestinations() throws Exception {    
-    ConstantDataDestination constantDataDestination1 = new ConstantDataDestination();
-    constantDataDestination1.setValue("$.store.book[0].title");  // Get the 2nd book's title.
-    ConstantDataDestination constantDataDestination2 = new ConstantDataDestination();
-    constantDataDestination2.setValue("$.store.book[1].title");  // Get the 2nd book's title.
+    ConstantDataInputParameter constantDataDestination1 = new ConstantDataInputParameter("$.store.book[0].title");
+    ConstantDataInputParameter constantDataDestination2 = new ConstantDataInputParameter("$.store.book[1].title");
     
-    Execution exec1 = new Execution();
-    exec1.setTargetDataDestination(new PayloadDataDestination());
-    exec1.setSourceJsonPathExpression(constantDataDestination1);
+    Execution exec1 = new Execution(constantDataDestination1, new StringPayloadDataOutputParameter());
     
-    Execution exec2 = new Execution();
-    exec2.setTargetDataDestination(new PayloadDataDestination());
-    exec2.setSourceJsonPathExpression(constantDataDestination2);
+    Execution exec2 = new Execution(constantDataDestination2, new StringPayloadDataOutputParameter());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { exec1, exec2 }));
-    jsonPathService.setSourceDestination(new PayloadDataDestination());
     
-    jsonPathService.doService(message);
+    execute(jsonPathService, message);
     
     assertEquals("Sword of Honour", message.getContent());
   }
   
   public void testComplexResultFromPayloadToPayload() throws Exception {
-    ConstantDataDestination constantDataDestination = new ConstantDataDestination();
-    constantDataDestination.setValue("$..book[?(@.isbn)]");
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$..book[?(@.isbn)]");
     
-    Execution execution = new Execution();
-    execution.setTargetDataDestination(new PayloadDataDestination());
-    execution.setSourceJsonPathExpression(constantDataDestination);
+    Execution execution = new Execution(constantDataDestination, new StringPayloadDataOutputParameter());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.setSourceDestination(new PayloadDataDestination());
     
     jsonPathService.doService(message);
     
@@ -187,21 +158,14 @@ public class JsonPathServiceTest extends ServiceCase {
   @Override
   protected Object retrieveObjectForSampleConfig() {
     try {
-      ConstantDataDestination constantDataDestination1 = new ConstantDataDestination();
-      constantDataDestination1.setValue("$.store.book[0].title");  // Get the 2nd book's title.
-      ConstantDataDestination constantDataDestination2 = new ConstantDataDestination();
-      constantDataDestination2.setValue("$.store.book[1].title");  // Get the 2nd book's title.
+      ConstantDataInputParameter constantDataDestination1 = new ConstantDataInputParameter("$.store.book[0].title");
+      ConstantDataInputParameter constantDataDestination2 = new ConstantDataInputParameter("$.store.book[1].title");
       
-      Execution exec1 = new Execution();
-      exec1.setTargetDataDestination(new PayloadDataDestination());
-      exec1.setSourceJsonPathExpression(constantDataDestination1);
+      Execution exec1 = new Execution(constantDataDestination1, new MetadataDataOutputParameter("targetMetadataKey1"));
       
-      Execution exec2 = new Execution();
-      exec1.setTargetDataDestination(new PayloadDataDestination());
-      exec1.setSourceJsonPathExpression(constantDataDestination2);
+      Execution exec2 = new Execution(constantDataDestination2, new MetadataDataOutputParameter("targetMetadataKey2"));
       
-      jsonPathService.setExecutions(Arrays.asList(new Execution[] { exec1, exec2 }));
-      jsonPathService.setSourceDestination(new PayloadDataDestination());
+      jsonPathService.setExecutions(new ArrayList<Execution>(Arrays.asList(new Execution[] {exec1, exec2})));
     } catch (Exception ex) {
       fail("Exception thrown while building example config.");
     }
