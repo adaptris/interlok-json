@@ -12,16 +12,15 @@ import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.interlok.InterlokException;
+import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.util.license.License;
 import com.adaptris.util.license.License.LicenseType;
-import com.adaptris.util.license.License.LicenseType;
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -130,7 +129,7 @@ public class JsonPathService extends ServiceImp {
   
   static {
     Configuration.setDefaults(new Configuration.Defaults() {
-        private final JsonProvider jsonProvider = new JacksonJsonProvider();
+        private final JsonProvider jsonProvider = new JsonSmartJsonProvider();
         private final MappingProvider mappingProvider = new JacksonMappingProvider();
         private final Set<Option> options = EnumSet.noneOf(Option.class);
 
@@ -153,9 +152,9 @@ public class JsonPathService extends ServiceImp {
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
     try {
-      DocumentContext parsedJsonContent = JsonPath.parse(this.getSourceDestination().extract(message));
+      Object parsedJsonContent = Configuration.defaultConfiguration().jsonProvider().parse(this.getSourceDestination().extract(message));
       for (Execution execution : this.getExecutions()) {
-        execution.getTarget().insert(parsedJsonContent.read((String) execution.getSource().extract(message)).toString(), message);
+        execution.getTarget().insert(JsonPath.read(parsedJsonContent, execution.getSource().extract(message)).toString(), message);
       }
     } catch (InterlokException ex) {
       throw new ServiceException(ex);
