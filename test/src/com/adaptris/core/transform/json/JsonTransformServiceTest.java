@@ -5,7 +5,6 @@ import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.FileDataInputParameter;
 import com.adaptris.core.common.MetadataDataInputParameter;
-import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
@@ -18,7 +17,6 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   private JsonTransformService service;
   private StringPayloadDataInputParameter payloadInput;
   private StringPayloadDataOutputParameter payloadOutput;
-  private MetadataDataOutputParameter metadataOutput;
   private MetadataDataInputParameter metadataInput;
   private ConstantDataInputParameter constantInput;
   
@@ -33,7 +31,6 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     payloadInput = new StringPayloadDataInputParameter();
     metadataInput = new MetadataDataInputParameter(METADATA_KEY);
     payloadOutput = new StringPayloadDataOutputParameter();
-    metadataOutput = new MetadataDataOutputParameter(METADATA_KEY);
     constantInput = new ConstantDataInputParameter(sampleSpec);
     message = DefaultMessageFactory.getDefaultInstance().newMessage();
   }
