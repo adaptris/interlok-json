@@ -108,7 +108,21 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * <li>metadata-key-2 = "Sword of Honour"</li>
  * </ul>
  * </p>
-
+ * <p>
+ * Any results returned by this service will normally include the json brackets wrapping the returned value.  However you can configure this
+ * service to unwrap the result for you, such that a value returned as "[myValue]" will now be returned as "myValue".
+ * <br/>
+ * The default value is false, but to override simply configure the "unwrap";
+ * <pre>
+ * {@code
+<json-path-service>
+  <unwrap-json>true</unwrap-json>
+  ...
+</json-path-service>
+ * }
+ * </pre>
+ * </p>
+ * 
  * @author amcgrath
  * @config json-path-service
  * @license BASIC
