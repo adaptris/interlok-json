@@ -122,6 +122,8 @@ public class JsonPathService extends ServiceImp {
   @XStreamImplicit(itemFieldName="json-path-execution")
   private List<Execution> executions;
   
+  private Boolean unwrapJson;
+  
   public JsonPathService() {
     setSourceDestination(new StringPayloadDataInputParameter());
     setExecutions(new ArrayList<Execution>());
@@ -154,11 +156,22 @@ public class JsonPathService extends ServiceImp {
     try {
       Object parsedJsonContent = Configuration.defaultConfiguration().jsonProvider().parse(this.getSourceDestination().extract(message));
       for (Execution execution : this.getExecutions()) {
-        execution.getTarget().insert(JsonPath.read(parsedJsonContent, execution.getSource().extract(message)).toString(), message);
+        execution.getTarget().insert(this.unwrap(JsonPath.read(parsedJsonContent, execution.getSource().extract(message)).toString()), message);
       }
     } catch (InterlokException ex) {
       throw new ServiceException(ex);
     }
+  }
+  
+  /*
+   * Do we need to strip the square brackets off of a value?
+   */
+  private String unwrap(String jsonValue) {
+    if(this.unwrapJson()) {
+      if((jsonValue.startsWith("[")) && (jsonValue.endsWith("]")))
+        return jsonValue.substring(1, jsonValue.length() - 1);
+    }
+    return jsonValue;
   }
 
   @Override
@@ -188,5 +201,17 @@ public class JsonPathService extends ServiceImp {
 
   public void setExecutions(List<Execution> executions) {
     this.executions = executions;
+  }
+  
+  protected Boolean unwrapJson() {
+    return (this.getUnwrapJson() == null ? false: this.getUnwrapJson());
+  }
+
+  public Boolean getUnwrapJson() {
+    return unwrapJson;
+  }
+
+  public void setUnwrapJson(Boolean unwrapJson) {
+    this.unwrapJson = unwrapJson;
   }
 }
