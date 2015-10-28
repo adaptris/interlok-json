@@ -5,6 +5,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -12,7 +16,6 @@ import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.interlok.InterlokException;
-import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.util.license.License;
 import com.adaptris.util.license.License.LicenseType;
@@ -134,6 +137,9 @@ public class JsonPathService extends ServiceImp {
   private DataInputParameter<String> sourceDestination;
   
   @XStreamImplicit(itemFieldName="json-path-execution")
+  @NotNull
+  @Valid
+  @AutoPopulated
   private List<Execution> executions;
   
   private Boolean unwrapJson;
