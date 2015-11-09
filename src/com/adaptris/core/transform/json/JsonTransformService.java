@@ -13,16 +13,17 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.MetadataCollection;
 import com.adaptris.core.MetadataElement;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
+import com.adaptris.core.licensing.License;
+import com.adaptris.core.licensing.License.LicenseType;
+import com.adaptris.core.licensing.LicenseChecker;
+import com.adaptris.core.licensing.LicensedService;
 import com.adaptris.core.metadata.MetadataFilter;
 import com.adaptris.core.metadata.RemoveAllMetadataFilter;
 import com.adaptris.core.util.Args;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
-import com.adaptris.util.license.License;
-import com.adaptris.util.license.License.LicenseType;
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -566,7 +567,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Aaron McGrath
  */
 @XStreamAlias("json-transform-service")
-public class JsonTransformService extends ServiceImp {
+public class JsonTransformService extends LicensedService {
   
   @NotNull
   @Valid
@@ -618,16 +619,21 @@ public class JsonTransformService extends ServiceImp {
   }
 
   @Override
-  public boolean isEnabled(License license) throws CoreException {
+  protected void prepareService() throws CoreException {
+    LicenseChecker.newChecker().checkLicense(this);
+  }
+
+  @Override
+  public boolean isEnabled(License license) {
     return license.isEnabled(LicenseType.Basic);
   }
 
   @Override
-  public void close() {
+  protected void closeService() {
   }
 
   @Override
-  public void init() throws CoreException {
+  protected void initService() throws CoreException {
   }
 
   public DataOutputParameter<String> getTargetJson() {
