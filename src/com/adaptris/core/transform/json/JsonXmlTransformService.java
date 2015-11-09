@@ -7,9 +7,10 @@ import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.ServiceImp;
-import com.adaptris.util.license.License;
-import com.adaptris.util.license.License.LicenseType;
+import com.adaptris.core.licensing.License;
+import com.adaptris.core.licensing.License.LicenseType;
+import com.adaptris.core.licensing.LicenseChecker;
+import com.adaptris.core.licensing.LicensedService;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -33,7 +34,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author gdries
  */
 @XStreamAlias("json-xml-transform-service")
-public class JsonXmlTransformService extends ServiceImp {
+public class JsonXmlTransformService extends LicensedService {
 
   @AutoPopulated
   @NotNull
@@ -54,18 +55,21 @@ public class JsonXmlTransformService extends ServiceImp {
   }
   
   @Override
-  public void close() {
-
+  protected void prepareService() throws CoreException {
+    LicenseChecker.newChecker().checkLicense(this);
   }
 
   @Override
-  public void init() throws CoreException {
-
-  }
-
-  @Override
-  public boolean isEnabled(License license) throws CoreException {
+  public boolean isEnabled(License license) {
     return license.isEnabled(LicenseType.Basic);
+  }
+
+  @Override
+  protected void closeService() {
+  }
+
+  @Override
+  protected void initService() throws CoreException {
   }
   
   public DIRECTION getDirection() {

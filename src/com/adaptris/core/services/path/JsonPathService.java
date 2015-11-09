@@ -12,13 +12,14 @@ import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.licensing.License;
+import com.adaptris.core.licensing.License.LicenseType;
+import com.adaptris.core.licensing.LicenseChecker;
+import com.adaptris.core.licensing.LicensedService;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataInputParameter;
-import com.adaptris.util.license.License;
-import com.adaptris.util.license.License.LicenseType;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -132,7 +133,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  */
 
 @XStreamAlias("json-path-service")
-public class JsonPathService extends ServiceImp {
+public class JsonPathService extends LicensedService {
     
   private DataInputParameter<String> sourceDestination;
   
@@ -195,16 +196,21 @@ public class JsonPathService extends ServiceImp {
   }
 
   @Override
-  public boolean isEnabled(License license) throws CoreException {
+  protected void prepareService() throws CoreException {
+    LicenseChecker.newChecker().checkLicense(this);
+  }
+
+  @Override
+  public boolean isEnabled(License license) {
     return license.isEnabled(LicenseType.Basic);
   }
 
   @Override
-  public void close() {    
+  protected void closeService() {
   }
 
   @Override
-  public void init() throws CoreException {    
+  protected void initService() throws CoreException {
   }
 
   public DataInputParameter<String> getSourceDestination() {
