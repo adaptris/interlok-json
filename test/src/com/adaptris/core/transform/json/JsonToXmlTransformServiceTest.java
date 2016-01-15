@@ -24,6 +24,9 @@ public class JsonToXmlTransformServiceTest extends TransformServiceExample {
       + "{\"location\":\"New York\",\n" + "\"name\":\"R&D sandbox\"\n" + "}\n" + "],\n" + "\"notes\":\"Some Notes\",\n"
       + "\"version\":0.5\n" + "}";
 
+  public static final String JSON_ARRAY_INPUT =
+      "[{ \"notes\": {\"Name\": \"MyName\" },\"id\": \"FARM\"}, {\"notes\": {\"Name\": \"MyName\" },\"id\": \"FIELD\"}]";
+
   String json = "{\n  \"implementation_version\": \"597\",\n  \"vdcs\": [\n    {\n      \"name\": \"XRGY Virtual Data Center\",\n      \"uri\": \"/vdc\"\n    },\n    {\n      \"name\": \"R&D sandbox\",\n      \"uri\": \"/sandbox\"\n    }\n  ],\n  \"uri\": \"http://xrgy.cloud.sun.com/\",\n  \"specification_version\": [\n    \"0.5\"\n  ]\n}";
 
   public void testDoService() throws Exception {
@@ -35,6 +38,13 @@ public class JsonToXmlTransformServiceTest extends TransformServiceExample {
     // Due to http://docs.oracle.com/javase/8/docs/technotes/guides/collections/changes8.html
     // The iteration order has changed for HashMap.keySet()
     // assertEquals(XML_OUTPUT, msg.getStringPayload());
+  }
+
+  public void testDoService_ArrayInput() throws Exception {
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY_INPUT);
+    SimpleJsonToXmlTransformService svc = new SimpleJsonToXmlTransformService();
+    execute(svc, msg);
+    doArrayAssertions(msg);
   }
 
   @Override
@@ -56,4 +66,10 @@ public class JsonToXmlTransformServiceTest extends TransformServiceExample {
     assertEquals("New York", xp.selectSingleTextItem(d, "/json/entry[2]/location"));
   }
 
+  private static void doArrayAssertions(AdaptrisMessage msg) throws Exception {
+    Document d = XmlHelper.createDocument(msg);
+    XPath xp = new XPath();
+    assertEquals("FARM", xp.selectSingleTextItem(d, "/json/array-item[1]/id"));
+    assertEquals("FIELD", xp.selectSingleTextItem(d, "/json/array-item[2]/id"));
+  }
 }
