@@ -62,6 +62,7 @@
     <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.4.201502262128" conf="ant->default"/>
     <dependency org="com.adaptris" name="code-signing" rev="2017-RELEASE" conf="signing->default"/>
 
+    <exclude org="c3p0"/>
     <exclude org="commons-logging"/>
     <!-- Exclude xalan, because we have SaxonHE in core -->
     <exclude org="xalan" artifact="xalan"/>
