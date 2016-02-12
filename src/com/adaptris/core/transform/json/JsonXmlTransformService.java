@@ -3,7 +3,9 @@ package com.adaptris.core.transform.json;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -34,6 +36,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author gdries
  */
 @XStreamAlias("json-xml-transform-service")
+@AdapterComponent
+@ComponentProfile(summary = "Transform a JSON document to XML, or vice versa", tag = "service,transform,json,xml")
 public class JsonXmlTransformService extends LicensedService {
 
   @AutoPopulated

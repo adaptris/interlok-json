@@ -8,7 +8,9 @@ import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -133,6 +135,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  */
 
 @XStreamAlias("json-path-service")
+@AdapterComponent
+@ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
 public class JsonPathService extends LicensedService {
     
   private DataInputParameter<String> sourceDestination;
