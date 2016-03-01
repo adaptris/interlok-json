@@ -41,7 +41,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * <a href="https://github.com/jayway/JsonPath">JSONPath</a> documentation.
  * </p>
  * <p>
- * By configuring the "source-destination" and "target-destination" ({@link DataDestination}) you can specify where the JSON content
+ * By configuring the "source" and "target-destination" ({@link DataDestination}) you can specify where the JSON content
  * is sourced from and where the results of the search should be set.
  * </p>
  * <p>
@@ -117,7 +117,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * </ul>
  * </p>
  * <p>
- * Any results returned by this service will normally include the json brackets wrapping the returned value.  However you can configure this
+ * Any results returned by this service will normally include the json brackets wrapping the returned value. However you can
+ * configure this
  * service to unwrap the result for you, such that a value returned as "[myValue]" will now be returned as "myValue".
  * <br/>
  * The default value is false, but to override simply configure the "unwrap";
