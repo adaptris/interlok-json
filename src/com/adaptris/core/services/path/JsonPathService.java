@@ -20,7 +20,9 @@ import com.adaptris.core.licensing.License;
 import com.adaptris.core.licensing.License.LicenseType;
 import com.adaptris.core.licensing.LicenseChecker;
 import com.adaptris.core.licensing.LicensedService;
+import com.adaptris.core.util.Args;
 import com.adaptris.interlok.InterlokException;
+import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -39,7 +41,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * <a href="https://github.com/jayway/JsonPath">JSONPath</a> documentation.
  * </p>
  * <p>
- * By configuring the "source-destination" and "target-destination" ({@link DataDestination}) you can specify where the JSON content
+ * By configuring the "source" and "target-destination" ({@link DataDestination}) you can specify where the JSON content
  * is sourced from and where the results of the search should be set.
  * </p>
  * <p>
@@ -115,7 +117,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * </ul>
  * </p>
  * <p>
- * Any results returned by this service will normally include the json brackets wrapping the returned value.  However you can configure this
+ * Any results returned by this service will normally include the json brackets wrapping the returned value. However you can
+ * configure this
  * service to unwrap the result for you, such that a value returned as "[myValue]" will now be returned as "myValue".
  * <br/>
  * The default value is false, but to override simply configure the "unwrap";
@@ -138,7 +141,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
 public class JsonPathService extends LicensedService {
-    
+  
+  @NotNull
+  @AutoPopulated
+  private DataInputParameter<String> source;
+  @Deprecated
   private DataInputParameter<String> sourceDestination;
   
   @XStreamImplicit(itemFieldName="json-path-execution")
@@ -150,7 +157,7 @@ public class JsonPathService extends LicensedService {
   private Boolean unwrapJson;
   
   public JsonPathService() {
-    setSourceDestination(new StringPayloadDataInputParameter());
+    setSource(new StringPayloadDataInputParameter());
     setExecutions(new ArrayList<Execution>());
   }
   
@@ -179,7 +186,7 @@ public class JsonPathService extends LicensedService {
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
     try {
-      Object parsedJsonContent = Configuration.defaultConfiguration().jsonProvider().parse(this.getSourceDestination().extract(message));
+      Object parsedJsonContent = Configuration.defaultConfiguration().jsonProvider().parse(sourceToUse().extract(message));
       for (Execution execution : this.getExecutions()) {
         execution.getTarget().insert(this.unwrap(JsonPath.read(parsedJsonContent, execution.getSource().extract(message)).toString()), message);
       }
@@ -192,7 +199,7 @@ public class JsonPathService extends LicensedService {
    * Do we need to strip the square brackets off of a value?
    */
   private String unwrap(String jsonValue) {
-    if(this.unwrapJson()) {
+    if (unwrapJson()) {
       if((jsonValue.startsWith("[")) && (jsonValue.endsWith("]")))
         return jsonValue.substring(1, jsonValue.length() - 1);
     }
@@ -215,14 +222,43 @@ public class JsonPathService extends LicensedService {
 
   @Override
   protected void initService() throws CoreException {
+
   }
 
+  /**
+   * 
+   * @deprecated since 3.2.0 use {@link #getSource()} instead.
+   */
+  @Deprecated
   public DataInputParameter<String> getSourceDestination() {
     return sourceDestination;
   }
 
+  /**
+   * 
+   * @deprecated since 3.2.0 use {@link #getSource()} instead.
+   */
+  @Deprecated
   public void setSourceDestination(DataInputParameter<String> sourceDestination) {
-    this.sourceDestination = sourceDestination;
+    log.warn("source-destination deprecated; use source instead");
+    this.sourceDestination = Args.notNull(sourceDestination, "sourceDestination");
+  }
+
+
+  public DataInputParameter<String> getSource() {
+    return source;
+  }
+
+  public void setSource(DataInputParameter<String> s) {
+    this.source = Args.notNull(s, "source");
+  }
+
+  private DataInputParameter<String> sourceToUse() {
+    DataInputParameter<String> result = getSource();
+    if (getSourceDestination() != null) {
+      result = getSourceDestination();
+    }
+    return result;
   }
 
   public List<Execution> getExecutions() {
@@ -233,8 +269,8 @@ public class JsonPathService extends LicensedService {
     this.executions = executions;
   }
   
-  protected Boolean unwrapJson() {
-    return (this.getUnwrapJson() == null ? false: this.getUnwrapJson());
+  boolean unwrapJson() {
+    return (this.getUnwrapJson() == null ? false : this.getUnwrapJson().booleanValue());
   }
 
   public Boolean getUnwrapJson() {
@@ -244,4 +280,5 @@ public class JsonPathService extends LicensedService {
   public void setUnwrapJson(Boolean unwrapJson) {
     this.unwrapJson = unwrapJson;
   }
+
 }
