@@ -29,7 +29,7 @@ public class JsonPathSplitter extends MessageSplitterImp {
       StringPayloadDataOutputParameter payloadOutputParam = new StringPayloadDataOutputParameter();
       Execution singleExec = new Execution(constantDataInputParameter, payloadOutputParam);
       
-      jsonPathService.setSourceDestination(this.getJsonSource());
+      jsonPathService.setSource(this.getJsonSource());
       jsonPathService.getExecutions().add(singleExec);
       
       jsonPathService.doService(msg);

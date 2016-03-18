@@ -1,5 +1,7 @@
 package com.adaptris.core.transform.json;
 
+import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -25,6 +27,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias("simple-json-to-xml-transform-service")
 @Deprecated
+@AdapterComponent
+@ComponentProfile(summary = "Transform a JSON document to XML", tag = "service,transform,json,xml")
 public class SimpleJsonToXmlTransformService extends LicensedService {
 
   private static transient boolean warningLogged;

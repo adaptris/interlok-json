@@ -45,7 +45,7 @@ public class JsonPathServiceTest extends ServiceCase {
     Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
+    jsonPathService.setSource(new StringPayloadDataInputParameter());
     
     execute(jsonPathService, message);
     
@@ -53,6 +53,23 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals("Sword of Honour", message.getMetadataValue("JsonResultKey"));
   }
   
+  @SuppressWarnings("deprecation")
+  public void testSimpleResultFromPayloadToMetadata_Deprecated() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter("JsonResultKey");
+
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.store.book[1].title");
+
+    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+
+    jsonPathService.setExecutions(Arrays.asList(new Execution[] {execution}));
+    jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
+
+    execute(jsonPathService, message);
+
+    assertTrue(message.headersContainsKey("JsonResultKey"));
+    assertEquals("Sword of Honour", message.getMetadataValue("JsonResultKey"));
+  }
+
   public void testSimpleResultFromPayloadToMetadataUsingMetadataJsonPath() throws Exception {
     message.addMetadata("JsonPath", "$.store.book[1].title");
     
@@ -64,7 +81,7 @@ public class JsonPathServiceTest extends ServiceCase {
     Execution execution = new Execution(jsonMetadataDestination, targetMetadataDestination);
         
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
+    jsonPathService.setSource(new StringPayloadDataInputParameter());
     
     execute(jsonPathService, message);
     
@@ -84,7 +101,7 @@ public class JsonPathServiceTest extends ServiceCase {
     message.setContent("", message.getContentEncoding());
     message.addMetadata("JsonResultKey", this.sampleJsonContent());
     
-    jsonPathService.setSourceDestination(sourceMetadataDestination);
+    jsonPathService.setSource(sourceMetadataDestination);
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
     execute(jsonPathService, message);
     
@@ -104,7 +121,7 @@ public class JsonPathServiceTest extends ServiceCase {
     message.addMetadata("JsonResultKey", this.sampleJsonContent());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
-    jsonPathService.setSourceDestination(sourceMetadataDestination);
+    jsonPathService.setSource(sourceMetadataDestination);
     
     execute(jsonPathService, message);
     
