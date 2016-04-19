@@ -1,4 +1,4 @@
-package com.adaptris.core.services.path;
+package com.adaptris.core.services.path.json;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
