@@ -5,10 +5,7 @@ import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.licensing.License;
-import com.adaptris.core.licensing.License.LicenseType;
-import com.adaptris.core.licensing.LicenseChecker;
-import com.adaptris.core.licensing.LicensedService;
+import com.adaptris.core.ServiceImp;
 import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -29,7 +26,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @Deprecated
 @AdapterComponent
 @ComponentProfile(summary = "Transform a JSON document to XML", tag = "service,transform,json,xml")
-public class SimpleJsonToXmlTransformService extends LicensedService {
+public class SimpleJsonToXmlTransformService extends ServiceImp {
 
   private static transient boolean warningLogged;
 
@@ -53,13 +50,7 @@ public class SimpleJsonToXmlTransformService extends LicensedService {
   }
 
   @Override
-  protected void prepareService() throws CoreException {
-    LicenseChecker.newChecker().checkLicense(this);
-  }
-
-  @Override
-  public boolean isEnabled(License license) {
-    return license.isEnabled(LicenseType.Basic);
+  public void prepare() throws CoreException {
   }
 
   @Override
