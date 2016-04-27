@@ -14,12 +14,9 @@ import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
+import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
-import com.adaptris.core.licensing.License;
-import com.adaptris.core.licensing.License.LicenseType;
-import com.adaptris.core.licensing.LicenseChecker;
-import com.adaptris.core.licensing.LicensedService;
 import com.adaptris.core.util.Args;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataDestination;
@@ -140,7 +137,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("json-path-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
-public class JsonPathService extends LicensedService {
+public class JsonPathService extends ServiceImp {
   
   @NotNull
   @AutoPopulated
@@ -207,13 +204,7 @@ public class JsonPathService extends LicensedService {
   }
 
   @Override
-  protected void prepareService() throws CoreException {
-    LicenseChecker.newChecker().checkLicense(this);
-  }
-
-  @Override
-  public boolean isEnabled(License license) {
-    return license.isEnabled(LicenseType.Basic);
+  public void prepare() throws CoreException {
   }
 
   @Override
