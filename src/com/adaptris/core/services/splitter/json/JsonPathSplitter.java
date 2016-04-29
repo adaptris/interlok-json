@@ -5,7 +5,7 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
-import com.adaptris.core.services.path.JsonPathService;
+import com.adaptris.core.services.path.json.JsonPathService;
 import com.adaptris.core.services.splitter.MessageSplitter;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
 import com.adaptris.interlok.InterlokException;

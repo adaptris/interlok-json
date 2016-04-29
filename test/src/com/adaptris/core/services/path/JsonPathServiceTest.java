@@ -12,6 +12,7 @@ import com.adaptris.core.common.MetadataDataInputParameter;
 import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
+import com.adaptris.core.services.path.json.JsonPathService;
 
 public class JsonPathServiceTest extends ServiceCase {
   

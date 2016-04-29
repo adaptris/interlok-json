@@ -9,10 +9,7 @@ import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.licensing.License;
-import com.adaptris.core.licensing.License.LicenseType;
-import com.adaptris.core.licensing.LicenseChecker;
-import com.adaptris.core.licensing.LicensedService;
+import com.adaptris.core.ServiceImp;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -38,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("json-xml-transform-service")
 @AdapterComponent
 @ComponentProfile(summary = "Transform a JSON document to XML, or vice versa", tag = "service,transform,json,xml")
-public class JsonXmlTransformService extends LicensedService {
+public class JsonXmlTransformService extends ServiceImp {
 
   @AutoPopulated
   @NotNull
@@ -59,13 +56,7 @@ public class JsonXmlTransformService extends LicensedService {
   }
   
   @Override
-  protected void prepareService() throws CoreException {
-    LicenseChecker.newChecker().checkLicense(this);
-  }
-
-  @Override
-  public boolean isEnabled(License license) {
-    return license.isEnabled(LicenseType.Basic);
+  public void prepare() throws CoreException {
   }
 
   @Override
