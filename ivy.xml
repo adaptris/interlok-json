@@ -36,7 +36,7 @@
     <!-- Simple driver dependency -->
     <dependency org="org.json" name="json" rev="20140107" conf="compile->default"/>
 
-    <dependency org="com.jayway.jsonpath" name="json-path" rev="2.0.0" conf="compile->default"/>
+    <dependency org="com.jayway.jsonpath" name="json-path" rev="2.2.0" conf="compile->default"/>
     <dependency org="com.bazaarvoice.jolt" name="jolt-core" rev="0.0.16" conf="compile->default"/>
     <dependency org="com.bazaarvoice.jolt" name="json-utils" rev="0.0.16" conf="compile->default"/>
 
