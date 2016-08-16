@@ -266,6 +266,7 @@
             <isset property="graphviz.available"/>
           </and>
           <then>
+            <echo "Building with Graphviz + PlantUML + UMLDoclet"
             <adapter:create-javadocs sourcepath="@{sourcepath}" destdir="@{destdir}">
               <custom-doclet>
                 <doclet name="nl.talsmasoftware.umldoclet.UMLDoclet" pathref="classpath.ant-tools">
