@@ -272,6 +272,19 @@
                 <doclet name="nl.talsmasoftware.umldoclet.UMLDoclet" pathref="classpath.ant-tools">
                   <param name="-umlBasePath" value="@{imgdir}"/>
                   <param name="-umlImageFormat" value="SVG"/>
+                  <param name="-umlExcludedReferences" value="java.lang.Exception,java.lang.Object,java.lang.Enum"/>
+                  <param name="-umlIncludePrivateClasses" value="false"/>
+                  <param name="-umlIncludePackagePrivateClasses" value="false"/>
+                  <param name="-umlIncludeProtectedClasses" value="false"/>
+                  <param name="-umlIncludeAbstractSuperclassMethods" value="false"/>
+                  <param name="-umlIncludeConstructors" value="false"/>
+                  <param name="-umlIncludePublicFields" value="false"/>
+                  <param name="-umlIncludePackagePrivateFields" value="false"/>
+                  <param name="-umlIncludeProtectedFields" value="false"/>
+                  <param name="-umlIncludeDeprecatedClasses" value="false"/>
+                  <param name="-umlIncludePrivateInnerClasses" value="false"/>
+                  <param name="-umlIncludePackagePrivateInnerClasses" value="false"/>
+                  <param name="-umlIncludeProtectedInnerClasses" value="false"/>                  
                 </doclet>
               </custom-doclet>
               <grouping>
