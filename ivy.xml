@@ -64,6 +64,7 @@
 
     <exclude org="c3p0"/>
     <exclude org="commons-logging"/>
+    <exclude org="org.glassfish.hk2.external"/>
     <!-- Exclude xalan, because we have SaxonHE in core -->
     <exclude org="xalan" artifact="xalan"/>
     <exclude org="org.apache.ant" artifact="ant"/>
