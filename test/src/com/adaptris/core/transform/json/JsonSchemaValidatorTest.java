@@ -29,7 +29,7 @@ public class JsonSchemaValidatorTest {
 			final JSONObject rawSchema = new JSONObject(new JSONTokener(is));
 			VALID_SCHEMA = SchemaLoader.load(rawSchema);
 		} catch (@SuppressWarnings("unused") final IOException e) {
-			// empty catch
+			/* empty catch block */
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
@@ -30,7 +31,24 @@ public class JsonSchemaService extends ServiceImp {
 	/**
 	 * Reference to JSON validator wrapper.
 	 */
-	private final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator();
+	private final JsonSchemaValidator jsonSchemaValidator;
+
+	/**
+	 * Default constructor for JSON schema validation service.
+	 */
+	public JsonSchemaService() {
+		jsonSchemaValidator = new JsonSchemaValidator();
+	}
+
+	/**
+	 * Overloaded constructor, which gives the URL to the schema to use for validation.
+	 *
+	 * @param schemaUrl
+	 *          The URL of the schema to use for validation.
+	 */
+	public JsonSchemaService(final URL schemaUrl) {
+		jsonSchemaValidator = new JsonSchemaValidator(getSchema(schemaUrl));
+	}
 
 	/**
 	 * {@inheritDoc}.
@@ -49,21 +67,6 @@ public class JsonSchemaService extends ServiceImp {
 			}
 			throw new ServiceException(e);
 		}
-
-		/*
-		 * try {
-		 * String shiftrContent = this.getMappingSpec().extract(message);
-		 * shiftrContent = this.applyMetadataSubstitution(message, shiftrContent);
-		 * 
-		 * final List<Object> chainrSpecJSON = JsonUtils.jsonToList(shiftrContent, defaultIfEmpty(message.getContentEncoding(), "UTF-8"));
-		 * final Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
-		 * final Object inputJSON = JsonUtils.jsonToObject(this.getSourceJson().extract(message));
-		 * final Object transformedOutput = chainr.transform(inputJSON);
-		 * getTargetJson().insert(JsonUtils.toJsonString(transformedOutput), message);
-		 * } catch (final Exception ex) {
-		 * throw new ServiceException(ex);
-		 * }
-		 */
 	}
 
 	/**
@@ -71,7 +74,7 @@ public class JsonSchemaService extends ServiceImp {
 	 */
 	@Override
 	public void prepare() throws CoreException {
-		// unused/empty method
+		/* unused/empty method */
 	}
 
 	/**
@@ -79,7 +82,7 @@ public class JsonSchemaService extends ServiceImp {
 	 */
 	@Override
 	protected void closeService() {
-		// unused/empty method
+		/* unused/empty method */
 	}
 
 	/**
@@ -87,21 +90,34 @@ public class JsonSchemaService extends ServiceImp {
 	 */
 	@Override
 	protected void initService() throws CoreException {
-		// unused/empty method
+		/* unused/empty method */
 	}
 
 	/**
 	 * Set the schema to use for JSON validation.
 	 *
 	 * @param schemaUrl
-	 *          The URL to the schema.
+	 *          The URL of the schema to use for validation.
 	 */
 	public void setSchema(final URL schemaUrl) {
+		jsonSchemaValidator.setSchema(getSchema(schemaUrl));
+	}
+
+	/**
+	 * Get the schema from wherever it is.
+	 *
+	 * @param schemaUrl
+	 *          The URL of the schema to use for validation.
+	 *
+	 * @return The schema to use for validation.
+	 */
+	private Schema getSchema(final URL schemaUrl) {
 		try (final InputStream is = schemaUrl.openStream()) {
 			final JSONObject rawSchema = new JSONObject(new JSONTokener(is));
-			jsonSchemaValidator.setSchema(SchemaLoader.load(rawSchema));
+			return SchemaLoader.load(rawSchema);
 		} catch (final IOException e) {
 			log.error("Could not access JSON schema URL : " + schemaUrl, e);
+			return null;
 		}
 	}
 }
