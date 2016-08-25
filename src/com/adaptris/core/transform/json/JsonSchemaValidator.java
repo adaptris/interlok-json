@@ -1,14 +1,10 @@
 package com.adaptris.core.transform.json;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +40,14 @@ public class JsonSchemaValidator {
 	/**
 	 * Create a new JSON schema validation instance, using the schema at the given URL.
 	 *
-	 * @param schemaUrl
-	 *          The URL to the schema to use for validation.
+	 * @param schema
+	 *          The schema to use for validation.
 	 *
 	 * @throws IOException
 	 *           If the URL isn't valid, or doesn't resolve to a JSON schema.
 	 */
-	public JsonSchemaValidator(final URL schemaUrl) {
-		setSchema(schemaUrl);
+	public JsonSchemaValidator(final Schema schema) {
+		setSchema(schema);
 	}
 
 	/**
@@ -67,35 +63,30 @@ public class JsonSchemaValidator {
 	/**
 	 * Create a new JSON schema validation instance for the given JSON against the schema at the given URL.
 	 *
-	 * @param schemaUrl
-	 *          The URL to the schema to use for validation.
+	 * @param schema
+	 *          The schema to use for validation.
 	 * @param json
 	 *          The JSON to validate.
 	 *
 	 * @throws IOException
 	 *           If the URL isn't valid, or doesn't resolve to a JSON schema.
 	 */
-	public JsonSchemaValidator(final URL schemaUrl, final JSONObject json) {
-		setSchema(schemaUrl);
+	public JsonSchemaValidator(final Schema schema, final JSONObject json) {
+		setSchema(schema);
 		setJson(json);
 	}
 
 	/**
 	 * Set the schema to use for validation.
 	 *
-	 * @param schemaUrl
-	 *          The URL to the schema to use for validation.
+	 * @param schema
+	 *          The schema to use for validation.
 	 *
 	 * @throws IOException
 	 *           If the URL isn't valid, or doesn't resolve to a JSON schema.
 	 */
-	public void setSchema(final URL schemaUrl) {
-		try (final InputStream is = schemaUrl.openStream()) {
-			final JSONObject rawSchema = new JSONObject(new JSONTokener(is));
-			schema = SchemaLoader.load(rawSchema);
-		} catch (final IOException e) {
-			LOGGER.error("Could not access JSON schema URL : " + schemaUrl, e);
-		}
+	public void setSchema(final Schema schema) {
+		this.schema = schema;
 	}
 
 	/**

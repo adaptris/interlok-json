@@ -4,9 +4,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Test;
 
 /**
@@ -19,7 +22,16 @@ public class JsonSchemaValidatorTest {
 	/**
 	 * Valid test schema.
 	 */
-	private static final URL VALID_SCHEMA = JsonSchemaValidatorTest.class.getResource("test_schema.json");
+	private static Schema VALID_SCHEMA = null;
+
+	static {
+		try (final InputStream is = JsonSchemaValidatorTest.class.getResource("test_schema.json").openStream()) {
+			final JSONObject rawSchema = new JSONObject(new JSONTokener(is));
+			VALID_SCHEMA = SchemaLoader.load(rawSchema);
+		} catch (@SuppressWarnings("unused") final IOException e) {
+			// empty catch
+		}
+	}
 
 	/**
 	 * Valid JSON.
