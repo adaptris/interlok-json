@@ -31,7 +31,7 @@ public class JsonSchemaService extends ServiceImp {
 	/**
 	 * Reference to JSON validator wrapper.
 	 */
-	private final JsonSchemaValidator jsonSchemaValidator;
+	private transient final JsonSchemaValidator jsonSchemaValidator;
 
 	/**
 	 * Default constructor for JSON schema validation service.
