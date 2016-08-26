@@ -54,6 +54,9 @@
 
     <dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
 
+    <!-- Schema validation dependency -->
+    <dependency org="org.everit.json" name="org.everit.json.schema" rev="1.4.0" conf="compile->default"/>
+
     <!-- For Various ANT Tasks -->
     <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="ant->default" transitive="false"/>
     <dependency org="com.yworks"  name="yguard" rev="2.5.2" conf="ant->default" transitive="false"/>
