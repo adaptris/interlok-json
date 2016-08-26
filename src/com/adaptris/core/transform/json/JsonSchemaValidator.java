@@ -34,7 +34,7 @@ public class JsonSchemaValidator {
 	 * Default constructor.
 	 */
 	public JsonSchemaValidator() {
-		/* Empty constructor */
+		/* empty constructor */
 	}
 
 	/**

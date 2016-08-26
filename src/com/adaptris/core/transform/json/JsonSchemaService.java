@@ -70,7 +70,7 @@ public class JsonSchemaService extends ServiceImp {
 	}
 
 	/**
-	 * Unused method.
+	 * Unused method. For more information see {@inheritDoc}.
 	 */
 	@Override
 	public void prepare() throws CoreException {
@@ -78,7 +78,7 @@ public class JsonSchemaService extends ServiceImp {
 	}
 
 	/**
-	 * Unused method.
+	 * Unused method. For more information see {@inheritDoc}.
 	 */
 	@Override
 	protected void closeService() {
@@ -86,7 +86,7 @@ public class JsonSchemaService extends ServiceImp {
 	}
 
 	/**
-	 * Unused method.
+	 * Unused method. For more information see {@inheritDoc}.
 	 */
 	@Override
 	protected void initService() throws CoreException {

@@ -56,7 +56,7 @@ public class JsonSchemaServiceTest extends ServiceCase {
 	}
 
 	/**
-	 * {@inheritDoc}.
+	 * Unused method. For more information see {@inheritDoc}.
 	 */
 	@Override
 	protected Object retrieveObjectForSampleConfig() {
