@@ -60,6 +60,6 @@ public class JsonSchemaServiceTest extends ServiceCase {
 	 */
 	@Override
 	protected Object retrieveObjectForSampleConfig() {
-		return null;
+		return new JsonSchemaService(SCHEMA_URL);
 	}
 }
