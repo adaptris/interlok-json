@@ -115,9 +115,6 @@ public class JsonSchemaValidator {
 	/**
 	 * Validate the JSON against the schema.
 	 *
-	 * @param json
-	 *          The JSON to validate.
-	 *
 	 * @return True if the JSON is valid when compared with the schema, false otherwise.
 	 */
 	public boolean isValid() {
