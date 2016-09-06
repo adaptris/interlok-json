@@ -43,15 +43,15 @@ public class JsonResultSetTranslatorTest {
 
 		final JdbcResultRow row_1 = new JdbcResultRow();
 		row_1.setFieldNames(fieldNames);
-		row_1.setFieldValues(Arrays.asList("John", "Doe"));
+		row_1.setFieldValues(Arrays.asList((Object)"John", (Object)"Doe"));
 
 		final JdbcResultRow row_2 = new JdbcResultRow();
 		row_2.setFieldNames(fieldNames);
-		row_2.setFieldValues(Arrays.asList("Anna", "Smith"));
+		row_2.setFieldValues(Arrays.asList((Object)"Anna", (Object)"Smith"));
 
 		final JdbcResultRow row_3 = new JdbcResultRow();
 		row_3.setFieldNames(fieldNames);
-		row_3.setFieldValues(Arrays.asList("Peter", "Jones"));
+		row_3.setFieldValues(Arrays.asList((Object)"Peter", (Object)"Jones"));
 
 		@SuppressWarnings("resource")
 		final JdbcResultSet mockResultSet = mock(JdbcResultSet.class);
