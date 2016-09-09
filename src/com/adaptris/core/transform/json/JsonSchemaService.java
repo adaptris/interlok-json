@@ -7,6 +7,7 @@ import java.net.URL;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -17,6 +18,9 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
 
 /**
  * JSON schema validation service.
@@ -55,15 +59,30 @@ public class JsonSchemaService extends ServiceImp {
 	 */
 	@Override
 	public void doService(final AdaptrisMessage message) throws ServiceException {
-
 		try {
-			final String j = new String(message.getPayload());
-			final JSONObject json = new JSONObject(j);
-			jsonSchemaValidator.validate(json);
-		} catch (final ValidationException e) {
+// final String j = new String(message.getPayload());
+// final JSONObject json = new JSONObject(j);
+
+			final JSONParser jasonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+			final Object object = jasonParser.parse(message.getInputStream());
+			if (object instanceof JSONObject) {
+				jsonSchemaValidator.validate((JSONObject)object);
+			} else if (object instanceof JSONArray) {
+				final JSONArray array = (JSONArray)object;
+				for (final Object o : array) {
+					jsonSchemaValidator.validate((JSONObject)o);
+				}
+			} else {
+				log.warn("Message payload was not JSON; could not be parsed to JSONObject (" + object.getClass() + ").");
+			}
+
+// jsonSchemaValidator.validate(json);
+		} catch (final ValidationException | ParseException | IOException e) {
 			log.warn("JSON is not valid!", e);
-			for (final ValidationException ve : e.getCausingExceptions()) {
-				log.debug(ve.getMessage());
+			if (e instanceof ValidationException) {
+				for (final ValidationException ve : ((ValidationException)e).getCausingExceptions()) {
+					log.debug(ve.getMessage());
+				}
 			}
 			throw new ServiceException(e);
 		}
