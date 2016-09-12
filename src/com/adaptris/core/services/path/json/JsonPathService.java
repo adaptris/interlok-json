@@ -51,38 +51,38 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * <pre>
  * {@code
 {
-    "store": {
-        "book": [{
-            "category": "reference",
-            "author": "Nigel Rees",
-            "title": "Sayings of the Century",
-            "price": 8.95
-        }, {
-            "category": "fiction",
-            "author": "Evelyn Waugh",
-            "title": "Sword of Honour",
-            "price": 12.99
-        }, {
-            "category": "fiction",
-            "author": "Herman Melville",
-            "title": "Moby Dick",
-            "isbn": "0-553-21311-3",
-            "price": 8.99
-        }, {
-            "category": "fiction",
-            "author": "J. R. R. Tolkien",
-            "title": "The Lord of the Rings",
-            "isbn": "0-395-19395-8",
-            "price": 22.99
-        }],
-        "bicycle": {
-            "color": "red",
-            "price": 19.95
-        }
-    },
-    "expensive": 10
-  }
+  "store": {
+    "book": [ {
+      "category": "reference",
+      "author": "Nigel Rees",
+      "title": "Sayings of the Century",
+      "price": 8.95
+    }, {
+      "category": "fiction",
+      "author": "Evelyn Waugh",
+      "title": "Sword of Honour",
+      "price": 12.99
+    }, {
+      "category": "fiction",
+      "author": "Herman Melville",
+      "title": "Moby Dick",
+      "isbn": "0-553-21311-3",
+      "price": 8.99
+    }, {
+      "category": "fiction",
+      "author": "J. R. R. Tolkien",
+      "title": "The Lord of the Rings",
+      "isbn": "0-395-19395-8",
+      "price": 22.99
+    } ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95
+    }
+  },
+  "expensive": 10
 }
+ * }
  * </pre>
  *
  * You could configure 2 target destinations, each one creating a new metadata item with the results of the specified search, like
@@ -136,7 +136,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @config json-path-service
  * @license BASIC
  */
-
 @XStreamAlias("json-path-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
@@ -207,6 +206,7 @@ public class JsonPathService extends ServiceImp {
 			final Object parsedJsonContent = jsonProvider.parse(e);
 
 			for (final Execution execution : executions) {
+
 				final DataInputParameter<String> executionSource = execution.getSource();
 				final String extracted = executionSource.extract(message);
 				final String jsonString = JsonPath.read(parsedJsonContent, extracted).toString();
@@ -214,7 +214,9 @@ public class JsonPathService extends ServiceImp {
 				final DataOutputParameter<String> target = execution.getTarget();
 
 				target.insert(unwraped, message);
+
 			}
+
 		} catch (final InterlokException ex) {
 			throw new ServiceException(ex);
 		}
@@ -290,11 +292,11 @@ public class JsonPathService extends ServiceImp {
 	/**
 	 * Set the source.
 	 *
-	 * @param s
+	 * @param source
 	 *          The source.
 	 */
-	public void setSource(final DataInputParameter<String> s) {
-		source = Args.notNull(s, "source");
+	public void setSource(final DataInputParameter<String> source) {
+		this.source = Args.notNull(source, "source");
 	}
 
 	private DataInputParameter<String> sourceToUse() {
@@ -329,7 +331,7 @@ public class JsonPathService extends ServiceImp {
 	 *
 	 * @return Whether the JSON should be unwrapped.
 	 */
-	public Boolean getUnwrapJson() {
+	public boolean getUnwrapJson() {
 		return unwrapJson;
 	}
 
