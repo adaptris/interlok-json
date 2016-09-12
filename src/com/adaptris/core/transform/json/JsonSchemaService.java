@@ -60,11 +60,9 @@ public class JsonSchemaService extends ServiceImp {
 	@Override
 	public void doService(final AdaptrisMessage message) throws ServiceException {
 		try {
-// final String j = new String(message.getPayload());
-// final JSONObject json = new JSONObject(j);
 
-			final JSONParser jasonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-			final Object object = jasonParser.parse(message.getInputStream());
+			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+			final Object object = jsonParser.parse(message.getInputStream());
 			if (object instanceof JSONObject) {
 				jsonSchemaValidator.validate((JSONObject)object);
 			} else if (object instanceof JSONArray) {
@@ -76,7 +74,6 @@ public class JsonSchemaService extends ServiceImp {
 				log.warn("Message payload was not JSON; could not be parsed to JSONObject (" + object.getClass() + ").");
 			}
 
-// jsonSchemaValidator.validate(json);
 		} catch (final ValidationException | ParseException | IOException e) {
 			log.warn("JSON is not valid!", e);
 			if (e instanceof ValidationException) {
