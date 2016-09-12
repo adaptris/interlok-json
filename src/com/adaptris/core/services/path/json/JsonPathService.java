@@ -209,7 +209,7 @@ public class JsonPathService extends ServiceImp {
 			for (final Execution execution : executions) {
 				final DataInputParameter<String> executionSource = execution.getSource();
 				final String extracted = executionSource.extract(message);
-				final String jsonString = JsonPath.read(parsedJsonContent, extracted);
+				final String jsonString = JsonPath.read(parsedJsonContent, extracted).toString();
 				final String unwraped = unwrap(jsonString);
 				final DataOutputParameter<String> target = execution.getTarget();
 
@@ -298,7 +298,7 @@ public class JsonPathService extends ServiceImp {
 	}
 
 	private DataInputParameter<String> sourceToUse() {
-		DataInputParameter<String> result = getSource();
+		DataInputParameter<String> result = source;
 		if (sourceDestination != null) {
 			result = sourceDestination;
 		}
