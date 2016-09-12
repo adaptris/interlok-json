@@ -66,8 +66,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 					result.add(message);
 				} else {
 
-					final List<AdaptrisMessage> splitMessages = splitMessage(array, message);
-					result.addAll(splitMessages);
+					result.addAll(splitMessage(array, message));
 
 				}
 
@@ -83,8 +82,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 						final JSONObject o = new JSONObject();
 						o.put(key, json.get(key));
 
-						final AdaptrisMessage splitMessage = createSplitMessage(o, message);
-						result.add(splitMessage);
+						result.add(createSplitMessage(o, message));
 					}
 
 				}
