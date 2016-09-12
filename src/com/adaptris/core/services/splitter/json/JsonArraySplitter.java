@@ -3,17 +3,20 @@ package com.adaptris.core.services.splitter.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONSerializer;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 /**
  * Message splitter implementation that splits a JSON array so that each element forms a new message.
- * 
+ *
  * <p>
  * If the message cannot be parsed as JSON then an exception will be thrown; If the message is a JSON object but not a JSON array,
  * then the original message is returned. Note that because it operates on the entire payload, size of message considerations may be
@@ -26,30 +29,51 @@ import net.sf.json.JSONSerializer;
  * <code>{"colours" : [{colour: "red",value: "#f00"},{colour: "green",value: "#0f0"},{colour: "blue",value: "#00f"},{colour: "black",value: "#000"}] }</code>
  * would remain a single message.
  * </p>
- * 
+ *
  * @config json-array-splitter
  * @author lchan
- * 
+ *
  */
 @XStreamAlias("json-array-splitter")
 public class JsonArraySplitter extends JsonObjectSplitter {
 
-  @Override
-  public List<AdaptrisMessage> splitMessage(AdaptrisMessage msg) throws CoreException {
-    List<AdaptrisMessage> result = new ArrayList<>();
-    try {
-      String original = msg.getContent();
-      JSON jsonRoot = JSONSerializer.toJSON(original);
-      if (jsonRoot.isArray()) {
-        result.addAll(splitMessage((JSONArray) jsonRoot, msg));
-      }
-      else {
-        result.add(msg);
-      }
-    }
-    catch (Exception e) {
-      throw new CoreException(e);
-    }
-    return result;
-  }
+	/**
+	 * Default logger.
+	 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(JsonArraySplitter.class.getName());
+
+	/**
+	 * Split an JSON array message. {@inheritDoc}.
+	 *
+	 * @param message
+	 *          The Adaptris message.
+	 */
+	@Override
+	public List<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
+		final List<AdaptrisMessage> result = new ArrayList<>();
+
+		try {
+
+			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+			final Object object = jsonParser.parse(message.getInputStream());
+
+			if (object instanceof JSONObject) {
+				result.add(message);
+			} else if (object instanceof JSONArray) {
+
+				final JSONArray array = (JSONArray)object;
+				final List<AdaptrisMessage> splitMessages = splitMessage(array, message);
+				result.addAll(splitMessages);
+
+			} else {
+				throw new Exception("Message payload was not JSON; could not be parsed to " + JSONObject.class + " from " + object.getClass());
+			}
+
+		} catch (final Exception e) {
+			LOGGER.error("Could not parse of split JSON payload.", e);
+			throw new CoreException(e);
+		}
+
+		return result;
+	}
 }
