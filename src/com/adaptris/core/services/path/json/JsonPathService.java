@@ -1,9 +1,7 @@
 package com.adaptris.core.services.path.json;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -22,13 +20,7 @@ import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JsonProvider;
-import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -161,29 +153,6 @@ public class JsonPathService extends ServiceImp {
 	 * Whether to strip leading/trailing [] from the JSON.
 	 */
 	private boolean unwrapJson = false;
-
-	static {
-		Configuration.setDefaults(new Configuration.Defaults() {
-			private final JsonProvider jsonProvider = new JsonSmartJsonProvider();
-			private final MappingProvider mappingProvider = new JacksonMappingProvider();
-			private final Set<Option> options = EnumSet.noneOf(Option.class);
-
-			@Override
-			public JsonProvider jsonProvider() {
-				return jsonProvider;
-			}
-
-			@Override
-			public MappingProvider mappingProvider() {
-				return mappingProvider;
-			}
-
-			@Override
-			public Set<Option> options() {
-				return options;
-			}
-		});
-	}
 
 	/**
 	 * {@inheritDoc}.
