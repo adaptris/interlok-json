@@ -154,6 +154,9 @@ public class JsonPathService extends ServiceImp {
 	@AutoPopulated
 	private List<Execution> executions = new ArrayList<>();
 
+	/**
+	 * Whether to strip leading/trailing [] from the JSON.
+	 */
 	private boolean unwrapJson = false;
 
 	static {
@@ -188,9 +191,7 @@ public class JsonPathService extends ServiceImp {
 			final Configuration defaultConfiguration = Configuration.defaultConfiguration();
 			final JsonProvider jsonProvider = defaultConfiguration.jsonProvider();
 
-			/*
-			 * TODO try and use net.minidev.jsonparser to parse the JSON
-			 */
+			/* TODO try and use net.minidev.jsonparser to parse the JSON */
 
 			final DataInputParameter<String> s = sourceDestination != null ? sourceDestination : source;
 			final String e = s.extract(message);
@@ -200,30 +201,37 @@ public class JsonPathService extends ServiceImp {
 			for (final Execution execution : executions) {
 
 				final DataInputParameter<String> executionSource = execution.getSource();
-				final String extracted = executionSource.extract(message);
-				final String jsonString = JsonPath.read(parsedJsonContent, extracted).toString();
-				final String unwraped = unwrap(jsonString);
-				final DataOutputParameter<String> target = execution.getTarget();
+				final DataOutputParameter<String> executionTarget = execution.getTarget();
 
-				target.insert(unwraped, message);
+				/* extract the JSON path */
+				final String jsonPath = executionSource.extract(message);
+
+				final String jsonString = unwrap(JsonPath.read(parsedJsonContent, jsonPath).toString());
+
+				executionTarget.insert(jsonString, message);
 
 			}
 
 		} catch (final InterlokException ex) {
+			log.warn("Failed to match JSON path!", ex);
 			throw new ServiceException(ex);
 		}
 	}
 
-	/*
-	 * Do we need to strip the square brackets off of a value?
+	/**
+	 * Strip (if necessary) the leading/trailing [] from the JSON.
+	 *
+	 * @param json
+	 *          The JSON string.
 	 */
-	private String unwrap(final String jsonValue) {
+	private String unwrap(final String json) {
+		/* Do we need to strip the square brackets off of a value? */
 		if (unwrapJson) {
-			if (jsonValue.startsWith("[") && jsonValue.endsWith("]")) {
-				return jsonValue.substring(1, jsonValue.length() - 1);
+			if (json.startsWith("[") && json.endsWith("]")) {
+				return json.substring(1, json.length() - 1);
 			}
 		}
-		return jsonValue;
+		return json;
 	}
 
 	/**

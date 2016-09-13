@@ -35,12 +35,14 @@ public class JsonPathSplitter extends MessageSplitterImp {
 	@Override
 	public Iterable<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
 		try {
-			/* TODO extract payload manually, as input stream */
+
+			/* TODO try and use net.minidev.jsonparser to parse the JSON */
+
 			final String extractedMessage = jsonPath.extract(message);
 
-			final ConstantDataInputParameter constantDataInputParameter = new ConstantDataInputParameter(extractedMessage);
-			final StringPayloadDataOutputParameter payloadOutputParam = new StringPayloadDataOutputParameter();
-			final Execution execution = new Execution(constantDataInputParameter, payloadOutputParam);
+			final ConstantDataInputParameter source = new ConstantDataInputParameter(extractedMessage);
+			final StringPayloadDataOutputParameter target = new StringPayloadDataOutputParameter();
+			final Execution execution = new Execution(source, target);
 
 			final JsonPathService jsonPathService = new JsonPathService();
 			jsonPathService.setSource(jsonSource);
@@ -48,6 +50,7 @@ public class JsonPathSplitter extends MessageSplitterImp {
 			jsonPathService.doService(message);
 
 			return getMessageSplitter().splitMessage(message);
+
 		} catch (final InterlokException ex) {
 			throw new CoreException(ex);
 		}
