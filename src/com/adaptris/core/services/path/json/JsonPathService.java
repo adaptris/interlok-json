@@ -32,6 +32,9 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+
 /**
  * This service allows you to search JSON content and the results are then set back into the message.
  * <p>
@@ -188,15 +191,12 @@ public class JsonPathService extends ServiceImp {
 	@Override
 	public void doService(final AdaptrisMessage message) throws ServiceException {
 		try {
-			final Configuration defaultConfiguration = Configuration.defaultConfiguration();
-			final JsonProvider jsonProvider = defaultConfiguration.jsonProvider();
 
-			/* TODO try and use net.minidev.jsonparser to parse the JSON */
+			final DataInputParameter<String> src = sourceDestination != null ? sourceDestination : source;
+			final String rawJson = src.extract(message);
 
-			final DataInputParameter<String> s = sourceDestination != null ? sourceDestination : source;
-			final String e = s.extract(message);
-
-			final Object parsedJsonContent = jsonProvider.parse(e);
+			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+			final Object json = jsonParser.parse(rawJson);
 
 			for (final Execution execution : executions) {
 
@@ -206,15 +206,18 @@ public class JsonPathService extends ServiceImp {
 				/* extract the JSON path */
 				final String jsonPath = executionSource.extract(message);
 
-				final String jsonString = unwrap(JsonPath.read(parsedJsonContent, jsonPath).toString());
+				final String jsonString = unwrap(JsonPath.read(json.toString(), jsonPath).toString());
 
 				executionTarget.insert(jsonString, message);
 
 			}
 
-		} catch (final InterlokException ex) {
-			log.warn("Failed to match JSON path!", ex);
-			throw new ServiceException(ex);
+		} catch (final ParseException e) {
+			log.warn("Failed to parse JSON!", e);
+			throw new ServiceException(e);
+		} catch (final InterlokException e) {
+			log.warn("Failed to match JSON path!", e);
+			throw new ServiceException(e);
 		}
 	}
 
