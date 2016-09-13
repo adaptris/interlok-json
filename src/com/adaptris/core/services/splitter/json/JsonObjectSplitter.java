@@ -55,7 +55,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	 * @param message
 	 *          The Adaptris message.
 	 *
-	 * @return A list of Adaptris messages.
+	 * @return A list of Adaptris messages for each JSON object.
 	 */
 	@Override
 	public List<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {

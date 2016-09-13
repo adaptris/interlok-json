@@ -39,6 +39,8 @@ public class JsonArraySplitter extends JsonObjectSplitter {
 	 *
 	 * @param message
 	 *          The Adaptris message.
+	 * 
+	 * @return A list of Adaptris messages for each JSON object in array.
 	 */
 	@Override
 	public List<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
