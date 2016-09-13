@@ -68,30 +68,23 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 			if (object instanceof JSONArray) {
 
 				final JSONArray array = (JSONArray)object;
-
 				if (array.isEmpty()) {
 					result.add(message);
 				} else {
-
 					result.addAll(splitMessage(array, message));
-
 				}
 
 			} else if (object instanceof JSONObject) {
 
 				final JSONObject json = (JSONObject)object;
-
 				if (json.isEmpty()) {
 					result.add(message);
 				} else {
-
 					for (final String key : json.keySet()) {
 						final JSONObject o = new JSONObject();
 						o.put(key, json.get(key));
-
 						result.add(createSplitMessage(o, message));
 					}
-
 				}
 
 			} else {

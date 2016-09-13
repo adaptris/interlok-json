@@ -39,7 +39,7 @@ public class JsonArraySplitter extends JsonObjectSplitter {
 	 *
 	 * @param message
 	 *          The Adaptris message.
-	 * 
+	 *
 	 * @return A list of Adaptris messages for each JSON object in array.
 	 */
 	@Override
@@ -52,7 +52,9 @@ public class JsonArraySplitter extends JsonObjectSplitter {
 			final Object object = jsonParser.parse(message.getInputStream());
 
 			if (object instanceof JSONObject) {
+
 				result.add(message);
+
 			} else if (object instanceof JSONArray) {
 
 				final JSONArray array = (JSONArray)object;
