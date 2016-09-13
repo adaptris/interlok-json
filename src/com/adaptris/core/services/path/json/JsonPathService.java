@@ -143,7 +143,7 @@ public class JsonPathService extends ServiceImp {
 
 	@NotNull
 	@AutoPopulated
-	private DataInputParameter<String> source;
+	private DataInputParameter<String> source = new StringPayloadDataInputParameter();
 
 	@Deprecated
 	private DataInputParameter<String> sourceDestination;
@@ -152,17 +152,9 @@ public class JsonPathService extends ServiceImp {
 	@NotNull
 	@Valid
 	@AutoPopulated
-	private List<Execution> executions;
+	private List<Execution> executions = new ArrayList<>();
 
 	private boolean unwrapJson = false;
-
-	/**
-	 * Default service constructor.
-	 */
-	public JsonPathService() {
-		setSource(new StringPayloadDataInputParameter());
-		setExecutions(new ArrayList<Execution>());
-	}
 
 	static {
 		Configuration.setDefaults(new Configuration.Defaults() {
@@ -200,7 +192,7 @@ public class JsonPathService extends ServiceImp {
 			 * TODO try and use net.minidev.jsonparser to parse the JSON
 			 */
 
-			final DataInputParameter<String> s = sourceToUse();
+			final DataInputParameter<String> s = sourceDestination != null ? sourceDestination : source;
 			final String e = s.extract(message);
 
 			final Object parsedJsonContent = jsonProvider.parse(e);
@@ -272,7 +264,7 @@ public class JsonPathService extends ServiceImp {
 	 * @param sourceDestination
 	 *          The source destination.
 	 *
-	 * @deprecated since 3.2.0 use {@link #getSource()} instead.
+	 * @deprecated since 3.2.0 use {@link #setSource()} instead.
 	 */
 	@Deprecated
 	public void setSourceDestination(final DataInputParameter<String> sourceDestination) {
@@ -297,14 +289,6 @@ public class JsonPathService extends ServiceImp {
 	 */
 	public void setSource(final DataInputParameter<String> source) {
 		this.source = Args.notNull(source, "source");
-	}
-
-	private DataInputParameter<String> sourceToUse() {
-		DataInputParameter<String> result = source;
-		if (sourceDestination != null) {
-			result = sourceDestination;
-		}
-		return result;
 	}
 
 	/**
