@@ -305,7 +305,7 @@ public class JsonPathService extends ServiceImp {
 	 * @param unwrapJson
 	 *          Whether the JSON should be unwrapped.
 	 */
-	public void setUnwrapJson(final Boolean unwrapJson) {
-		this.unwrapJson = unwrapJson == null ? false : unwrapJson;
+	public void setUnwrapJson(final boolean unwrapJson) {
+		this.unwrapJson = unwrapJson;
 	}
 }
