@@ -1,15 +1,15 @@
 package com.adaptris.core.transform.json;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
@@ -17,6 +17,10 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
+import com.adaptris.core.common.FileDataInputParameter;
+import com.adaptris.core.util.Args;
+import com.adaptris.interlok.InterlokException;
+import com.adaptris.interlok.config.DataInputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import net.minidev.json.parser.JSONParser;
@@ -33,26 +37,11 @@ import net.minidev.json.parser.ParseException;
 public class JsonSchemaService extends ServiceImp {
 
 	/**
-	 * Reference to JSON validator wrapper.
+	 * Reference to the schema to use for validation.
 	 */
-	private transient final JsonSchemaValidator jsonSchemaValidator;
-
-	/**
-	 * Default constructor for JSON schema validation service.
-	 */
-	public JsonSchemaService() {
-		jsonSchemaValidator = new JsonSchemaValidator();
-	}
-
-	/**
-	 * Overloaded constructor, which gives the URL to the schema to use for validation.
-	 *
-	 * @param schemaUrl
-	 *          The URL of the schema to use for validation.
-	 */
-	public JsonSchemaService(final URL schemaUrl) {
-		jsonSchemaValidator = new JsonSchemaValidator(getSchema(schemaUrl));
-	}
+	@NotNull
+	@Valid
+	private DataInputParameter<String> schemaUrl = new FileDataInputParameter();
 
 	/**
 	 * {@inheritDoc}.
@@ -60,9 +49,17 @@ public class JsonSchemaService extends ServiceImp {
 	@Override
 	public void doService(final AdaptrisMessage message) throws ServiceException {
 		try {
+			/* retrieve the schema */
+			final String schemaString = schemaUrl.extract(message);
+			final JSONObject rawSchema = new JSONObject(schemaString);
+			final Schema schema = SchemaLoader.load(rawSchema);
 
+			/* parse the JSON from the message body */
 			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 			final Object object = jsonParser.parse(message.getInputStream());
+
+			/* either validate a single JSON object or an array of JSON objects (or fail) */
+			final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(schema);
 			if (object instanceof JSONObject) {
 				jsonSchemaValidator.validate((JSONObject)object);
 			} else if (object instanceof JSONArray) {
@@ -74,7 +71,7 @@ public class JsonSchemaService extends ServiceImp {
 				log.warn("Message payload was not JSON; could not be parsed to JSONObject (" + object.getClass() + ").");
 			}
 
-		} catch (final ValidationException | ParseException | IOException e) {
+		} catch (final ValidationException | ParseException | IOException | InterlokException e) {
 			log.warn("JSON is not valid!", e);
 			if (e instanceof ValidationException) {
 				for (final ValidationException ve : ((ValidationException)e).getCausingExceptions()) {
@@ -110,30 +107,21 @@ public class JsonSchemaService extends ServiceImp {
 	}
 
 	/**
-	 * Set the schema to use for JSON validation.
+	 * Set the URL of the schema to use for JSON validation.
 	 *
 	 * @param schemaUrl
 	 *          The URL of the schema to use for validation.
 	 */
-	public void setSchema(final URL schemaUrl) {
-		jsonSchemaValidator.setSchema(getSchema(schemaUrl));
+	public void setSchemaUrl(final DataInputParameter<String> schemaUrl) {
+		this.schemaUrl = Args.notNull(schemaUrl, "Schema");
 	}
 
 	/**
-	 * Get the schema from wherever it is.
+	 * Get the URL of the schema to use for JSON validation.
 	 *
-	 * @param schemaUrl
-	 *          The URL of the schema to use for validation.
-	 *
-	 * @return The schema to use for validation.
+	 * @return The URL of the schema to use for validation.
 	 */
-	private Schema getSchema(final URL schemaUrl) {
-		try (final InputStream is = schemaUrl.openStream()) {
-			final JSONObject rawSchema = new JSONObject(new JSONTokener(is));
-			return SchemaLoader.load(rawSchema);
-		} catch (final IOException e) {
-			log.error("Could not access JSON schema URL : " + schemaUrl, e);
-			return null;
-		}
+	public DataInputParameter<String> getSchemaUrl() {
+		return schemaUrl;
 	}
 }

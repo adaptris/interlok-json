@@ -1,19 +1,19 @@
 package com.adaptris.core.transform.json;
 
-import java.net.URL;
-
+import org.junit.Before;
 import org.junit.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ServiceCase;
+import com.adaptris.core.common.FileDataInputParameter;
+import com.adaptris.core.transform.TransformServiceExample;
 
 /**
  * Unit tests for {@link JsonSchemaService}.
  *
  * @author Ashley Anderson
  */
-public class JsonSchemaServiceTest extends ServiceCase {
+public class JsonSchemaServiceTest extends /* ServiceCase */TransformServiceExample {
 
 	/**
 	 * Default constructor.
@@ -35,11 +35,35 @@ public class JsonSchemaServiceTest extends ServiceCase {
 	/**
 	 * Reference to the test schema.
 	 */
-	private static final URL SCHEMA_URL = JsonSchemaServiceTest.class.getResource("test_schema.json");
+	private static final String SCHEMA_URL = "file:///com/adaptris/core/transform/json/test_schema.json";
+
 	/**
 	 * Valid JSON.
 	 */
 	private static final String VALID_JSON = "{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }";
+
+	/**
+	 * The service being tested.
+	 */
+	private JsonSchemaService service;
+
+	/**
+	 * The test Adaptris message.
+	 */
+	private AdaptrisMessage message;
+
+	/**
+	 * Setup the test environment.
+	 */
+	@Override
+	@Before
+	public void setUp() {
+		service = new JsonSchemaService();
+		final FileDataInputParameter schemaUrl = new FileDataInputParameter();
+		schemaUrl.setUrl(SCHEMA_URL);
+		service.setSchemaUrl(schemaUrl);
+		message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
+	}
 
 	/**
 	 * Test for success.
@@ -49,17 +73,14 @@ public class JsonSchemaServiceTest extends ServiceCase {
 	 */
 	@Test
 	public void testSuccess() throws Exception {
-		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
-		final JsonSchemaService service = new JsonSchemaService();
-		service.setSchema(SCHEMA_URL);
 		execute(service, message);
 	}
 
 	/**
-	 * Unused method. For more information see {@inheritDoc}.
+	 * {@inheritDoc}.
 	 */
 	@Override
 	protected Object retrieveObjectForSampleConfig() {
-		return new JsonSchemaService(SCHEMA_URL);
+		return service;
 	}
 }
