@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
@@ -41,6 +43,11 @@ import net.minidev.json.parser.JSONParser;
  */
 @XStreamAlias("json-object-splitter")
 public class JsonObjectSplitter extends MessageSplitterImp {
+
+	/**
+	 * Default logger.
+	 */
+	protected static final Logger LOGGER = LoggerFactory.getLogger(JsonObjectSplitter.class.getName());
 
 	/**
 	 * Split a JSON payload from an Adaptris message. {@inheritDoc}.
@@ -92,6 +99,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 			}
 
 		} catch (final Exception e) {
+			LOGGER.error("Could not parse or split JSON object payload.", e);
 			throw new CoreException(e);
 		}
 		return result;
@@ -110,7 +118,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	 * @throws IOException
 	 *           If IOUtils cannot copy from a Reader to a Writer (see {@link #createSplitMessage(JSONObject, AdaptrisMessage)}.
 	 */
-	List<AdaptrisMessage> splitMessage(final JSONArray array, final AdaptrisMessage message) throws IOException {
+	protected List<AdaptrisMessage> splitMessage(final JSONArray array, final AdaptrisMessage message) throws IOException {
 		final List<AdaptrisMessage> result = new ArrayList<>();
 		for (final Object element : array) {
 			result.add(createSplitMessage((JSONObject)element, message));
@@ -131,7 +139,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	 * @throws IOException
 	 *           If IOUtils cannot copy from a Reader to a Writer.
 	 */
-	AdaptrisMessage createSplitMessage(final JSONObject json, final AdaptrisMessage message) throws IOException {
+	protected AdaptrisMessage createSplitMessage(final JSONObject json, final AdaptrisMessage message) throws IOException {
 		final AdaptrisMessage newMessage = selectFactory(message).newMessage();
 		try (final Reader reader = new StringReader(json.toString()); final Writer writer = newMessage.getWriter()) {
 			IOUtils.copy(reader, writer);

@@ -3,9 +3,6 @@ package com.adaptris.core.services.splitter.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -38,11 +35,6 @@ import net.minidev.json.parser.JSONParser;
 public class JsonArraySplitter extends JsonObjectSplitter {
 
 	/**
-	 * Default logger.
-	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(JsonArraySplitter.class.getName());
-
-	/**
 	 * Split an JSON array message. {@inheritDoc}.
 	 *
 	 * @param message
@@ -70,7 +62,7 @@ public class JsonArraySplitter extends JsonObjectSplitter {
 			}
 
 		} catch (final Exception e) {
-			LOGGER.error("Could not parse of split JSON payload.", e);
+			LOGGER.error("Could not parse or split JSON array payload.", e);
 			throw new CoreException(e);
 		}
 
