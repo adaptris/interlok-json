@@ -49,7 +49,7 @@ public class JsonPathSplitter extends MessageSplitterImp {
 			jsonPathService.setExecutions(Arrays.asList(execution));
 			jsonPathService.doService(message);
 
-			return getMessageSplitter().splitMessage(message);
+			return messageSplitter.splitMessage(message);
 
 		} catch (final InterlokException ex) {
 			throw new CoreException(ex);
