@@ -10,215 +10,212 @@ import net.sf.json.JSONException;
 
 /**
  * Transformation Driver using the {@code net.sf.json} package.
- * 
  */
 public abstract class JsonTransformationDriverImpl implements TransformationDriver {
 
-  /* These fields exists to make XStream serialize the driver properly. Since the driver 
-   * uses an XMLSerializer instance, exposing only SOME of its settings, we don't want the
-   * serializer itself to be generated into the XML. There are some issues with the 
-   * 'expandedProperties' field that cause it to not (de)serialize correctly. */
-  @AdvancedConfig
-  private String arrayName;
-  @AdvancedConfig
-  private String elementName;
-  @AdvancedConfig
-  private String objectName;
-  @AdvancedConfig
-  private String rootName;
-  @AdvancedConfig
-  private Boolean forceTopLevelObject;
-  @AdvancedConfig
-  private Boolean skipWhitespace;
-  @AdvancedConfig
-  private Boolean trimSpaces;
-  @AdvancedConfig
-  private Boolean typeHintsCompatibility;
-  @AdvancedConfig
-  private Boolean typeHintsEnabled;
-  
-  private static final boolean DEFAULT_FORCE_TOP_LEVEL_OBJECT;
-  private static final boolean DEFAULT_SKIP_WHITE_SPACE;
-  private static final boolean DEFAULT_TRIM_SPACES;
-  private static final boolean DEFAULT_TYPE_HINTS_COMPAT;
-  private static final boolean DEFAULT_TYPE_HINTS_ENABLED;
+	/*
+	 * These fields exists to make XStream serialize the driver properly. Since the driver
+	 * uses an XMLSerializer instance, exposing only SOME of its settings, we don't want the
+	 * serializer itself to be generated into the XML. There are some issues with the
+	 * 'expandedProperties' field that cause it to not (de)serialize correctly.
+	 */
+	@AdvancedConfig
+	private String arrayName;
+	@AdvancedConfig
+	private String elementName;
+	@AdvancedConfig
+	private String objectName;
+	@AdvancedConfig
+	private String rootName;
+	@AdvancedConfig
+	private Boolean forceTopLevelObject;
+	@AdvancedConfig
+	private Boolean skipWhitespace;
+	@AdvancedConfig
+	private Boolean trimSpaces;
+	@AdvancedConfig
+	private Boolean typeHintsCompatibility;
+	@AdvancedConfig
+	private Boolean typeHintsEnabled;
 
-  private static final String DEFAULT_ARRAYNAME;
-  private static final String DEFAULT_ELEMENTNAME;
-  private static final String DEFAULT_OBJECTNAME;
-  private static final String DEFAULT_ROOTNAME;
-    
-  static {
-    XMLSerializer serializer = new XMLSerializer();
-    DEFAULT_ARRAYNAME = serializer.getArrayName();
-    DEFAULT_ELEMENTNAME = serializer.getElementName();
-    DEFAULT_OBJECTNAME = serializer.getObjectName();
-    DEFAULT_ROOTNAME = serializer.getRootName();
+	private static final boolean DEFAULT_FORCE_TOP_LEVEL_OBJECT;
+	private static final boolean DEFAULT_SKIP_WHITE_SPACE;
+	private static final boolean DEFAULT_TRIM_SPACES;
+	private static final boolean DEFAULT_TYPE_HINTS_COMPAT;
+	private static final boolean DEFAULT_TYPE_HINTS_ENABLED;
 
-    DEFAULT_FORCE_TOP_LEVEL_OBJECT = serializer.isForceTopLevelObject();
-    DEFAULT_SKIP_WHITE_SPACE = serializer.isSkipWhitespace();
-    DEFAULT_TRIM_SPACES = serializer.isTrimSpaces();
-    DEFAULT_TYPE_HINTS_COMPAT = serializer.isTypeHintsCompatibility();
-    DEFAULT_TYPE_HINTS_ENABLED = serializer.isTypeHintsEnabled();
-  }
+	private static final String DEFAULT_ARRAYNAME;
+	private static final String DEFAULT_ELEMENTNAME;
+	private static final String DEFAULT_OBJECTNAME;
+	private static final String DEFAULT_ROOTNAME;
 
-  public JsonTransformationDriverImpl() {
-  }
-  
-  @Override
-  public String transform(String input, DIRECTION direction) throws ServiceException {
-    switch(direction) {
-    case JSON_TO_XML:
-      return jsonToXML(input);
-      
-    case XML_TO_JSON:
-      return xmlToJSON(input);
-      
-    default:
-      throw new IllegalArgumentException("direction");
-    }
-  }
-  
-  private String xmlToJSON(String input) throws ServiceException {
-    try {
-      return getSerializer().read(input).toString();
-    } catch (JSONException e) {
-      throw new ServiceException("Exception while converting XML to JSON", e);
-    }
-  }
+	static {
+		final XMLSerializer serializer = new XMLSerializer();
+		DEFAULT_ARRAYNAME = serializer.getArrayName();
+		DEFAULT_ELEMENTNAME = serializer.getElementName();
+		DEFAULT_OBJECTNAME = serializer.getObjectName();
+		DEFAULT_ROOTNAME = serializer.getRootName();
 
-  private String jsonToXML(String input) throws ServiceException {
-    try {
-      JSON object = parse(input);
-      return getSerializer().write(object);
-    } catch (JSONException e) {
-      throw new ServiceException("Exception while converting JSON to XML", e);
-    }
-  }
-  
-  protected abstract JSON parse(String input) throws JSONException;
+		DEFAULT_FORCE_TOP_LEVEL_OBJECT = serializer.isForceTopLevelObject();
+		DEFAULT_SKIP_WHITE_SPACE = serializer.isSkipWhitespace();
+		DEFAULT_TRIM_SPACES = serializer.isTrimSpaces();
+		DEFAULT_TYPE_HINTS_COMPAT = serializer.isTypeHintsCompatibility();
+		DEFAULT_TYPE_HINTS_ENABLED = serializer.isTypeHintsEnabled();
+	}
 
-  private XMLSerializer getSerializer() {
-    XMLSerializer serializer = new XMLSerializer();
-    serializer.setArrayName(arrayName());
-    serializer.setElementName(elementName());
-    serializer.setObjectName(objectName());
-    serializer.setRootName(rootName());
-    serializer.setForceTopLevelObject(isForceTopLevelObject());
-    serializer.setSkipWhitespace(isSkipWhitespace());
-    serializer.setTrimSpaces(isTrimSpaces());
-    serializer.setTypeHintsCompatibility(isTypeHintsCompatibility());
-    serializer.setTypeHintsEnabled(isTypeHintsEnabled());
-    return serializer;
-  }
+	@Override
+	public String transform(final String input, final DIRECTION direction) throws ServiceException {
+		switch (direction) {
+			case JSON_TO_XML:
+				return jsonToXML(input);
 
-  public String getArrayName() {
-    return arrayName;
-  }
+			case XML_TO_JSON:
+				return xmlToJSON(input);
 
-  public void setArrayName(String arrayName) {
-    this.arrayName = arrayName;
-  }
+			default:
+				throw new IllegalArgumentException("direction");
+		}
+	}
 
-  String arrayName() {
-    return getArrayName() != null ? getArrayName() : DEFAULT_ARRAYNAME;
-  }
+	private String xmlToJSON(final String input) throws ServiceException {
+		try {
+			return getSerializer().read(input).toString();
+		} catch (final JSONException e) {
+			throw new ServiceException("Exception while converting XML to JSON", e);
+		}
+	}
 
-  public String getElementName() {
-    return elementName;
-  }
+	private String jsonToXML(final String input) throws ServiceException {
+		try {
+			final JSON object = parse(input);
+			return getSerializer().write(object);
+		} catch (final JSONException e) {
+			throw new ServiceException("Exception while converting JSON to XML", e);
+		}
+	}
 
-  public void setElementName(String elementName) {
-    this.elementName = elementName;
-  }
+	protected abstract JSON parse(String input) throws JSONException;
 
-  String elementName() {
-    return getElementName() != null ? getElementName() : DEFAULT_ELEMENTNAME;
-  }
+	private XMLSerializer getSerializer() {
+		final XMLSerializer serializer = new XMLSerializer();
+		serializer.setArrayName(arrayName());
+		serializer.setElementName(elementName());
+		serializer.setObjectName(objectName());
+		serializer.setRootName(rootName());
+		serializer.setForceTopLevelObject(isForceTopLevelObject());
+		serializer.setSkipWhitespace(isSkipWhitespace());
+		serializer.setTrimSpaces(isTrimSpaces());
+		serializer.setTypeHintsCompatibility(isTypeHintsCompatibility());
+		serializer.setTypeHintsEnabled(isTypeHintsEnabled());
+		return serializer;
+	}
 
-  public String getObjectName() {
-    return objectName;
-  }
+	public String getArrayName() {
+		return arrayName;
+	}
 
-  public void setObjectName(String objectName) {
-    this.objectName = objectName;
-  }
+	public void setArrayName(final String arrayName) {
+		this.arrayName = arrayName;
+	}
 
-  String objectName() {
-    return getObjectName() != null ? getObjectName() : DEFAULT_OBJECTNAME;
-  }
+	String arrayName() {
+		return getArrayName() != null ? getArrayName() : DEFAULT_ARRAYNAME;
+	}
 
-  public String getRootName() {
-    return rootName;
-  }
+	public String getElementName() {
+		return elementName;
+	}
 
-  public void setRootName(String rootName) {
-    this.rootName = rootName;
-  }
+	public void setElementName(final String elementName) {
+		this.elementName = elementName;
+	}
 
-  String rootName() {
-    return getRootName() != null ? getRootName() : DEFAULT_ROOTNAME;
-  }
+	String elementName() {
+		return getElementName() != null ? getElementName() : DEFAULT_ELEMENTNAME;
+	}
 
-  boolean isForceTopLevelObject() {
-    return getForceTopLevelObject() != null ? getForceTopLevelObject().booleanValue() : DEFAULT_FORCE_TOP_LEVEL_OBJECT;
-  }
+	public String getObjectName() {
+		return objectName;
+	}
 
-  public void setForceTopLevelObject(Boolean forceTopLevelObject) {
-    this.forceTopLevelObject = forceTopLevelObject;
-  }
+	public void setObjectName(final String objectName) {
+		this.objectName = objectName;
+	}
 
-  public Boolean getForceTopLevelObject() {
-    return forceTopLevelObject;
-  }
+	String objectName() {
+		return getObjectName() != null ? getObjectName() : DEFAULT_OBJECTNAME;
+	}
 
-  boolean isSkipWhitespace() {
-    return getSkipWhitespace() != null ? getSkipWhitespace().booleanValue() : DEFAULT_SKIP_WHITE_SPACE;
-  }
+	public String getRootName() {
+		return rootName;
+	}
 
-  public void setSkipWhitespace(Boolean skipWhitespace) {
-    this.skipWhitespace = skipWhitespace;
-  }
+	public void setRootName(final String rootName) {
+		this.rootName = rootName;
+	}
 
-  public Boolean getSkipWhitespace() {
-    return skipWhitespace;
-  }
+	String rootName() {
+		return getRootName() != null ? getRootName() : DEFAULT_ROOTNAME;
+	}
 
-  boolean isTrimSpaces() {
-    return getTrimSpaces() != null ? getTrimSpaces().booleanValue() : DEFAULT_TRIM_SPACES;
-  }
+	boolean isForceTopLevelObject() {
+		return getForceTopLevelObject() != null ? getForceTopLevelObject().booleanValue() : DEFAULT_FORCE_TOP_LEVEL_OBJECT;
+	}
 
-  public void setTrimSpaces(Boolean trimSpaces) {
-    this.trimSpaces = trimSpaces;
-  }
+	public void setForceTopLevelObject(final Boolean forceTopLevelObject) {
+		this.forceTopLevelObject = forceTopLevelObject;
+	}
 
-  public Boolean getTrimSpaces() {
-    return trimSpaces;
-  }
+	public Boolean getForceTopLevelObject() {
+		return forceTopLevelObject;
+	}
 
-  boolean isTypeHintsCompatibility() {
-    return getTypeHintsCompatibility() != null ? getTypeHintsCompatibility().booleanValue() : DEFAULT_TYPE_HINTS_COMPAT;
-  }
+	boolean isSkipWhitespace() {
+		return getSkipWhitespace() != null ? getSkipWhitespace().booleanValue() : DEFAULT_SKIP_WHITE_SPACE;
+	}
 
-  public void setTypeHintsCompatibility(Boolean typeHintsCompatibility) {
-    this.typeHintsCompatibility = typeHintsCompatibility;
-  }
+	public void setSkipWhitespace(final Boolean skipWhitespace) {
+		this.skipWhitespace = skipWhitespace;
+	}
 
-  public Boolean getTypeHintsCompatibility() {
-    return typeHintsCompatibility;
-  }
+	public Boolean getSkipWhitespace() {
+		return skipWhitespace;
+	}
 
-  boolean isTypeHintsEnabled() {
-    return getTypeHintsEnabled() != null ? getTypeHintsEnabled().booleanValue() : DEFAULT_TYPE_HINTS_ENABLED;
-  }
+	boolean isTrimSpaces() {
+		return getTrimSpaces() != null ? getTrimSpaces().booleanValue() : DEFAULT_TRIM_SPACES;
+	}
 
-  public void setTypeHintsEnabled(Boolean typeHintsEnabled) {
-    this.typeHintsEnabled = typeHintsEnabled;
-  }
+	public void setTrimSpaces(final Boolean trimSpaces) {
+		this.trimSpaces = trimSpaces;
+	}
 
-  public Boolean getTypeHintsEnabled() {
-    return typeHintsEnabled;
-  }
+	public Boolean getTrimSpaces() {
+		return trimSpaces;
+	}
 
+	boolean isTypeHintsCompatibility() {
+		return getTypeHintsCompatibility() != null ? getTypeHintsCompatibility().booleanValue() : DEFAULT_TYPE_HINTS_COMPAT;
+	}
+
+	public void setTypeHintsCompatibility(final Boolean typeHintsCompatibility) {
+		this.typeHintsCompatibility = typeHintsCompatibility;
+	}
+
+	public Boolean getTypeHintsCompatibility() {
+		return typeHintsCompatibility;
+	}
+
+	boolean isTypeHintsEnabled() {
+		return getTypeHintsEnabled() != null ? getTypeHintsEnabled().booleanValue() : DEFAULT_TYPE_HINTS_ENABLED;
+	}
+
+	public void setTypeHintsEnabled(final Boolean typeHintsEnabled) {
+		this.typeHintsEnabled = typeHintsEnabled;
+	}
+
+	public Boolean getTypeHintsEnabled() {
+		return typeHintsEnabled;
+	}
 
 }
