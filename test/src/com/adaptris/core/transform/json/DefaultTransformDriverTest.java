@@ -50,12 +50,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testArrayName() {
 		assertNull(driver.getArrayName());
-		assertEquals(serializer.getArrayName(), driver.arrayName());
+		assertEquals(serializer.getArrayName(), driver.getArrayNameOrDefault());
 
 		driver.setArrayName(ABC);
 
 		assertEquals(ABC, driver.getArrayName());
-		assertEquals(ABC, driver.arrayName());
 	}
 
 	/**
@@ -64,12 +63,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testElementName() {
 		assertNull(driver.getElementName());
-		assertEquals(serializer.getElementName(), driver.elementName());
+		assertEquals(serializer.getElementName(), driver.getElementNameOrDefault());
 
 		driver.setElementName(ABC);
 
 		assertEquals(ABC, driver.getElementName());
-		assertEquals(ABC, driver.elementName());
 	}
 
 	/**
@@ -78,12 +76,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testObjectName() {
 		assertNull(driver.getObjectName());
-		assertEquals(serializer.getObjectName(), driver.objectName());
+		assertEquals(serializer.getObjectName(), driver.getObjectNameOrDefault());
 
 		driver.setObjectName(ABC);
 
 		assertEquals(ABC, driver.getObjectName());
-		assertEquals(ABC, driver.objectName());
 	}
 
 	/**
@@ -92,12 +89,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testRootName() {
 		assertNull(driver.getRootName());
-		assertEquals(serializer.getRootName(), driver.rootName());
+		assertEquals(serializer.getRootName(), driver.getRootNameOrDefault());
 
 		driver.setRootName(ABC);
 
 		assertEquals(ABC, driver.getRootName());
-		assertEquals(ABC, driver.rootName());
 	}
 
 	/**
@@ -105,12 +101,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testForceTopLevelObject() {
-		assertNull(driver.getForceTopLevelObject());
-		assertEquals(serializer.isForceTopLevelObject(), driver.isForceTopLevelObject());
+		assertNull(driver.isForceTopLevelObject());
+		assertEquals(serializer.isForceTopLevelObject(), driver.isForceTopLevelObjectOrDefault());
 
 		driver.setForceTopLevelObject(true);
 
-		assertTrue(driver.getForceTopLevelObject());
 		assertTrue(driver.isForceTopLevelObject());
 	}
 
@@ -119,12 +114,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testSkipWhiteSpace() {
-		assertNull(driver.getSkipWhitespace());
-		assertEquals(serializer.isSkipWhitespace(), driver.isSkipWhitespace());
+		assertNull(driver.isSkipWhitespace());
+		assertEquals(serializer.isSkipWhitespace(), driver.isSkipWhitespaceOrDefault());
 
 		driver.setSkipWhitespace(true);
 
-		assertTrue(driver.getSkipWhitespace());
 		assertTrue(driver.isSkipWhitespace());
 	}
 
@@ -133,12 +127,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testTrimSpaces() {
-		assertNull(driver.getTrimSpaces());
-		assertEquals(serializer.isTrimSpaces(), driver.isTrimSpaces());
+		assertNull(driver.isTrimSpaces());
+		assertEquals(serializer.isTrimSpaces(), driver.isTrimSpacesOrDefault());
 
 		driver.setTrimSpaces(true);
 
-		assertTrue(driver.getTrimSpaces());
 		assertTrue(driver.isTrimSpaces());
 	}
 
@@ -147,12 +140,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testTypeHintsCompatibility() {
-		assertNull(driver.getTypeHintsCompatibility());
-		assertEquals(serializer.isTypeHintsCompatibility(), driver.isTypeHintsCompatibility());
+		assertNull(driver.isTypeHintsCompatibility());
+		assertEquals(serializer.isTypeHintsCompatibility(), driver.isTypeHintsCompatibilityOrDefault());
 
 		driver.setTypeHintsCompatibility(true);
 
-		assertTrue(driver.getTypeHintsCompatibility());
 		assertTrue(driver.isTypeHintsCompatibility());
 	}
 
@@ -161,12 +153,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testTypeHintsEnabled() {
-		assertNull(driver.getTypeHintsEnabled());
-		assertEquals(serializer.isTypeHintsEnabled(), driver.isTypeHintsEnabled());
+		assertNull(driver.isTypeHintsEnabled());
+		assertEquals(serializer.isTypeHintsEnabled(), driver.isTypeHintsEnabledOrDefault());
 
 		driver.setTypeHintsEnabled(true);
 
-		assertTrue(driver.getTypeHintsEnabled());
 		assertTrue(driver.isTypeHintsEnabled());
 	}
 }
