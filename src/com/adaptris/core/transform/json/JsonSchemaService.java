@@ -71,14 +71,23 @@ public class JsonSchemaService extends ServiceImp {
 				log.warn("Message payload was not JSON; could not be parsed to JSONObject (" + object.getClass() + ").");
 			}
 
-		} catch (final ValidationException | ParseException | IOException | InterlokException e) {
-			log.warn("JSON is not valid!", e);
-			if (e instanceof ValidationException) {
-				for (final ValidationException ve : ((ValidationException)e).getCausingExceptions()) {
-					log.debug(ve.getMessage());
-				}
+		} catch (final InterlokException e) {
+
+			log.error("Could not successfully retrieve schema!", e);
+			throw new ServiceException(e);
+
+		} catch (final ValidationException e) {
+
+			for (final ValidationException ve : e.getCausingExceptions()) {
+				log.error(ve.getMessage());
 			}
 			throw new ServiceException(e);
+
+		} catch (final ParseException | IOException e) {
+
+			log.error("JSON is not valid!", e);
+			throw new ServiceException(e);
+
 		}
 	}
 
