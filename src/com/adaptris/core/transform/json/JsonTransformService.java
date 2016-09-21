@@ -68,6 +68,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * An example:
  * <br/>
  * Assuming Shiftr content like this;
+ *
  * <pre>
  * {@code
  * {
@@ -80,6 +81,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * }
  * }
  * </pre>
+ *
  * And assuming our message contains payload items that include;
  * <ul>
  * <li>Key = "my-metadata-key1" Value = "Value1"</li>
@@ -87,6 +89,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <li></li>
  * </ul>
  * Just before transform execution, our variable substitution will run giving us final Shift content like this;
+ *
  * <pre>
  * {@code
  * {
@@ -107,8 +110,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * In Shiftr, the input path is a JSON tree structure, and the output path is flattened "dot notation" path notation. The idea is
  * that you can start with a copy your JSon input data data and modify it into a Shiftr spec by supplying a "dot notation" output
  * path for each piece of data that you care about.
- * 
+ *
  * For example, given this simple input JSON :
+ *
  * <pre>
  * {@code
  * {
@@ -125,6 +129,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * A simple Shiftr spec could be constructed by coping of that input, and modifying it to supply an output path for each piece of
  * data :
+ *
  * <pre>
  * {@code
  * {
@@ -137,7 +142,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * }
  * }
  * </pre>
+ *
  * would product the following output JSON :
+ *
  * <pre>
  * {@code
  * {
@@ -155,6 +162,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * As shown above, Shiftr specs can be entirely made up of literal string values, but it's real power comes from its wildcards.Using
  * wildcards, you can leverage the fact that you know, not just the data and it's immediate key, but the whole input path to that
  * data. Expanding the example above, say we have the following expanded Input JSON:
+ *
  * <pre>
  * {@code
  * {
@@ -175,9 +183,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * }
  * }
  * </pre>
+ *
  * The Spec would be :
+ *
  * <pre>
-{@code 
+{@code
 {
   "rating": {
     "primary": {
@@ -203,9 +213,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 }
 }
  * </pre>
+ *
  * Yielding the following output:
+ *
  * <pre>
-{@code 
+{@code
 {
   "Rating": 3,
   "RatingRange": 5,
@@ -234,6 +246,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * As illustrated in the example above, the '*' wildcard by itself is useful for "templating" JSON maps, where each key / value has
  * the same "format".
+ *
  * <pre>
 {@code
  // example input
@@ -251,6 +264,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
   }
 }
  * </pre>
+ *
  * In this example, "rating.quality" and "rating.sharpness" both have the same structure/format, and thus we can use the '*' to
  * allow use to write more compact rules and avoid having to to explicitly write very similar rules for both "quality" and
  * "sharpness".
@@ -258,14 +272,16 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <h4>'*' wildcard as part of a key :</h4>
  * <p>
  * This is useful for working with input JSON with keys that are "prefixed". Ex : if you had an input document like
+ *
  * <pre>
-{@code 
+{@code
   {
      "tag-Pro" : "Awesome",
      "tag-Con" : "Bogus"
   }
 }
  * </pre>
+ *
  * A 'tag-*' would match both keys, and make the whole key and "matched" part of the key available. Ex, input key of "tag-Pro" with
  * LHS spec "tag-*", would "tag-Pro" and "Pro" available to reference. Note the '*' wildcard is as non-greedy as possible, hence you
  * can use more than one '*' in a key. For example, "tag-*-*" would match "tag-Foo-Bar", making "tag-Foo-Bar", "Foo", and "Bar" all
@@ -280,10 +296,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * key). There are syntactic sugar versions of the wildcard, all of the following mean the same thing : {@code '&' = '&0' =
  * '&(0)' = '&(0,0)' }. The syntactic sugar versions are nice, as there are a set of data transforms that do not need to use
  * the canonical form, e.g. if your input data does not have any "prefixed" keys.
- * 
+ *
  * <h4>'&amp;' Path lookup</h4>
- * <p>As Shiftr processes data and walks down the spec, it maintains a data structure describing the path it has walked. The '&amp;'
+ * <p>
+ * As Shiftr processes data and walks down the spec, it maintains a data structure describing the path it has walked. The '&amp;'
  * wildcard can access data from that path in a 0 major, upward oriented way.
+ *
  * <pre>
 {@code
   {
@@ -297,7 +315,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </pre>
  * </p>
  * <h4>'&amp;' Subkey lookup</h4>
- * <p>The '&amp;' subkey lookup allows us to referece the values captured by the '*' wildcard. Example, "tag-*-*" would match
+ * <p>
+ * The '&amp;' subkey lookup allows us to referece the values captured by the '*' wildcard. Example, "tag-*-*" would match
  * "tag-Foo-Bar", making
  * <ul>
  * <li>{@code &(0,0) = "tag-Foo-Bar"}</li>
@@ -307,7 +326,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <p>
  * <h3>'$' Wildcard</h3>
- * <p>Valid only on the LHS of the spec. The existence of this wildcard is a reflection of the fact that the "data" of the input
+ * <p>
+ * Valid only on the LHS of the spec. The existence of this wildcard is a reflection of the fact that the "data" of the input
  * JSON, can be both in the "values" and the "keys" of the input JSON. The base case operation of Shiftr is to copy input JSON
  * "values", thus we need a way to specify that we want to copy the input JSON "key" instead. Thus '$' specifies that we want to use
  * an input key, or input key derived value, as the data to be placed in the output JSON. '$' has the same syntax as the '&amp;'
@@ -320,6 +340,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * example above.</li>
  * <li>you want to make a list of all the input keys</li>
  * </ol>
+ *
  * <pre>
 {@code
   // input
@@ -335,13 +356,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
       }
     }
   }
-  
+
   // desired output
   {
     "ratings" : [ "primary", "quality" ]    // Aside : this is an example of implicit JSON array creation in the output which is detailed further down.
                                             // For now just observe that the input keys "primary" and "quality" have both made it to the output.
   }
-  
+
   // spec
   {
     "rating": {
@@ -369,8 +390,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * On the LHS of the spec, # allows you to specify a hard coded String to be place as a value in the output. The initial use-case
  * for this feature was to be able to process a Boolean input value, and if the value is boolean true write out the string
  * "enabled". Note, this was possible before, but it required two Shiftr steps.
+ *
  * <pre>
-{@code 
+{@code
    "hidden" : {
        "true" : {                             // if the value of "hidden" is true
            "#disabled" : "clients.clientId"   // write the word "disabled" to the path "clients.clientId"
@@ -380,8 +402,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </pre>
  * </p>
  * <h3>'|' Wildcard</h3>
- * <p>Valid only on the LHS of the spec. This 'or' wildcard allows you to match multiple input keys. Useful if you don't always know
+ * <p>
+ * Valid only on the LHS of the spec. This 'or' wildcard allows you to match multiple input keys. Useful if you don't always know
  * exactly what your input data will be.
+ *
  * <pre>
 {@code
   {
@@ -389,21 +413,25 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
   }
 }
  * </pre>
+ *
  * This is really just syntactic sugar, as the implementation really just treats the key "rating|Rating" as two keys when
  * processing.
  * </p>
  * <h3>'@' Wildcard</h3>
- * <p>Valid on both sides of the spec.</p>
+ * <p>
+ * Valid on both sides of the spec.
+ * </p>
  * <h4>The basic '@' on the LHS.</h4>
  * This wildcard is necessary if you want to do put both the input value and the input key somewhere in the output JSON. Example '@'
  * wildcard usage :
+ *
  * <pre>
-{@code 
+{@code
   // Say we have a spec that just operates on the value of the input key "rating"
   {
      "foo" : "place.to.put.value",  // leveraging the implicit operation of Shiftr which is to operate on input JSON values
   }
-  
+
   // if we want to do something with the "key" as well as the value
   {
      "foo" : {
@@ -413,6 +441,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
   }
 }
  * </pre>
+ *
  * Thus the '@' wildcard is the mean "copy the value of the data at this level in the tree, to the output".
  * </p>
  * <h4>Advanced '@' sign wildcard</h4>
@@ -420,11 +449,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * and use the value at that key.
  * </p>
  * <h2>JSON Arrays</h2>
- * <p>Reading from (input) and writing to (output) JSON Arrays is fully supported.</p>
- * 
+ * <p>
+ * Reading from (input) and writing to (output) JSON Arrays is fully supported.
+ * </p>
+ *
  * <h3>Handling Arrays in the input JSON</h3>
  * <p>
  * Shiftr treats JSON arrays in the input data as Maps with numeric keys.
+ *
  * <pre>
 {@code
   // input
@@ -451,6 +483,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * Traditional array brackets, [ ], are used to specify array index in the output JSON. []'s are only valid on the RHS of the Shiftr
  * spec.
+ *
  * <pre>
 {@code
   // input
@@ -482,12 +515,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 }
  * </pre>
  * </p>
- * 
+ *
  * <h3>JSON arrays in the spec file</h3>
  * <p>
  * JSON Arrays in Shiftr spec are used to to specify that piece of input data should be copied to two places in the output JSON.
+ *
  * <pre>
-{@code 
+{@code
   // input
   { "foo" : 3 }
 
@@ -506,9 +540,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * If a spec file is configured to output multiple pieces of data to the same output location, the output location will be turned
  * into a JSON array.
- * 
+ *
  * <pre>
-{@code 
+{@code
   // input
   {
       "foo" : "bar",
@@ -530,8 +564,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <h2>Additional Info</h2>
  * <h3>Algorithm High Level</h3>
- * <p>Walk the input data, and Shiftr spec simultaneously, and execute the Shiftr command/mapping each time there is a match.</p>
- * 
+ * <p>
+ * Walk the input data, and Shiftr spec simultaneously, and execute the Shiftr command/mapping each time there is a match.
+ * </p>
+ *
  * <h3.Algorithm Low Level</h3>
  * <ul>
  * <li>Simultaneously walk of the spec and input JSon, and maintain a walked "input" path data structure.</li>
@@ -550,113 +586,180 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </li>
  * </ol>
  * <li>If no match is found, try to match against LHS keys with '*' wildcard values.
- * <ol><li>For deterministic behavior, {@code '*'} wildcard keys are sorted and applied/matched in alphabetical order.</li></ol>
+ * <ol>
+ * <li>For deterministic behavior, {@code '*'} wildcard keys are sorted and applied/matched in alphabetical order.</li>
+ * </ol>
  * </li>
  * Note, processing of the '@' and '$' LHS keys always occur if their parent's match, and do not block any other matching.
  * </p>
  * <h3>Implementation Notes</h3>
- * <p>Instances of this class execute Shiftr transformations given a transform spec of Jackson-style maps of maps and a
+ * <p>
+ * Instances of this class execute Shiftr transformations given a transform spec of Jackson-style maps of maps and a
  * Jackson-style map-of-maps input.
  * </p>
- * 
+ *
  * @license BASIC
  * @config json-transform-service
  * @author Aaron McGrath
  */
 @XStreamAlias("json-transform-service")
 public class JsonTransformService extends ServiceImp {
-  
-  @NotNull
-  @Valid
-  @AutoPopulated
-  private DataInputParameter<String> sourceJson;
-  
-  @NotNull
-  @Valid
-  private DataInputParameter<String> mappingSpec;
-  
-  @NotNull
-  @Valid
-  @AutoPopulated
-  private DataOutputParameter<String> targetJson;
 
-  @NotNull
-  @AutoPopulated
-  @Valid
-  private MetadataFilter metadataFilter;
+	@NotNull
+	@Valid
+	@AutoPopulated
+	private DataInputParameter<String> sourceJson;
 
-  public JsonTransformService() {
-    setSourceJson(new StringPayloadDataInputParameter());
-    setTargetJson(new StringPayloadDataOutputParameter());
-    setMetadataFilter(new RemoveAllMetadataFilter());
-  }
-  
-  @Override
-  public void doService(AdaptrisMessage message) throws ServiceException {
-    try {
-      String shiftrContent = this.getMappingSpec().extract(message);
-      shiftrContent = this.applyMetadataSubstitution(message, shiftrContent);
-      
-      List<Object> chainrSpecJSON = JsonUtils.jsonToList(shiftrContent, defaultIfEmpty(message.getContentEncoding(), "UTF-8"));
-      Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
-      Object inputJSON = JsonUtils.jsonToObject(this.getSourceJson().extract(message));
-      Object transformedOutput = chainr.transform(inputJSON);
-      getTargetJson().insert(JsonUtils.toJsonString(transformedOutput), message);
-    } catch (Exception ex) {
-      throw new ServiceException(ex);
-    }
-  }
+	@NotNull
+	@Valid
+	private DataInputParameter<String> mappingSpec;
 
-  private String applyMetadataSubstitution(AdaptrisMessage message, String shiftrContent) {
-    MetadataCollection filteredMetadata = getMetadataFilter().filter(message);
-    for (MetadataElement element : filteredMetadata) {
-      shiftrContent = shiftrContent.replace("${" + element.getKey() + "}", element.getValue());
-    }
-    return shiftrContent;
-  }
+	@NotNull
+	@Valid
+	@AutoPopulated
+	private DataOutputParameter<String> targetJson;
 
-  @Override
-  public void prepare() throws CoreException {
-  }
+	@NotNull
+	@AutoPopulated
+	@Valid
+	private MetadataFilter metadataFilter;
 
-  @Override
-  protected void closeService() {
-  }
+	/**
+	 * Create new instance of JSON transform service.
+	 */
+	public JsonTransformService() {
+		setSourceJson(new StringPayloadDataInputParameter());
+		setTargetJson(new StringPayloadDataOutputParameter());
+		setMetadataFilter(new RemoveAllMetadataFilter());
+	}
 
-  @Override
-  protected void initService() throws CoreException {
-  }
+	/**
+	 * {@inheritDoc}.
+	 */
+	@Override
+	public void doService(final AdaptrisMessage message) throws ServiceException {
+		try {
 
-  public DataOutputParameter<String> getTargetJson() {
-    return targetJson;
-  }
+			String shiftrContent = mappingSpec.extract(message);
+			final MetadataCollection filteredMetadata = getMetadataFilter().filter(message);
+			for (final MetadataElement element : filteredMetadata) {
+				shiftrContent = shiftrContent.replace("${" + element.getKey() + "}", element.getValue());
+			}
 
-  public void setTargetJson(DataOutputParameter<String> target) {
-    this.targetJson = Args.notNull(target, "Target");
-  }
+			final String encoding = defaultIfEmpty(message.getContentEncoding(), "UTF-8");
+			final List<Object> chainrSpecJSON = JsonUtils.jsonToList(shiftrContent, encoding);
 
-  public DataInputParameter<String> getSourceJson() {
-    return sourceJson;
-  }
+			final String jsonString = sourceJson.extract(message);
+			final Object jsonObject = JsonUtils.jsonToObject(jsonString);
 
-  public void setSourceJson(DataInputParameter<String> src) {
-    this.sourceJson = Args.notNull(src, "Source");
-  }
+			final Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
 
-  public DataInputParameter<String> getMappingSpec() {
-    return mappingSpec;
-  }
+			final Object transformedOutput = chainr.transform(jsonObject);
+			final String outputJson = JsonUtils.toJsonString(transformedOutput);
+			targetJson.insert(outputJson, message);
 
-  public void setMappingSpec(DataInputParameter<String> mapping) {
-    this.mappingSpec = Args.notNull(mapping, "Mapping");
-  }
+		} catch (final Exception e) {
+			throw new ServiceException(e);
+		}
+	}
 
-  public MetadataFilter getMetadataFilter() {
-    return metadataFilter;
-  }
+	/**
+	 * Unused method. For more information see {@inheritDoc}.
+	 */
+	@Override
+	public void prepare() throws CoreException {
+		/* unused/empty method */
+	}
 
-  public void setMetadataFilter(MetadataFilter mf) {
-    this.metadataFilter = Args.notNull(mf, "Metadata Filter");
-  }
+	/**
+	 * Unused method. For more information see {@inheritDoc}.
+	 */
+	@Override
+	protected void closeService() {
+		/* unused/empty method */
+	}
 
+	/**
+	 * Unused method. For more information see {@inheritDoc}.
+	 */
+	@Override
+	protected void initService() throws CoreException {
+		/* unused/empty method */
+	}
+
+	/**
+	 * Get the target JSON.
+	 *
+	 * @return The target JSON.
+	 */
+	public DataOutputParameter<String> getTargetJson() {
+		return targetJson;
+	}
+
+	/**
+	 * Set the target JSON.
+	 *
+	 * @param targetJson
+	 *          The target JSON.
+	 */
+	public void setTargetJson(final DataOutputParameter<String> targetJson) {
+		this.targetJson = Args.notNull(targetJson, "Target");
+	}
+
+	/**
+	 * Get the source JSON.
+	 *
+	 * @return The source JSON.
+	 */
+	public DataInputParameter<String> getSourceJson() {
+		return sourceJson;
+	}
+
+	/**
+	 * Set the source JSON.
+	 *
+	 * @param sourceJson
+	 *          The source JSON.
+	 */
+	public void setSourceJson(final DataInputParameter<String> sourceJson) {
+		this.sourceJson = Args.notNull(sourceJson, "Source");
+	}
+
+	/**
+	 * Get the mapping spec.
+	 *
+	 * @return The mapping spec.
+	 */
+	public DataInputParameter<String> getMappingSpec() {
+		return mappingSpec;
+	}
+
+	/**
+	 * Set the mapping spec.
+	 *
+	 * @param mappingSpec
+	 *          The mapping spec.
+	 */
+	public void setMappingSpec(final DataInputParameter<String> mappingSpec) {
+		this.mappingSpec = Args.notNull(mappingSpec, "Mapping");
+	}
+
+	/**
+	 * Get the metadata filter.
+	 *
+	 * @return The metadata filter.
+	 */
+	public MetadataFilter getMetadataFilter() {
+		return metadataFilter;
+	}
+
+	/**
+	 * Set the metadata filter.
+	 *
+	 * @param metadataFilter
+	 *          The metadata filter.
+	 */
+	public void setMetadataFilter(final MetadataFilter metadataFilter) {
+		this.metadataFilter = Args.notNull(metadataFilter, "Metadata Filter");
+	}
 }
