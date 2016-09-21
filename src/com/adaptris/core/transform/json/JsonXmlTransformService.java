@@ -39,19 +39,11 @@ public class JsonXmlTransformService extends ServiceImp {
 
 	@AutoPopulated
 	@NotNull
-	private TransformationDirection direction;
+	private TransformationDirection direction = TransformationDirection.JSON_TO_XML;
 	@NotNull
 	@AutoPopulated
 	@Valid
-	private TransformationDriver driver;
-
-	/**
-	 * Create a new JSON XML transform service instance.
-	 */
-	public JsonXmlTransformService() {
-		setDirection(TransformationDirection.JSON_TO_XML);
-		setDriver(new DefaultJsonTransformationDriver());
-	}
+	private TransformationDriver driver = new DefaultJsonTransformationDriver();
 
 	/**
 	 * {@inheritDoc}.
