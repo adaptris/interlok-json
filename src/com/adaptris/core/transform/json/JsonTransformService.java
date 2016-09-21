@@ -608,7 +608,7 @@ public class JsonTransformService extends ServiceImp {
 	@NotNull
 	@Valid
 	@AutoPopulated
-	private DataInputParameter<String> sourceJson;
+	private DataInputParameter<String> sourceJson = new StringPayloadDataInputParameter();
 
 	@NotNull
 	@Valid
@@ -617,21 +617,12 @@ public class JsonTransformService extends ServiceImp {
 	@NotNull
 	@Valid
 	@AutoPopulated
-	private DataOutputParameter<String> targetJson;
+	private DataOutputParameter<String> targetJson = new StringPayloadDataOutputParameter();
 
 	@NotNull
 	@AutoPopulated
 	@Valid
-	private MetadataFilter metadataFilter;
-
-	/**
-	 * Create new instance of JSON transform service.
-	 */
-	public JsonTransformService() {
-		setSourceJson(new StringPayloadDataInputParameter());
-		setTargetJson(new StringPayloadDataOutputParameter());
-		setMetadataFilter(new RemoveAllMetadataFilter());
-	}
+	private MetadataFilter metadataFilter = new RemoveAllMetadataFilter();
 
 	/**
 	 * {@inheritDoc}.
