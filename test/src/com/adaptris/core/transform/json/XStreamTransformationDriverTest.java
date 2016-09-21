@@ -25,7 +25,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
     SerializableMessage original = configure(new SerializableAdaptrisMessage());
     String jsonData = jsonMarshaller().marshal(original);
     System.err.println(jsonData);
-    String xmlData = driver.transform(jsonData, JsonXmlTransformService.DIRECTION.JSON_TO_XML);
+    String xmlData = driver.transform(jsonData, JsonXmlTransformService.TransformationDirection.JSON_TO_XML);
     System.err.println(xmlData);
     SerializableAdaptrisMessage unmarshalled = (SerializableAdaptrisMessage) xmlMarshaller().unmarshal(xmlData);
     assertEquals(original, unmarshalled);
@@ -36,7 +36,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
     SerializableMessage original = configure(new SerializableAdaptrisMessage());
     String xmlData = xmlMarshaller().marshal(original);
     System.err.println(xmlData);
-    String jsonData = driver.transform(xmlData, JsonXmlTransformService.DIRECTION.XML_TO_JSON);
+    String jsonData = driver.transform(xmlData, JsonXmlTransformService.TransformationDirection.XML_TO_JSON);
     System.err.println(jsonData);
     SerializableAdaptrisMessage unmarshalled = (SerializableAdaptrisMessage) jsonMarshaller().unmarshal(jsonData);
     assertEquals(original, unmarshalled);
@@ -48,7 +48,7 @@ public class XStreamTransformationDriverTest extends BaseCase {
     SerializableMessage original = configure(new SerializableAdaptrisMessage());
     String xmlData = xmlMarshaller().marshal(original);
     try {
-      String jsonData = driver.transform(xmlData, JsonXmlTransformService.DIRECTION.JSON_TO_XML);
+      String jsonData = driver.transform(xmlData, JsonXmlTransformService.TransformationDirection.JSON_TO_XML);
       fail();
     } catch (ServiceException expected) {
 

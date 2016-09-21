@@ -2,7 +2,7 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
+import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDirection;
 import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 
 import net.sf.json.JSON;
@@ -63,8 +63,11 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 		DEFAULT_TYPE_HINTS_ENABLED = serializer.isTypeHintsEnabled();
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
-	public String transform(final String input, final DIRECTION direction) throws ServiceException {
+	public String transform(final String input, final TransformationDirection direction) throws ServiceException {
 		switch (direction) {
 			case JSON_TO_XML:
 				return jsonToXML(input);

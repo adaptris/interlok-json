@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
+import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDirection;
 import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -37,7 +37,7 @@ public class SimpleJsonTransformationDriver implements TransformationDriver {
   }
   
   @Override
-  public String transform(String input, DIRECTION direction) throws ServiceException {
+  public String transform(String input, TransformationDirection direction) throws ServiceException {
     switch(direction) {
     case JSON_TO_XML:
       return jsonToXML(input);
