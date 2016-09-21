@@ -80,25 +80,67 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 		}
 	}
 
+	/**
+	 * Convert XML to JSON.
+	 *
+	 * @param input
+	 *          The XML to convert.
+	 *
+	 * @return The converted JSON.
+	 *
+	 * @throws ServiceException
+	 *           Thrown if there was a problem converting from XML to JSON.
+	 */
 	private String xmlToJSON(final String input) throws ServiceException {
 		try {
+
 			return getSerializer().read(input).toString();
+
 		} catch (final JSONException e) {
 			throw new ServiceException("Exception while converting XML to JSON", e);
 		}
 	}
 
+	/**
+	 * Convert JSON to XML.
+	 *
+	 * @param input
+	 *          The JSON to convert.
+	 *
+	 * @return The converted XML.
+	 *
+	 * @throws ServiceException
+	 *           Thrown if there was a problem converting from JSON to XML.
+	 */
 	private String jsonToXML(final String input) throws ServiceException {
 		try {
+
 			final JSON object = parse(input);
 			return getSerializer().write(object);
+
 		} catch (final JSONException e) {
 			throw new ServiceException("Exception while converting JSON to XML", e);
 		}
 	}
 
+	/**
+	 * Parse the string to JSON.
+	 *
+	 * @param input
+	 *          The string to parse.
+	 *
+	 * @return The JSON.
+	 *
+	 * @throws JSONException
+	 *           Thrown if the string could not be parsed to JSON.
+	 */
 	protected abstract JSON parse(String input) throws JSONException;
 
+	/**
+	 * Create an XML serializer with the data from the member variables.
+	 *
+	 * @return The newly created/populated XML serializer.
+	 */
 	private XMLSerializer getSerializer() {
 		final XMLSerializer serializer = new XMLSerializer();
 		serializer.setArrayName(getArrayNameOrDefault());
