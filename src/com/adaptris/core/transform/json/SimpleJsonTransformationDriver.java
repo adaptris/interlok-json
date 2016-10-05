@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDirection;
-import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
