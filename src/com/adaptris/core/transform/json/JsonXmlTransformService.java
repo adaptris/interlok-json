@@ -26,10 +26,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * This format can then be used to precisely control the JSON output when converting to JSON, resolving issues like improper array
  * generation. This driver always takes the entire message body as input and does not support converting only a part of it.
  * </p>
- * 
+ *
  * @config json-xml-transform-service
  * @license BASIC
- * 
+ *
  * @author gdries
  */
 @XStreamAlias("json-xml-transform-service")
@@ -37,63 +37,116 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Transform a JSON document to XML, or vice versa", tag = "service,transform,json,xml")
 public class JsonXmlTransformService extends ServiceImp {
 
-  @AutoPopulated
-  @NotNull
-  private DIRECTION direction;
-  @NotNull
-  @AutoPopulated
-  @Valid
-  private TransformationDriver driver;
-  
-  public JsonXmlTransformService() {
-    setDirection(DIRECTION.JSON_TO_XML);
-    setDriver(new DefaultJsonTransformationDriver());
-  }
+	@AutoPopulated
+	@NotNull
+	private TransformationDirection direction = TransformationDirection.JSON_TO_XML;
+	@NotNull
+	@AutoPopulated
+	@Valid
+	private TransformationDriver driver = new DefaultJsonTransformationDriver();
 
-  @Override
-  public void doService(AdaptrisMessage msg) throws ServiceException {
-    msg.setContent(getDriver().transform(msg.getContent(), getDirection()), msg.getContentEncoding());
-  }
-  
-  @Override
-  public void prepare() throws CoreException {
-  }
+	/**
+	 * {@inheritDoc}.
+	 */
+	@Override
+	public void doService(final AdaptrisMessage msg) throws ServiceException {
+		msg.setContent(driver.transform(msg.getContent(), direction), msg.getContentEncoding());
+	}
 
-  @Override
-  protected void closeService() {
-  }
+	/**
+	 * Unused method. For more information see {@inheritDoc}.
+	 */
+	@Override
+	public void prepare() throws CoreException {
+		/* unused/empty method */
+	}
 
-  @Override
-  protected void initService() throws CoreException {
-  }
-  
-  public DIRECTION getDirection() {
-    return direction;
-  }
+	/**
+	 * Unused method. For more information see {@inheritDoc}.
+	 */
+	@Override
+	protected void closeService() {
+		/* unused/empty method */
+	}
 
-  public void setDirection(DIRECTION direction) {
-    this.direction = direction;
-  }
+	/**
+	 * Unused method. For more information see {@inheritDoc}.
+	 */
+	@Override
+	protected void initService() throws CoreException {
+		/* unused/empty method */
+	}
 
-  public TransformationDriver getDriver() {
-    return driver;
-  }
+	/**
+	 * Get the transformation direction.
+	 *
+	 * @return The transformation direction.
+	 */
+	public TransformationDirection getDirection() {
+		return direction;
+	}
 
-  public void setDriver(TransformationDriver driver) {
-    this.driver = driver;
-  }
+	/**
+	 * Set the transformation direction.
+	 *
+	 * @param direction
+	 *          The transformation direction.
+	 */
+	public void setDirection(final TransformationDirection direction) {
+		this.direction = direction;
+	}
 
-  public enum DIRECTION {
-    JSON_TO_XML, XML_TO_JSON;
-    
-    @Override 
-    public String toString() {
-      return name();
-      // return WordUtils.capitalizeFully(name(), new char[] {'_'}).replace('_', ' ');
-    }
-  }
-  
-  public interface TransformationDriver {
-    public String transform(String input, DIRECTION direction) throws ServiceException;
-  }
+	/**
+	 * Get the transformation driver.
+	 *
+	 * @return The transformation driver.
+	 */
+	public TransformationDriver getDriver() {
+		return driver;
+	}
+
+	/**
+	 * Set the transformation driver.
+	 *
+	 * @param driver
+	 *          The transformation driver.
+	 */
+	public void setDriver(final TransformationDriver driver) {
+		this.driver = driver;
+	}
+
+	/**
+	 * Direction enum; JSON <-> XML.
+	 */
+	public enum TransformationDirection {
+		/**
+		 * JSON to XML.
+		 */
+		JSON_TO_XML,
+
+		/**
+		 * XML to JSON.
+		 */
+		XML_TO_JSON;
+	}
+
+	/**
+	 * Transformation driver.
+	 */
+	public interface TransformationDriver {
+		/**
+		 * Perform transformation.
+		 *
+		 * @param input
+		 *          The data to transform.
+		 * @param direction
+		 *          The direction of the transformation.
+		 *
+		 * @return The transformed data.
+		 *
+		 * @throws ServiceException
+		 *           Thrown if there is a problem with the transformation.
+		 */
+		public String transform(String input, TransformationDirection direction) throws ServiceException;
+	}
 }

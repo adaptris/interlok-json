@@ -6,7 +6,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
-import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
+import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDirection;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -43,7 +43,7 @@ public class SimpleJsonToXmlTransformService extends ServiceImp {
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
     try {
-      msg.setStringPayload(driver.transform(msg.getStringPayload(), DIRECTION.JSON_TO_XML), msg.getCharEncoding());
+      msg.setStringPayload(driver.transform(msg.getStringPayload(), TransformationDirection.JSON_TO_XML), msg.getCharEncoding());
     } catch (Exception e) {
       throw new ServiceException("Failed to convert JSON to XML", e);
     }

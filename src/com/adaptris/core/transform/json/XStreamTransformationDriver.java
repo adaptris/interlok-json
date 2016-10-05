@@ -4,7 +4,7 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.XStreamJsonMarshaller;
 import com.adaptris.core.XStreamMarshaller;
-import com.adaptris.core.transform.json.JsonXmlTransformService.DIRECTION;
+import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDirection;
 import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 import com.adaptris.core.util.ExceptionHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -33,7 +33,7 @@ public class XStreamTransformationDriver implements TransformationDriver {
 
 
   @Override
-  public String transform(String input, DIRECTION direction) throws ServiceException {
+  public String transform(String input, TransformationDirection direction) throws ServiceException {
     String result = null;
     try {
       switch (direction) {

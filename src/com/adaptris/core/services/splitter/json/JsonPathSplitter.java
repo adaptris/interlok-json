@@ -1,5 +1,7 @@
 package com.adaptris.core.services.splitter.json;
 
+import java.util.Arrays;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.common.ConstantDataInputParameter;
@@ -12,56 +14,102 @@ import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/**
+ * JSON path splitter.
+ */
 @XStreamAlias("json-path-splitter")
 public class JsonPathSplitter extends MessageSplitterImp {
-  
-  private DataInputParameter<String> jsonSource;
-  
-  private DataInputParameter<String> jsonPath;
-  
-  private MessageSplitter messageSplitter;
 
-  @Override
-  public Iterable<AdaptrisMessage> splitMessage(AdaptrisMessage msg) throws CoreException {
-    try {      
-      JsonPathService jsonPathService = new JsonPathService();
-      ConstantDataInputParameter constantDataInputParameter = new ConstantDataInputParameter(this.getJsonPath().extract(msg));
-      StringPayloadDataOutputParameter payloadOutputParam = new StringPayloadDataOutputParameter();
-      Execution singleExec = new Execution(constantDataInputParameter, payloadOutputParam);
-      
-      jsonPathService.setSource(this.getJsonSource());
-      jsonPathService.getExecutions().add(singleExec);
-      
-      jsonPathService.doService(msg);
-      
-      return this.getMessageSplitter().splitMessage(msg);
-    } catch (InterlokException ex) {
-      throw new CoreException(ex);
-    }
-  }
+	private DataInputParameter<String> jsonSource;
 
-  public DataInputParameter<String> getJsonSource() {
-    return jsonSource;
-  }
+	private DataInputParameter<String> jsonPath;
 
-  public void setJsonSource(DataInputParameter<String> jsonSource) {
-    this.jsonSource = jsonSource;
-  }
+	private MessageSplitter messageSplitter;
 
-  public DataInputParameter<String> getJsonPath() {
-    return jsonPath;
-  }
+	/**
+	 * Split JSON path. {@inheritDoc}.
+	 *
+	 * @param message
+	 *          The Adaptris message with the JSON payload.
+	 */
+	@Override
+	public Iterable<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
+		try {
 
-  public void setJsonPath(DataInputParameter<String> jsonPath) {
-    this.jsonPath = jsonPath;
-  }
+			/* TODO try and use net.minidev.jsonparser to parse the JSON */
 
-  public MessageSplitter getMessageSplitter() {
-    return messageSplitter;
-  }
+			final String extractedMessage = jsonPath.extract(message);
 
-  public void setMessageSplitter(MessageSplitter messageSplitter) {
-    this.messageSplitter = messageSplitter;
-  }
+			final ConstantDataInputParameter source = new ConstantDataInputParameter(extractedMessage);
+			final StringPayloadDataOutputParameter target = new StringPayloadDataOutputParameter();
+			final Execution execution = new Execution(source, target);
 
+			final JsonPathService jsonPathService = new JsonPathService();
+			jsonPathService.setSource(jsonSource);
+			jsonPathService.setExecutions(Arrays.asList(execution));
+			jsonPathService.doService(message);
+
+			return messageSplitter.splitMessage(message);
+
+		} catch (final InterlokException ex) {
+			throw new CoreException(ex);
+		}
+	}
+
+	/**
+	 * Get the JSON source.
+	 *
+	 * @return The JSON source.
+	 */
+	public DataInputParameter<String> getJsonSource() {
+		return jsonSource;
+	}
+
+	/**
+	 * Set the JSON source.
+	 *
+	 * @param jsonSource
+	 *          The JSON source.
+	 */
+	public void setJsonSource(final DataInputParameter<String> jsonSource) {
+		this.jsonSource = jsonSource;
+	}
+
+	/**
+	 * Get the JSON path.
+	 *
+	 * @return The JSON path.
+	 */
+	public DataInputParameter<String> getJsonPath() {
+		return jsonPath;
+	}
+
+	/**
+	 * Set the JSON path.
+	 *
+	 * @param jsonPath
+	 *          The JSON path.
+	 */
+	public void setJsonPath(final DataInputParameter<String> jsonPath) {
+		this.jsonPath = jsonPath;
+	}
+
+	/**
+	 * Get the message splitter.
+	 *
+	 * @return The message splitter.
+	 */
+	public MessageSplitter getMessageSplitter() {
+		return messageSplitter;
+	}
+
+	/**
+	 * Set the message splitter.
+	 *
+	 * @param messageSplitter
+	 *          The message splitter.
+	 */
+	public void setMessageSplitter(final MessageSplitter messageSplitter) {
+		this.messageSplitter = messageSplitter;
+	}
 }

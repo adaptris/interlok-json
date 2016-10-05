@@ -1,28 +1,28 @@
 package com.adaptris.core.services.splitter.json;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 /**
  * Message splitter implementation that splits a JSON object so each entry forms a new message.
- * 
+ *
  * <p>
  * If the message cannot be parsed as JSON then an exception will be thrown; If the message is an empty JSON object then the
  * original message is returned. Note that because it operates on the entire payload, size of message considerations may be in
@@ -36,61 +36,108 @@ import net.sf.json.JSONSerializer;
 [{colour: "red",value: "#f00"},{colour: "green",value: "#0f0"},{colour: "blue",value: "#00f"},{colour: "black",value: "#000"}]</code>
  * would be split into 4 messages.
  * </p>
- * 
+ *
  * @config json-object-splitter
  * @author lchan
- * 
+ *
  */
 @XStreamAlias("json-object-splitter")
 public class JsonObjectSplitter extends MessageSplitterImp {
 
-  @Override
-  public List<AdaptrisMessage> splitMessage(AdaptrisMessage msg) throws CoreException {
-    List<AdaptrisMessage> result = new ArrayList<>();
-    try {
-      String original = msg.getContent();
-      JSON jsonRoot = JSONSerializer.toJSON(original);
-      if (!jsonRoot.isEmpty()) {
-        if (jsonRoot.isArray()) {
-          result.addAll(splitMessage((JSONArray) jsonRoot, msg));
-        }
-        else {
-          JSONObject obj = (JSONObject) jsonRoot;
-          for (Iterator i = obj.keys(); i.hasNext();) {
-            String key = (String) i.next();
-            JSONObject o = new JSONObject();
-            o.put(key, obj.get(key));
-            result.add(createSplitMessage(o, msg));
-          }
-        }
-      }
-      else {
-        result.add(msg);
-      }
-    }
-    catch (Exception e) {
-      throw new CoreException(e);
-    }
-    return result;
-  }
+	/**
+	 * Default logger.
+	 */
+	protected static final Logger LOGGER = LoggerFactory.getLogger(JsonObjectSplitter.class.getName());
 
+	/**
+	 * Split a JSON payload from an Adaptris message. {@inheritDoc}.
+	 *
+	 * @param message
+	 *          The Adaptris message.
+	 *
+	 * @return A list of Adaptris messages for each JSON object.
+	 */
+	@Override
+	public List<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
+		final List<AdaptrisMessage> result = new ArrayList<>();
+		try {
 
-  List<AdaptrisMessage> splitMessage(JSONArray array, AdaptrisMessage original) throws IOException {
-    List<AdaptrisMessage> result = new ArrayList<>();
-    for (Iterator i = array.iterator(); i.hasNext();) {
-      result.add(createSplitMessage((JSONObject) i.next(), original));
-    }
-    return result;
-  }
+			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+			final Object object = jsonParser.parse(message.getInputStream());
 
-  AdaptrisMessage createSplitMessage(JSONObject src, AdaptrisMessage original) throws IOException {
-    AdaptrisMessageFactory factory = selectFactory(original);
-    AdaptrisMessage dest = factory.newMessage();
-    try (StringReader in = new StringReader(src.toString()); Writer out = dest.getWriter()) {
-      IOUtils.copy(in, out);
-      copyMetadata(original, dest);
-    }
-    return dest;
-  }
+			if (object instanceof JSONArray) {
 
+				final JSONArray array = (JSONArray)object;
+				if (array.isEmpty()) {
+					result.add(message);
+				} else {
+					result.addAll(splitMessage(array, message));
+				}
+
+			} else if (object instanceof JSONObject) {
+
+				final JSONObject json = (JSONObject)object;
+				if (json.isEmpty()) {
+					result.add(message);
+				} else {
+					for (final String key : json.keySet()) {
+						final JSONObject o = new JSONObject();
+						o.put(key, json.get(key));
+						result.add(createSplitMessage(o, message));
+					}
+				}
+
+			} else {
+				throw new Exception("Message payload was not JSON; could not be parsed to " + JSONObject.class + " from " + object.getClass());
+			}
+
+		} catch (final Exception e) {
+			LOGGER.error("Could not parse or split JSON object payload.", e);
+			throw new CoreException(e);
+		}
+		return result;
+	}
+
+	/**
+	 * Split a JSON array into a list of Adaptris messages for each JSON array element.
+	 *
+	 * @param array
+	 *          The JSON array.
+	 * @param message
+	 *          The original Adaptris message.
+	 *
+	 * @return A list of Adaptris messages.
+	 *
+	 * @throws IOException
+	 *           If IOUtils cannot copy from a Reader to a Writer (see {@link #createSplitMessage(JSONObject, AdaptrisMessage)}.
+	 */
+	protected List<AdaptrisMessage> splitMessage(final JSONArray array, final AdaptrisMessage message) throws IOException {
+		final List<AdaptrisMessage> result = new ArrayList<>();
+		for (final Object element : array) {
+			result.add(createSplitMessage((JSONObject)element, message));
+		}
+		return result;
+	}
+
+	/**
+	 * Create a new Adaptris message for the given JSON object.
+	 *
+	 * @param json
+	 *          The JSON object.
+	 * @param message
+	 *          The original Adaptris message.
+	 *
+	 * @return A new Adaptris message for the JSON object.
+	 *
+	 * @throws IOException
+	 *           If IOUtils cannot copy from a Reader to a Writer.
+	 */
+	protected AdaptrisMessage createSplitMessage(final JSONObject json, final AdaptrisMessage message) throws IOException {
+		final AdaptrisMessage newMessage = selectFactory(message).newMessage();
+		try (final Reader reader = new StringReader(json.toString()); final Writer writer = newMessage.getWriter()) {
+			IOUtils.copy(reader, writer);
+			copyMetadata(message, newMessage);
+		}
+		return newMessage;
+	}
 }
