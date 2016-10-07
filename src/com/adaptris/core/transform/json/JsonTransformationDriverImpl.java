@@ -2,8 +2,6 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDirection;
-import com.adaptris.core.transform.json.JsonXmlTransformService.TransformationDriver;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONException;
