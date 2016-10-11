@@ -40,6 +40,7 @@ public class JsonXmlTransformService extends ServiceImp {
 	@AutoPopulated
 	@NotNull
 	private TransformationDirection direction = TransformationDirection.JSON_TO_XML;
+
 	@NotNull
 	@AutoPopulated
 	@Valid
@@ -113,40 +114,5 @@ public class JsonXmlTransformService extends ServiceImp {
 	 */
 	public void setDriver(final TransformationDriver driver) {
 		this.driver = driver;
-	}
-
-	/**
-	 * Direction enum; JSON <-> XML.
-	 */
-	public enum TransformationDirection {
-		/**
-		 * JSON to XML.
-		 */
-		JSON_TO_XML,
-
-		/**
-		 * XML to JSON.
-		 */
-		XML_TO_JSON;
-	}
-
-	/**
-	 * Transformation driver.
-	 */
-	public interface TransformationDriver {
-		/**
-		 * Perform transformation.
-		 *
-		 * @param input
-		 *          The data to transform.
-		 * @param direction
-		 *          The direction of the transformation.
-		 *
-		 * @return The transformed data.
-		 *
-		 * @throws ServiceException
-		 *           Thrown if there is a problem with the transformation.
-		 */
-		public String transform(String input, TransformationDirection direction) throws ServiceException;
 	}
 }
