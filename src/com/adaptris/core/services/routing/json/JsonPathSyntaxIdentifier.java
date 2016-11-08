@@ -1,17 +1,24 @@
 package com.adaptris.core.services.routing.json;
 
+import java.util.List;
+
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.ServiceException;
+import com.adaptris.core.services.routing.SyntaxIdentifier;
 import com.adaptris.core.services.routing.SyntaxIdentifierImpl;
 import com.adaptris.core.util.ExceptionHelper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
-import java.util.List;
-
+/**
+ * Implementation of {@link SyntaxIdentifier} which handles JSON paths.
+ * 
+ * @config routing-json-path-syntax-identifier
+ */
 @XStreamAlias("routing-json-path-syntax-identifier")
 @DisplayOrder(order = {"destination", "patterns"})
 public class JsonPathSyntaxIdentifier extends SyntaxIdentifierImpl {
