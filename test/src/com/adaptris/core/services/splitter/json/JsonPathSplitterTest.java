@@ -13,26 +13,28 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
   }
   
   public void testSplitArray() throws Exception {
-    JsonPathSplitter splitter = new JsonPathSplitter();
+    JsonPathSplitter splitter = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(sampleJsonContent());
-    
+
+    Iterable<AdaptrisMessage> splitMessages = splitter.splitMessage(src);
+    int i = 0;
+    for(AdaptrisMessage message : splitMessages) {
+      i++;
+      assertNotNull(message);
+    }
+    assertEquals(4, i);
+  }
+
+
+  @Override
+  JsonPathSplitter createSplitter() {
+    JsonPathSplitter splitter = new JsonPathSplitter();
     StringPayloadDataInputParameter jsonSource = new StringPayloadDataInputParameter();
     ConstantDataInputParameter jsonPath = new ConstantDataInputParameter("$.store.book");
     splitter.setJsonPath(jsonPath);
     splitter.setJsonSource(jsonSource);
     splitter.setMessageSplitter(new JsonArraySplitter());
-    
-    Iterable<AdaptrisMessage> splitMessages = splitter.splitMessage(src);
-    for(AdaptrisMessage message : splitMessages) {
-      System.out.println(message);
-      System.out.println(message.getContent() + "\n\n\n");
-    }
-  }
-
-
-  @Override
-  MessageSplitter createSplitter() {
-    return new JsonPathSplitter();
+    return splitter;
   }
   
   private String sampleJsonContent() {
