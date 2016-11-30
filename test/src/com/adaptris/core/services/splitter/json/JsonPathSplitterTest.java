@@ -71,9 +71,15 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
     +    "\"bicycle\": {"
     +        "\"color\": \"red\","
     +        "\"price\": 19.95"
-    +    "}"
+    + "   }"
     + "},"
-    + "\"expensive\": 10"
+    + "  \"expensive\": 10,"
+    + "  \"files\": [ "
+    + "    \"file_1\","
+    + "    \"file_2\","
+    + "    \"file_3\","
+    + "    \"file_4\""
+    + "  ]"
     + "}";
   }
 
