@@ -669,7 +669,7 @@
         </zip>
       </then>
     </if>
-    <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/${project.name}/pom/${project.name}.pom"/>
+    <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/${project.name}/pom/${project.name}.pom" description="${project.pom.description}"/>
   </target>
 
   <target name="publish" depends="prepare-for-publish">
