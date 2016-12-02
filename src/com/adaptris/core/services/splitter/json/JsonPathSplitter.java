@@ -4,12 +4,15 @@ import java.util.Arrays;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.Service;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.services.path.json.JsonPathService;
 import com.adaptris.core.services.splitter.MessageSplitter;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
+import com.adaptris.core.util.ExceptionHelper;
+import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -36,8 +39,6 @@ public class JsonPathSplitter extends MessageSplitterImp {
 	public Iterable<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
 		try {
 
-			/* TODO try and use net.minidev.jsonparser to parse the JSON */
-
 			final String extractedMessage = jsonPath.extract(message);
 
 			final ConstantDataInputParameter source = new ConstantDataInputParameter(extractedMessage);
@@ -47,14 +48,25 @@ public class JsonPathSplitter extends MessageSplitterImp {
 			final JsonPathService jsonPathService = new JsonPathService();
 			jsonPathService.setSource(jsonSource);
 			jsonPathService.setExecutions(Arrays.asList(execution));
-			jsonPathService.doService(message);
-
+      execute(jsonPathService, message);
 			return messageSplitter.splitMessage(message);
-
 		} catch (final InterlokException ex) {
-			throw new CoreException(ex);
+      throw ExceptionHelper.wrapCoreException(ex);
 		}
 	}
+
+  public static void execute(Service s, AdaptrisMessage msg) throws CoreException {
+    try {
+      s.prepare();
+      LifecycleHelper.init(s);
+      LifecycleHelper.start(s);
+      s.doService(msg);
+    }
+    finally {
+      LifecycleHelper.stop(s);
+      LifecycleHelper.close(s);
+    }
+  }
 
 	/**
 	 * Get the JSON source.

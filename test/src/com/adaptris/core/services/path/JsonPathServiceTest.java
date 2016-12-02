@@ -2,6 +2,7 @@ package com.adaptris.core.services.path;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
@@ -13,6 +14,12 @@ import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.services.path.json.JsonPathService;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.ReadContext;
+import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 public class JsonPathServiceTest extends ServiceCase {
   
@@ -167,10 +174,13 @@ public class JsonPathServiceTest extends ServiceCase {
     Execution execution = new Execution(constantDataDestination, new StringPayloadDataOutputParameter());
     
     jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
+    execute(jsonPathService, message);
     
-    jsonPathService.doService(message);
-    
-    assertEquals(complexExpected(), message.getContent());
+    Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+        .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+    ReadContext context = JsonPath.parse(message.getInputStream(), jsonConfig);
+    assertEquals("Herman Melville", context.read("$[0].author"));
+    assertEquals("J. R. R. Tolkien", context.read("$[1].author"));
   }
   
   @Override
@@ -190,7 +200,7 @@ public class JsonPathServiceTest extends ServiceCase {
     return jsonPathService;
   }
 
-  private String sampleJsonContent() {
+  public static String sampleJsonContent() {
     return "{"
     + "\"store\": {"
     +    "\"book\": ["
