@@ -70,13 +70,12 @@ public class JsonPathDataInputParameter implements DataInputParameter<String> {
             .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
       }
       ReadContext context = JsonPath.parse(m.getInputStream(), jsonConfig);
-      Object o = context.read(getPath());
-      System.err.println(o.getClass());
-      if (Map.class.isAssignableFrom(o.getClass())) {
-        result = new ObjectMapper().writeValueAsString((Map) o);
+      Object resultObj = context.read(getPath());
+      if (Map.class.isAssignableFrom(resultObj.getClass())) {
+        result = new ObjectMapper().writeValueAsString((Map) resultObj);
       }
       else {
-        result = o.toString();
+        result = resultObj.toString();
       }
     }
     catch (Exception e) {

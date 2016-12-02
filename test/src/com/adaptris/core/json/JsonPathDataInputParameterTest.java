@@ -73,7 +73,6 @@ public class JsonPathDataInputParameterTest {
     JsonPathDataInputParameter param = new JsonPathDataInputParameter("$.store.book");
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonPathServiceTest.sampleJsonContent());
     String result = param.extract(msg);
-    System.err.println(result);
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
     ReadContext context = JsonPath.parse(result, jsonConfig);
