@@ -44,7 +44,6 @@ public class JsonPathDataInputParameterTest {
   @Test
   public void testExtract_NotJson() throws Exception {
     try {
-      // Should return a JSONArray... cast exception causing a InterlokException.
       JsonPathDataInputParameter param = new JsonPathDataInputParameter("$.store.book");
       AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello World");
       String s = param.extract(msg);
