@@ -114,7 +114,13 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	protected List<AdaptrisMessage> splitMessage(final JSONArray array, final AdaptrisMessage message) throws IOException {
 		final List<AdaptrisMessage> result = new ArrayList<>();
 		for (final Object element : array) {
-			result.add(createSplitMessage((JSONObject)element, message));
+			final AdaptrisMessage splitMessage;
+			if (element instanceof JSONObject) {
+				splitMessage = createSplitMessage((JSONObject)element, message);
+			} else {
+				splitMessage = createSplitMessage(element.toString(), message);
+			}
+			result.add(splitMessage);
 		}
 		return result;
 	}
@@ -133,8 +139,25 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	 *           If IOUtils cannot copy from a Reader to a Writer.
 	 */
 	protected AdaptrisMessage createSplitMessage(final JSONObject json, final AdaptrisMessage message) throws IOException {
+		return createSplitMessage(json.toJSONString(), message);
+	}
+	
+	/**
+	 * Create a new Adaptris message for the given JSON object.
+	 *
+	 * @param json
+	 *          The JSON string.
+	 * @param message
+	 *          The original Adaptris message.
+	 *
+	 * @return A new Adaptris message for the JSON object.
+	 *
+	 * @throws IOException
+	 *           If IOUtils cannot copy from a Reader to a Writer.
+	 */
+	private AdaptrisMessage createSplitMessage(final String json, final AdaptrisMessage message) throws IOException {
 		final AdaptrisMessage newMessage = selectFactory(message).newMessage();
-		try (final Reader reader = new StringReader(json.toString()); final Writer writer = newMessage.getWriter()) {
+		try (final Reader reader = new StringReader(json); final Writer writer = newMessage.getWriter()) {
 			IOUtils.copy(reader, writer);
 			copyMetadata(message, newMessage);
 		}

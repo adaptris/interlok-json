@@ -1,6 +1,7 @@
 package com.adaptris.core.services.path.json;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -16,16 +17,19 @@ import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.util.Args;
+import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.ReadContext;
+import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
 
 /**
  * This service allows you to search JSON content and the results are then set back into the message.
@@ -149,6 +153,8 @@ public class JsonPathService extends ServiceImp {
 	@AutoPopulated
 	private List<Execution> executions = new ArrayList<>();
 
+  protected transient Configuration jsonConfig;
+
 	/**
 	 * Whether to strip leading/trailing [] from the JSON.
 	 */
@@ -163,30 +169,21 @@ public class JsonPathService extends ServiceImp {
 
 			final DataInputParameter<String> src = sourceDestination != null ? sourceDestination : source;
 			final String rawJson = src.extract(message);
-
-			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-			final Object json = jsonParser.parse(rawJson);
+      ReadContext context = JsonPath.parse(rawJson, jsonConfig);
 
 			for (final Execution execution : executions) {
 
 				final DataInputParameter<String> executionSource = execution.getSource();
 				final DataOutputParameter<String> executionTarget = execution.getTarget();
 
-				/* extract the JSON path */
 				final String jsonPath = executionSource.extract(message);
-
-				final String jsonString = unwrap(JsonPath.read(json.toString(), jsonPath).toString());
-
+        final String jsonString = unwrap(context.read(jsonPath).toString());
 				executionTarget.insert(jsonString, message);
 
 			}
-
-		} catch (final ParseException e) {
-			log.warn("Failed to parse JSON!", e);
-			throw new ServiceException(e);
-		} catch (final InterlokException e) {
-			log.warn("Failed to match JSON path!", e);
-			throw new ServiceException(e);
+    }
+    catch (InterlokException e) {
+      throw ExceptionHelper.wrapServiceException(e);
 		}
 	}
 
@@ -211,7 +208,8 @@ public class JsonPathService extends ServiceImp {
 	 */
 	@Override
 	public void prepare() throws CoreException {
-		/* unused/empty method */
+    jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+        .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
 	}
 
 	/**

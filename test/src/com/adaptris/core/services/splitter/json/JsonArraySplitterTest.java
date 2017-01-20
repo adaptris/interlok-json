@@ -9,6 +9,7 @@ import com.adaptris.core.transform.json.JsonToXmlTransformServiceTest;
 
 public class JsonArraySplitterTest extends SplitterServiceExample {
 
+  private static final String SIMPLE_ARRAY = "[ \"file1\", \"file2\" , \"file3\" , \"file4\"]";
   public JsonArraySplitterTest(String name) {
     super(name);
   }
@@ -16,6 +17,12 @@ public class JsonArraySplitterTest extends SplitterServiceExample {
   public void testSplitArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
+    assertEquals(4, s.splitMessage(src).size());
+  }
+
+  public void testSplitArray_SimpleStringArray() throws Exception {
+    JsonArraySplitter s = new JsonArraySplitter();
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(SIMPLE_ARRAY);
     assertEquals(4, s.splitMessage(src).size());
   }
 

@@ -31,6 +31,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.adaptris.core.util.XmlHelper;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -47,13 +54,6 @@ import nu.xom.Elements;
 import nu.xom.Node;
 import nu.xom.Serializer;
 import nu.xom.Text;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.adaptris.core.util.XmlHelper;
 
 /**
  * This is a cut and paste job of {@link net.sf.json.xml.XMLSerializer} with a fix for element
@@ -74,7 +74,7 @@ class XMLSerializer {
 
   private static final String[] EMPTY_ARRAY = new String[0];
   private static final String JSON_PREFIX = "json_";
-  private static final Logger log = LoggerFactory.getLogger(XMLSerializer.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultJsonTransformationDriver.class);
 
   /** the name for an JSONArray Element */
   private String arrayName;
@@ -711,7 +711,7 @@ class XMLSerializer {
       }
     } else {
       if (defaultType != null) {
-        log.info("Using default type " + defaultType);
+        log.trace("Using default type " + defaultType);
         type = defaultType;
       }
     }

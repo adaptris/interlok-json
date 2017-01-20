@@ -4,7 +4,6 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
-import com.adaptris.core.services.splitter.MessageSplitter;
 
 public class JsonPathSplitterTest extends SplitterServiceExample {
 
@@ -25,6 +24,19 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
     assertEquals(4, i);
   }
 
+  public void testSplitArray_Strings() throws Exception {
+    JsonPathSplitter splitter = createSplitter();
+    splitter.setJsonPath(new ConstantDataInputParameter("$.files"));
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(sampleJsonContent());
+
+    Iterable<AdaptrisMessage> splitMessages = splitter.splitMessage(src);
+    int i = 0;
+    for (AdaptrisMessage message : splitMessages) {
+      i++;
+      assertNotNull(message);
+    }
+    assertEquals(4, i);
+  }
 
   @Override
   JsonPathSplitter createSplitter() {
@@ -71,9 +83,15 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
     +    "\"bicycle\": {"
     +        "\"color\": \"red\","
     +        "\"price\": 19.95"
-    +    "}"
+    + "   }"
     + "},"
-    + "\"expensive\": 10"
+    + "  \"expensive\": 10,"
+    + "  \"files\": [ "
+    + "    \"file_1\","
+    + "    \"file_2\","
+    + "    \"file_3\","
+    + "    \"file_4\""
+    + "  ]"
     + "}";
   }
 
