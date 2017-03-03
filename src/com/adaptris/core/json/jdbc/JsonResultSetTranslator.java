@@ -23,6 +23,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class JsonResultSetTranslator implements ResultSetTranslator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JsonResultSetTranslator.class.getName());
+	
+	private String uniqueId;
 
 	/**
 	 * Unused method. For more information see {@inheritDoc}.
@@ -104,4 +106,12 @@ public class JsonResultSetTranslator implements ResultSetTranslator {
 
 		target.setPayload(json.toString().getBytes());
 	}
+
+  public String getUniqueId() {
+    return uniqueId;
+  }
+
+  public void setUniqueId(String uniqueId) {
+    this.uniqueId = uniqueId;
+  }
 }
