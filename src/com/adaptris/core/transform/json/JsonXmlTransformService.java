@@ -46,6 +46,20 @@ public class JsonXmlTransformService extends ServiceImp {
 	@Valid
 	private TransformationDriver driver = new DefaultJsonTransformationDriver();
 
+  public JsonXmlTransformService() {
+    super();
+  }
+
+  public JsonXmlTransformService(TransformationDirection direction) {
+    this(direction, new DefaultJsonTransformationDriver());
+  }
+
+  public JsonXmlTransformService(TransformationDirection direction, TransformationDriver driver) {
+    this();
+    setDriver(driver);
+    setDirection(direction);
+  }
+
 	/**
 	 * {@inheritDoc}.
 	 */

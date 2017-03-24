@@ -629,6 +629,8 @@ class XMLSerializer {
     int childCount = element.getChildCount();
     Elements elements = element.getChildElements();
     int elementCount = elements.size();
+    log.warn("Element [{}], isTopLevel={}, children={}, elementCount={}", element.getLocalName(), isTopLevel, childCount,
+        elementCount);
 
     if (childCount == 1 && element.getChild(0) instanceof Text) {
       return isTopLevel;
@@ -740,7 +742,14 @@ class XMLSerializer {
       isArray = checkChildElements(element, isTopLevel);
     } else if (element.getAttributeCount() == 1
         && (element.getAttribute(addJsonPrefix("class")) != null || element.getAttribute(addJsonPrefix("type")) != null)) {
-      isArray = checkChildElements(element, isTopLevel);
+      // INTERLOK-1499
+      // if it's something like <contact type="string"/> then elementCount=0 and childCount=0
+      if (element.getChildCount() == 0 && element.getChildElements().size() == 0) {
+        isArray = false;
+      }
+      else {
+        isArray = checkChildElements(element, isTopLevel);
+      }
     } else if (element.getAttributeCount() == 2
         && (element.getAttribute(addJsonPrefix("class")) != null && element.getAttribute(addJsonPrefix("type")) != null)) {
       isArray = checkChildElements(element, isTopLevel);
