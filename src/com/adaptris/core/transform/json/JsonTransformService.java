@@ -628,6 +628,15 @@ public class JsonTransformService extends ServiceImp {
 	@Valid
 	private MetadataFilter metadataFilter = new RemoveAllMetadataFilter();
 
+  public JsonTransformService() {
+    super();
+  }
+
+  public JsonTransformService(DataInputParameter<String> mappingSpec) {
+    this();
+    setMappingSpec(mappingSpec);
+  }
+
 	/**
 	 * {@inheritDoc}.
 	 */

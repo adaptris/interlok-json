@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ashley Anderson <ashley.anderson@reedbusiness.com>
  */
-public class JsonSchemaValidator {
+class JsonSchemaValidator {
 
 	/**
 	 * Default logger.
@@ -98,7 +98,7 @@ public class JsonSchemaValidator {
 	 * @throws ValidationException
 	 *           If the JSON is invalid against this schema; use {@link ValidationException#getCausingExceptions()} to identify the cause(s).
 	 */
-	public void validate(@SuppressWarnings("hiding") final JSONObject json) throws ValidationException {
+  public void validate(final Object json) throws ValidationException {
 		schema.validate(json);
 	}
 
