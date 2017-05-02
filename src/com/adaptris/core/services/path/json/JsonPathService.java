@@ -140,6 +140,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
 public class JsonPathService extends ServiceImp {
 
+  private static boolean warningLogged = false;
 	@NotNull
 	@AutoPopulated
 	private DataInputParameter<String> source = new StringPayloadDataInputParameter();
@@ -245,10 +246,13 @@ public class JsonPathService extends ServiceImp {
 	 * @deprecated since 3.2.0 use {@link #setSource()} instead.
 	 */
 	@Deprecated
-	public void setSourceDestination(final DataInputParameter<String> sourceDestination) {
-		log.warn("source-destination deprecated; use source instead");
-		this.sourceDestination = Args.notNull(sourceDestination, "sourceDestination");
-	}
+  public void setSourceDestination(final DataInputParameter<String> sourceDestination) {
+    if (!warningLogged) {
+      log.warn("source-destination deprecated; use source instead");
+      warningLogged = true;
+    }
+    this.sourceDestination = Args.notNull(sourceDestination, "sourceDestination");
+  }
 
 	/**
 	 * Get the source.
