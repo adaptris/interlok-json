@@ -629,8 +629,8 @@ class XMLSerializer {
     int childCount = element.getChildCount();
     Elements elements = element.getChildElements();
     int elementCount = elements.size();
-    log.warn("Element [{}], isTopLevel={}, children={}, elementCount={}", element.getLocalName(), isTopLevel, childCount,
-        elementCount);
+    // log.trace("Element [{}], isTopLevel={}, children={}, elementCount={}", element.getLocalName(), isTopLevel, childCount,
+    // elementCount);
 
     if (childCount == 1 && element.getChild(0) instanceof Text) {
       return isTopLevel;
