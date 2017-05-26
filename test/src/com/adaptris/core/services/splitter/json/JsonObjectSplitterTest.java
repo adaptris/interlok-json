@@ -16,7 +16,12 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
     super(name);
   }
 
-  public static final String JSON_ARRAY = "[\n{colour: \"red\",value: \"#f00\"},\n{colour: \"green\",value: \"#0f0\"},\n{colour: \"blue\",value: \"#00f\"},\n{colour: \"black\",value: \"#000\"}\n]";
+  public static final String JSON_ARRAY =
+      "[\n{\"colour\": \"red\",\"value\": \"#f00\"},\n"
+      + "{\"colour\": \"green\",\"value\": \"#0f0\"},\n"
+      + "{\"colour\": \"blue\",\"value\": \"#00f\"},"
+      + "\n{\"colour\": \"black\",\"value\": \"#000\"}\n"
+      + "]";
 
   public void testSplitArray() throws Exception {
     JsonObjectSplitter s = new JsonObjectSplitter();
