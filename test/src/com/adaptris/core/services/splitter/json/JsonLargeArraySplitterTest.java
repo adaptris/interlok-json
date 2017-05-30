@@ -11,7 +11,7 @@ public class JsonLargeArraySplitterTest extends SplitterServiceExample {
   }
 
   public void testSplitArray() throws Exception {
-    LargeJsonArraySplitter s = new LargeJsonArraySplitter();
+    LargeJsonArraySplitter s = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     int count = 0;
     for (AdaptrisMessage m : s.splitMessage(src)) {
@@ -21,7 +21,7 @@ public class JsonLargeArraySplitterTest extends SplitterServiceExample {
   }
 
   public void testSplitNotJson() throws Exception {
-    JsonArraySplitter s = new JsonArraySplitter();
+    LargeJsonArraySplitter s = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello World");
     try {
       Iterable<AdaptrisMessage> msgs = s.splitMessage(src);
