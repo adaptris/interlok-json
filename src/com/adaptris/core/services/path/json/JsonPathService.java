@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
+import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -138,6 +140,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("json-path-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
+@DisplayOrder(order = {"source", "executions", "unwrapJson"})
 public class JsonPathService extends ServiceImp {
 
   private static boolean warningLogged = false;
@@ -156,10 +159,18 @@ public class JsonPathService extends ServiceImp {
 
   protected transient Configuration jsonConfig;
 
-	/**
-	 * Whether to strip leading/trailing [] from the JSON.
-	 */
-	private boolean unwrapJson = false;
+  @InputFieldDefault(value = "false")
+  private Boolean unwrapJson;
+
+  public JsonPathService() {
+    super();
+  }
+
+  public JsonPathService(DataInputParameter<String> source, List<Execution> executions) {
+    this();
+    setSource(source);
+    setExecutions(executions);
+  }
 
 	/**
 	 * {@inheritDoc}.
@@ -196,7 +207,7 @@ public class JsonPathService extends ServiceImp {
 	 */
 	private String unwrap(final String json) {
 		/* Do we need to strip the square brackets off of a value? */
-		if (unwrapJson) {
+    if (unwrapJson()) {
 			if (json.startsWith("[") && json.endsWith("]")) {
 				return json.substring(1, json.length() - 1);
 			}
@@ -226,7 +237,10 @@ public class JsonPathService extends ServiceImp {
 	 */
 	@Override
 	protected void initService() throws CoreException {
-		/* unused/empty method */
+    if (!warningLogged && getSourceDestination() != null) {
+      log.warn("source-destination deprecated; use source instead");
+      warningLogged = true;
+    }
 	}
 
 	/**
@@ -297,17 +311,21 @@ public class JsonPathService extends ServiceImp {
 	 *
 	 * @return Whether the JSON should be unwrapped.
 	 */
-	public boolean getUnwrapJson() {
+  public Boolean getUnwrapJson() {
 		return unwrapJson;
 	}
 
 	/**
-	 * Set whether the JSON should be unwrapped.
-	 *
-	 * @param unwrapJson
-	 *          Whether the JSON should be unwrapped.
-	 */
-	public void setUnwrapJson(final boolean unwrapJson) {
+   * Set whether the JSON should be unwrapped.
+   *
+   * @param unwrapJson
+   *        Whether the JSON should be unwrapped; default is false.
+   */
+  public void setUnwrapJson(final Boolean unwrapJson) {
 		this.unwrapJson = unwrapJson;
 	}
+
+  boolean unwrapJson() {
+    return getUnwrapJson() != null ? getUnwrapJson().booleanValue() : false;
+  }
 }

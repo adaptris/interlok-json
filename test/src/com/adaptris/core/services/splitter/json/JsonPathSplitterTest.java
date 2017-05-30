@@ -22,6 +22,7 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
       assertNotNull(message);
     }
     assertEquals(4, i);
+    assertEquals(sampleJsonContent(), src.getContent());
   }
 
   public void testSplitArray_Strings() throws Exception {
@@ -36,6 +37,7 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
       assertNotNull(message);
     }
     assertEquals(4, i);
+    assertEquals(sampleJsonContent(), src.getContent());
   }
 
   @Override
