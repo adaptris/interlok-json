@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-schema-validation-exception-as-object-metadata
  */
 @XStreamAlias("json-schema-validation-exception-as-object-metadata")
-public class ObjectMetadataExceptionHandler extends ValidationExceptionHandlerImpl {
+public class ObjectMetadataExceptionHandler extends DefaultValidationExceptionHandler {
 
   @AutoPopulated
   @InputFieldDefault(value = "ObjectMetadataExceptionHandler")
@@ -40,7 +40,7 @@ public class ObjectMetadataExceptionHandler extends ValidationExceptionHandlerIm
   public void handle(ValidationException exc, AdaptrisMessage msg) throws ServiceException {
     msg.addObjectHeader(getObjectMetadataKey(), exc);
     if (throwException()) {
-      throw ExceptionHelper.wrapServiceException(exc);
+      throw ExceptionHelper.wrapServiceException(buildExceptionMessage(exc), exc);
     }
   }
 

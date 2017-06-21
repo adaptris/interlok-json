@@ -29,7 +29,7 @@ public class DefaultValidationExceptionHandler extends ValidationExceptionHandle
     throw ExceptionHelper.wrapServiceException(buildExceptionMessage(exc), exc);
   }
 
-  private String buildExceptionMessage(ValidationException exc) {
+  protected String buildExceptionMessage(ValidationException exc) {
     String prefix = exc.getMessage() + ": ";
     Map<Integer, String> map = new TreeMap<>();
     int count = 0;
