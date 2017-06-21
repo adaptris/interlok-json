@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.everit.json.schema.ValidationException;
@@ -15,7 +14,6 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.util.ExceptionHelper;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -94,24 +92,6 @@ public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImp
   }
 
   private Object jsonify(String input) throws JsonParseException, JsonMappingException, IOException {
-    try {
-      return jsonifyObject(input);
-    }
-    catch (IOException e) {
-      return jsonifyArray(input);
-    }
+    return mapper.readValue(input, Object.class);
   }
-
-  private Object jsonifyObject(String input) throws JsonParseException, JsonMappingException, IOException {
-    Map<String, Object> map = new HashMap<String, Object>();
-    return mapper.readValue(input, new TypeReference<Map<String, Object>>() {
-    });
-  }
-
-  private Object jsonifyArray(String input) throws JsonParseException, JsonMappingException, IOException {
-    List<Object> map = new ArrayList<Object>();
-    return mapper.readValue(input, new TypeReference<List<Object>>() {
-    });
-  }
-
 }
