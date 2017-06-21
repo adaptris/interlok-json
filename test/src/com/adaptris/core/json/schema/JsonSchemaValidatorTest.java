@@ -1,4 +1,4 @@
-package com.adaptris.core.transform.json;
+package com.adaptris.core.json.schema;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

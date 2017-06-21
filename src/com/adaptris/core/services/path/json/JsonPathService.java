@@ -274,7 +274,7 @@ public class JsonPathService extends ServiceImp {
    * @param sourceDestination
    *        The source destination.
    *
-   * @deprecated since 3.2.0 use {@link #setSource()} instead.
+   * @deprecated since 3.2.0 use {@link #setSource(DataInputParameter)} instead.
    */
   @Deprecated
   public void setSourceDestination(final DataInputParameter<String> sourceDestination) {
