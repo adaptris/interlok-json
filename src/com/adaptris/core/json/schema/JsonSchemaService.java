@@ -1,15 +1,15 @@
 package com.adaptris.core.json.schema;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
@@ -23,6 +23,9 @@ import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataInputParameter;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -44,6 +47,7 @@ public class JsonSchemaService extends ServiceImp {
   @NotNull
   @AutoPopulated
   private ValidationExceptionHandler onValidationException;
+  private transient ObjectMapper mapper = new ObjectMapper();
 
   public JsonSchemaService() {
     setOnValidationException(new DefaultValidationExceptionHandler());
@@ -57,33 +61,26 @@ public class JsonSchemaService extends ServiceImp {
   @Override
   public void doService(final AdaptrisMessage message) throws ServiceException {
     try {
-      /* retrieve the schema */
-      final String schemaString = schemaUrl.extract(message);
-      final JSONObject rawSchema = new JSONObject(schemaString);
-      final Schema schema = SchemaLoader.load(rawSchema);
-
       /* either validate a single JSON object or an array of JSON objects (or fail) */
-      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(schema);
+      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(loadSchema(message));
       jsonSchemaValidator.validate(asJSON(message.getContent()));
-
     }
     catch (final ValidationException e) {
       getOnValidationException().handle(e, message);
     }
-    catch (InterlokException | JSONException e) {
+    catch (NullPointerException | InterlokException | JSONException | IOException e) {
       throw ExceptionHelper.wrapServiceException(e);
     }
   }
 
-  private Object asJSON(String input) throws JSONException {
-    Object result = null;
-    try {
-      result = new JSONObject(new JSONTokener(input));
-    }
-    catch (final JSONException e) {
-      result = new JSONArray(new JSONTokener(input));
-    }
-    return result;
+  private Object asJSON(String input) throws JSONException, JsonParseException, JsonMappingException, IOException {
+    Object result = mapper.readValue(input, Object.class);
+    return JSONObject.wrap(result);
+  }
+
+  private Schema loadSchema(AdaptrisMessage input) throws JSONException, InterlokException {
+    JSONObject rawSchema = new JSONObject(schemaUrl.extract(input));
+    return SchemaLoader.load(rawSchema);
   }
 
   @Override

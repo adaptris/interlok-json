@@ -153,6 +153,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
       JsonSchemaService service = createService();
       service.setOnValidationException(new ModifyPayloadExceptionHandler());
       execute(service, message);
+      System.out.println(message.getContent());
       assertModifications(message);
     }
     catch (ServiceException expected) {
