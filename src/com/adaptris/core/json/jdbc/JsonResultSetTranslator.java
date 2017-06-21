@@ -15,7 +15,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Service to translate a JDBC result set to JSON.
  *
  * @author Ashley Anderson <ashley.anderson@reedbusiness.com>
+ * @config jdbc-json-payload-translator
+ * @deprecated since 3.6.3 use {@link JdbcJsonOutput} instead as this does not support multiple result sets properly and may cause
+ *             issues with massive result sets.
  */
+@Deprecated
 @XStreamAlias("jdbc-json-payload-translator")
 public class JsonResultSetTranslator extends JsonResultSetTranslatorImpl {
 

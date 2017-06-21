@@ -10,13 +10,12 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.json.jdbc.JsonResultSetTranslator;
+import com.adaptris.core.json.jdbc.JdbcJsonOutput;
 import com.adaptris.jdbc.JdbcResult;
 import com.adaptris.jdbc.JdbcResultRow;
 import com.adaptris.jdbc.JdbcResultSet;
@@ -27,29 +26,13 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
-/**
- * Tests for JDBC to JSON translator {@link JsonResultSetTranslator}.
- *
- * @author Ashley Anderson <ashley.anderson@reedbusiness.com>
- */
-@SuppressWarnings("deprecation")
-public class JsonResultSetTranslatorTest {
 
-	private JSONObject expected;
+public class ResultSetToJsonTest {
 
 	private final JdbcResult result = new JdbcResult();
 
-	/**
-	 * Initialise the unit test environment.
-	 *
-	 * @throws Exception
-	 *           If initialisation could not occur.
-	 */
 	@Before
 	public void setUp() throws Exception {
-		expected = new JSONObject(
-				"{\"result\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}");
-
 		final List<String> fieldNames = Arrays.asList("firstName", "lastName");
 
 		final JdbcResultRow row_1 = new JdbcResultRow();
@@ -64,31 +47,26 @@ public class JsonResultSetTranslatorTest {
 		row_3.setFieldNames(fieldNames);
 		row_3.setFieldValues(Arrays.asList((Object)"Peter", (Object)"Jones"));
 
-		@SuppressWarnings("resource")
-		final JdbcResultSet mockResultSet = mock(JdbcResultSet.class);
-		when(mockResultSet.getRows()).thenReturn(Arrays.asList(row_1, row_2, row_3));
+    final JdbcResultSet mock1 = mock(JdbcResultSet.class);
+    when(mock1.getRows()).thenReturn(Arrays.asList(row_1, row_2, row_3));
+    final JdbcResultSet mock2 = mock(JdbcResultSet.class);
+    when(mock2.getRows()).thenReturn(Arrays.asList(row_1, row_2, row_3));
 
-		result.setResultSets(Arrays.asList(mockResultSet));
-
+    result.setResultSets(Arrays.asList(mock1, mock2));
 	}
 
-	/**
-	 * Test the simple, valid path through the translation from a JDBC result to JSON.
-	 *
-	 * @throws Exception
-	 *           Unexpected; should not happen.
-	 */
+
 	@Test
   public void testTranslate() throws Exception {
-		final JsonResultSetTranslator jsonTranslator = new JsonResultSetTranslator();
-		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutput();
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
 
 		jsonTranslator.translate(result, message);
+    System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
-    assertNotNull(ctx.read("$.result"));
-    assertNotNull(ctx.read("$.result.[0]"));
-    assertEquals("Anna", ctx.read("$.result.[1].firstName"));
-    assertEquals(expected.toString(), new String(message.getPayload()));
+    assertNotNull(ctx.read("$.[0].result[0]"));
+    assertNotNull(ctx.read("$.[1].result[0]"));
+    assertEquals("Anna", ctx.read("$.[0].result[1].firstName"));
 	}
 
   private ReadContext createContext(AdaptrisMessage msg) throws IOException {
