@@ -1,7 +1,7 @@
 package com.adaptris.core.json.schema;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.everit.json.schema.ValidationException;
 
@@ -31,11 +31,12 @@ public class DefaultValidationExceptionHandler extends ValidationExceptionHandle
 
   private String buildExceptionMessage(ValidationException exc) {
     String prefix = exc.getMessage() + ": ";
-    List<String> msg = new ArrayList<>();
+    Map<Integer, String> map = new TreeMap<>();
+    int count = 0;
     for (ValidationException ve : exc.getCausingExceptions()) {
       log.error(ve.getMessage());
-      msg.add(ve.getMessage());
+      map.put(++count, ve.getMessage());
     }
-    return prefix + msg;
+    return prefix + map;
   }
 }
