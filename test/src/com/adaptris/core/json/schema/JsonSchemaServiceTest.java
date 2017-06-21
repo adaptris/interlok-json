@@ -1,13 +1,12 @@
-package com.adaptris.core.transform.json;
+package com.adaptris.core.json.schema;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.BaseCase;
 import com.adaptris.core.ConfiguredProduceDestination;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.FileDataInputParameter;
+import com.adaptris.core.transform.TransformServiceExample;
 import com.adaptris.core.util.LifecycleHelper;
 
 /**
@@ -15,7 +14,7 @@ import com.adaptris.core.util.LifecycleHelper;
  *
  * @author Ashley Anderson
  */
-public class JsonSchemaServiceTest extends BaseCase {
+public class JsonSchemaServiceTest extends TransformServiceExample {
 
 	/**
 	 * Default constructor.
@@ -49,13 +48,13 @@ public class JsonSchemaServiceTest extends BaseCase {
 
 	public void testSuccess() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
-    ServiceCase.execute(createService(), message);
+    execute(createService(), message);
 	}
 
   public void testFailure() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
-      ServiceCase.execute(createService(), message);
+      execute(createService(), message);
       fail();
     }
     catch (ServiceException expected) {
@@ -66,13 +65,19 @@ public class JsonSchemaServiceTest extends BaseCase {
   public void testArray() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     try {
-      ServiceCase.execute(createService(), message);
+      execute(createService(), message);
       fail();
     }
     catch (ServiceException expected) {
 
     }
   }
+
+	@Override
+	protected Object retrieveObjectForSampleConfig() {
+    return createService();
+	}
+
   private JsonSchemaService createService() {
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
     schemaUrl.setDestination(new ConfiguredProduceDestination(SCHEMA_URL));
