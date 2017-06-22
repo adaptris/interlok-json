@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,43 +20,75 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Implementation of {@link ResultSetTranslator} that outputs as json.
+ * Implementation of {@link ResultSetTranslator} that outputs the first result set as json.
+ * <p>
+ * Takes the first result set, and writes out each row as part of a json array.
+ * </p>
+ * <pre>
+   {@code
+{
+    "result": [{
+        "firstName": "John",
+        "lastName": "Doe"
+    }, {
+        "firstName": "Anna",
+        "lastName": "Smith"
+    }, {
+        "firstName": "Peter",
+        "lastName": "Jones"
+    }]
+}  
+ * </pre>
  * 
  * @config jdbc-json-output
  */
 @XStreamAlias("jdbc-json-output")
 public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
 
-  private transient ObjectMapper mapper = new ObjectMapper();
+  protected transient ObjectMapper mapper = new ObjectMapper();
 
   public JdbcJsonOutput() {
     mapper = new ObjectMapper();
   }
 
-	@Override
-	public void translate(final JdbcResult source, final AdaptrisMessage target)throws SQLException, ServiceException {
+  @Override
+  public void translate(final JdbcResult source, final AdaptrisMessage target) throws SQLException, ServiceException {
     try (Writer w = new BufferedWriter(target.getWriter()); JsonGenerator generator = mapper.getFactory().createGenerator(w)) {
-      generator.writeStartArray();
-      // now we can iterate
-      for (final JdbcResultSet result : source.getResultSets()) {
-        generator.writeStartObject();
-        generator.writeFieldName("result");
-        generator.writeStartArray();
-        for (final JdbcResultRow row : result.getRows()) {
-          Map<String, Object> jsonObject = new HashMap<String, Object>();
-          for (final String field : row.getFieldNames()) {
-            jsonObject.put(field, row.getFieldValue(field));
-          }
-          generator.writeObject(jsonObject);
-        }
-        generator.writeEndArray();
-        generator.writeEndObject();
-      }
-      generator.writeEndArray();
+      writeResultSet(firstResultSet(source), generator);
     }
     catch (IOException e) {
       throw ExceptionHelper.wrapServiceException(e);
     }
-	}
+  }
+
+  protected void writeResultSet(JdbcResultSet result, JsonGenerator generator) throws IOException {
+    generator.writeStartObject();
+    generator.writeFieldName("result");
+    generator.writeStartArray();
+    for (final JdbcResultRow row : result.getRows()) {
+      Map<String, Object> jsonObject = new HashMap<String, Object>();
+      for (final String field : row.getFieldNames()) {
+        jsonObject.put(field, row.getFieldValue(field));
+      }
+      generator.writeObject(jsonObject);
+    }
+    generator.writeEndArray();
+    generator.writeEndObject();
+  }
+
+  private JdbcResultSet firstResultSet(JdbcResult result) {
+    if (result.isHasResultSet()) {
+      return result.getResultSet(0);
+    }
+    return new JdbcResultSet() {
+      public Iterable<JdbcResultRow> getRows() {
+        return Collections.EMPTY_LIST;
+      }
+
+      public void close() {
+
+      }
+    };
+  }
 
 }

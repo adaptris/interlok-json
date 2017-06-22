@@ -16,7 +16,7 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.json.jdbc.JdbcJsonOutput;
+import com.adaptris.core.json.jdbc.JdbcJsonArrayOutput;
 import com.adaptris.jdbc.JdbcResult;
 import com.adaptris.jdbc.JdbcResultRow;
 import com.adaptris.jdbc.JdbcResultSet;
@@ -28,8 +28,7 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 
-public class ResultSetToJsonTest {
-
+public class JsonArrayOutputTest {
 
   public JdbcResult createJdbcResult() throws Exception {
     JdbcResult result = new JdbcResult();
@@ -59,36 +58,20 @@ public class ResultSetToJsonTest {
 
 	@Test
   public void testTranslate() throws Exception {
-    JdbcJsonOutput jsonTranslator = new JdbcJsonOutput();
+    JdbcJsonArrayOutput jsonTranslator = new JdbcJsonArrayOutput();
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
 
     jsonTranslator.translate(createJdbcResult(), message);
     System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
-    assertNotNull(ctx.read("$.result.[0]"));
-    assertNotNull(ctx.read("$.result.[1]"));
-    assertEquals("Anna", ctx.read("$.result.[1].firstName"));
+    assertNotNull(ctx.read("$.[0].result[0]"));
+    assertNotNull(ctx.read("$.[1].result[0]"));
+    assertEquals("Anna", ctx.read("$.[0].result[1].firstName"));
 	}
 
   @Test
-  public void testTranslate_NoResults() throws Exception {
-    JdbcJsonOutput jsonTranslator = new JdbcJsonOutput();
-    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-
-    jsonTranslator.translate(new JdbcResult(), message);
-    System.out.println(message.getContent());
-    ReadContext ctx = createContext(message);
-    try {
-      ctx.read("$.result.[0]");
-      fail();
-    }
-    catch (RuntimeException expected) {
-    }
-  }
-
-  @Test
   public void testTranslate_IOException() throws Exception {
-    JdbcJsonOutput jsonTranslator = new JdbcJsonOutput();
+    JdbcJsonArrayOutput jsonTranslator = new JdbcJsonArrayOutput();
     AdaptrisMessage message = new BrokenAdaptrisMessage();
     try {
       jsonTranslator.translate(createJdbcResult(), message);
@@ -98,7 +81,6 @@ public class ResultSetToJsonTest {
 
     }
   }
-
   private ReadContext createContext(AdaptrisMessage msg) throws IOException {
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
