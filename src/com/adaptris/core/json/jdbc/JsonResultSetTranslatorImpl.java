@@ -8,7 +8,7 @@ import com.adaptris.core.services.jdbc.ResultSetTranslator;
 
 public abstract class JsonResultSetTranslatorImpl implements ResultSetTranslator {
 
-  protected final Logger log = LoggerFactory.getLogger(this.getClass());
+  protected transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Override
   public void init() throws CoreException {
