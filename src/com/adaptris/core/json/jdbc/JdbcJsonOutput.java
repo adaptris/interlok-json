@@ -26,18 +26,19 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <pre>
    {@code
-{
-    "result": [{
+    {
+      "result": [{
         "firstName": "John",
         "lastName": "Doe"
-    }, {
+      }, {
         "firstName": "Anna",
         "lastName": "Smith"
-    }, {
+      }, {
         "firstName": "Peter",
         "lastName": "Jones"
-    }]
-}  
+      }]
+    }
+   }  
  * </pre>
  * 
  * @config jdbc-json-output
