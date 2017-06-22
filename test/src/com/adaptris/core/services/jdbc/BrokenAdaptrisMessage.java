@@ -9,7 +9,7 @@ import com.adaptris.util.GuidGenerator;
 
 public class BrokenAdaptrisMessage extends DefaultAdaptrisMessageImp {
 
-  protected BrokenAdaptrisMessage() throws RuntimeException {
+  public BrokenAdaptrisMessage() throws RuntimeException {
     super(new GuidGenerator(), AdaptrisMessageFactory.getDefaultInstance());
     setPayload(new byte[0]);
   }

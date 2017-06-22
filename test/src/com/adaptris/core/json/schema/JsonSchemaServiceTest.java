@@ -9,6 +9,7 @@ import com.adaptris.core.ConfiguredProduceDestination;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.FileDataInputParameter;
+import com.adaptris.core.services.jdbc.BrokenAdaptrisMessage;
 import com.adaptris.core.transform.TransformServiceExample;
 import com.adaptris.core.util.LifecycleHelper;
 import com.jayway.jsonpath.Configuration;
@@ -140,6 +141,20 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     try {
       JsonSchemaService service = createService();
       service.setOnValidationException(new ModifyPayloadExceptionHandler(true));
+      execute(service, message);
+      fail();
+    }
+    catch (ServiceException expected) {
+    }
+  }
+
+  @SuppressWarnings("deprecation")
+  public void testFailure_ModifyPayload_IOException() throws Exception {
+    AdaptrisMessage message = new BrokenAdaptrisMessage();
+    message.setStringPayload(INVALID_JSON);
+    try {
+      JsonSchemaService service = createService();
+      service.setOnValidationException(new ModifyPayloadExceptionHandler());
       execute(service, message);
       fail();
     }
