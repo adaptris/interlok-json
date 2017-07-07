@@ -50,9 +50,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
    
  * </pre>
  * 
- * @config jdbc-json-array-output
+ * @config jdbc-json-all-resultset-output
  */
-@XStreamAlias("jdbc-json-array-output")
+@XStreamAlias("jdbc-json-all-resultset-output")
 public class JdbcJsonArrayOutput extends JdbcJsonOutput {
 
   public JdbcJsonArrayOutput() {

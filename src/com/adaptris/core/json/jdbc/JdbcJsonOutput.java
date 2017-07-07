@@ -26,24 +26,23 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <pre>
    {@code
-    {
-      "result": [{
-        "firstName": "John",
+   [{   "firstName": "John",
         "lastName": "Doe"
-      }, {
+    }, 
+    {
         "firstName": "Anna",
         "lastName": "Smith"
-      }, {
+    },
+    {
         "firstName": "Peter",
         "lastName": "Jones"
-      }]
-    }
+   }]
    }  
  * </pre>
  * 
- * @config jdbc-json-output
+ * @config jdbc-json-first-resultset-output
  */
-@XStreamAlias("jdbc-json-output")
+@XStreamAlias("jdbc-json-first-resultset-output")
 public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
 
   protected transient ObjectMapper mapper = new ObjectMapper();
@@ -63,8 +62,6 @@ public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
   }
 
   protected void writeResultSet(JdbcResultSet result, JsonGenerator generator) throws IOException {
-    generator.writeStartObject();
-    generator.writeFieldName("result");
     generator.writeStartArray();
     for (final JdbcResultRow row : result.getRows()) {
       Map<String, Object> jsonObject = new HashMap<String, Object>();
@@ -74,7 +71,6 @@ public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
       generator.writeObject(jsonObject);
     }
     generator.writeEndArray();
-    generator.writeEndObject();
   }
 
   private JdbcResultSet firstResultSet(JdbcResult result) {

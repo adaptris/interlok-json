@@ -27,9 +27,9 @@ public class JsonArrayOutputTest {
 
     System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
-    assertNotNull(ctx.read("$.[0].result[0]"));
-    assertNotNull(ctx.read("$.[1].result[0]"));
-    assertEquals("Anna", ctx.read("$.[0].result[1].firstName"));
+    assertNotNull(ctx.read("$.[0].[0]"));
+    assertNotNull(ctx.read("$.[1].[0]"));
+    assertEquals("Anna", ctx.read("$.[0].[1].firstName"));
 	}
 
   @Test

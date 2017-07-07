@@ -27,9 +27,9 @@ public class ResultSetToJsonTest {
     execute(jsonTranslator, createJdbcResult(), message);
     System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
-    assertNotNull(ctx.read("$.result.[0]"));
-    assertNotNull(ctx.read("$.result.[1]"));
-    assertEquals("Anna", ctx.read("$.result.[1].firstName"));
+    assertNotNull(ctx.read("$.[0]"));
+    assertNotNull(ctx.read("$.[1]"));
+    assertEquals("Anna", ctx.read("$.[1].firstName"));
 	}
 
   @Test
@@ -41,7 +41,7 @@ public class ResultSetToJsonTest {
     System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
     try {
-      ctx.read("$.result.[0]");
+      ctx.read("$.[0]");
       fail();
     }
     catch (RuntimeException expected) {
