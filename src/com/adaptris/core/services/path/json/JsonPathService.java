@@ -22,7 +22,6 @@ import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
-import com.adaptris.interlok.config.DataDestination;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
 import com.jayway.jsonpath.Configuration;
@@ -41,13 +40,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * The searching works in much the same way as XPath, for more information on how to build a JSON path see the
  * <a href="https://github.com/jayway/JsonPath">JSONPath</a> documentation.
  * </p>
- * <p>
- * By configuring the "source" and "target-destination" ({@link DataDestination}) you can specify where the JSON content
- * is sourced from and where the results of the search should be set.
- * </p>
- * <p>
- * You may configure multiple target destinations. This allows you to essentially perform multiple searches, rather than configuring
- * multiple instances of this service.
  * </br>
  * For example, if you have a message with the following payload;
  *
@@ -93,19 +85,25 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  *
  * <pre>
  * {@code
-<target-destination class="json-metadata-destination">
-  <configured-json-path class="constant-json-path">
-    <json-path>$.store.book[0].title</json-path>
-  </configured-json-path>
-  <key>metadata-key-1</key>
-</target-destination>
-<target-destination class="json-metadata-destination">
-  <configured-json-path class="constant-json-path">
-    <json-path>$.store.book[1].title</json-path>
-  </configured-json-path>
-  <key>metadata-key-2</key>
-</target-destination>
- * }
+ <json-path-service>
+   <json-path-execution>
+     <source class="constant-data-input-parameter">
+       <value>$.store.book[0].title</value>
+     </source>
+     <target class="metadata-data-output-parameter">
+       <metadata-key>metadata-key-1</metadata-key>
+     </target>
+   </json-path-execution>
+   <json-path-execution>
+     <source class="constant-data-input-parameter">
+       <value>$.store.book[1].title</value>
+     </source>
+     <target class="metadata-data-output-parameter">
+       <metadata-key>metadata-key-2</metadata-key>
+     </target>
+   </json-path-execution>
+ </json-path-service>
+ }
  * </pre>
  *
  * The first target above searches for the first book title, the second target searches for the second book title.
