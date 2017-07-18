@@ -600,7 +600,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Jackson-style map-of-maps input.
  * </p>
  *
- * @license BASIC
  * @config json-transform-service
  * @author Aaron McGrath
  */

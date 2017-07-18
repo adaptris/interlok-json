@@ -18,7 +18,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  * @deprecated use {@link JsonXmlTransformService} with a {@link SimpleJsonTransformationDriver} instead.
  * @config simple-xml-to-json-transform-service
- * @license BASIC
  *
  * @author sellidge
  */

@@ -1,16 +1,23 @@
 package com.adaptris.core.services.splitter.json;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.Service;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.Execution;
+import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.services.path.json.JsonPathService;
 import com.adaptris.core.services.splitter.MessageSplitter;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
+import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.InterlokException;
@@ -19,15 +26,36 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * JSON path splitter.
+ * 
+ * @config json-path-splitter
  */
 @XStreamAlias("json-path-splitter")
 public class JsonPathSplitter extends MessageSplitterImp {
 
+  @NotNull
+  @Valid
+  @AutoPopulated
 	private DataInputParameter<String> jsonSource;
 
+  @NotNull
+  @Valid
 	private DataInputParameter<String> jsonPath;
 
+  @NotNull
+  @Valid
+  @AutoPopulated
 	private MessageSplitter messageSplitter;
+
+  public JsonPathSplitter() {
+    setJsonSource(new StringPayloadDataInputParameter());
+    setMessageSplitter(new JsonArraySplitter());
+  }
+
+  public JsonPathSplitter(DataInputParameter<String> source, DataInputParameter<String> path) {
+    this();
+    setJsonSource(source);
+    setJsonPath(path);
+  }
 
 	/**
 	 * Split JSON path. {@inheritDoc}.
@@ -39,25 +67,28 @@ public class JsonPathSplitter extends MessageSplitterImp {
 	public Iterable<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
 		try {
 
-			final String extractedMessage = jsonPath.extract(message);
+      final String jsonPathToUse = jsonPath.extract(message);
+      // INTERLOK-1651 Work on a "clone" of the message so the original remains
+      // untouched.
+      AdaptrisMessage clone = selectFactory(message).newMessage(message, null);
+      clone.setContent(message.getContent(), message.getContentEncoding());
 
-			final ConstantDataInputParameter source = new ConstantDataInputParameter(extractedMessage);
-			final StringPayloadDataOutputParameter target = new StringPayloadDataOutputParameter();
-			final Execution execution = new Execution(source, target);
+      final ConstantDataInputParameter source = new ConstantDataInputParameter(jsonPathToUse);
+      final StringPayloadDataOutputParameter target = new StringPayloadDataOutputParameter();
+      final Execution execution = new Execution(source, target);
 
-			final JsonPathService jsonPathService = new JsonPathService();
-			jsonPathService.setSource(jsonSource);
-			jsonPathService.setExecutions(Arrays.asList(execution));
-      execute(jsonPathService, message);
-			return messageSplitter.splitMessage(message);
-		} catch (final InterlokException ex) {
+      final JsonPathService jsonPathService = new JsonPathService(jsonSource, new ArrayList<Execution>(Arrays.asList(execution)));
+      execute(jsonPathService, clone);
+
+      return getMessageSplitter().splitMessage(clone);
+    } catch (final InterlokException | CloneNotSupportedException ex) {
       throw ExceptionHelper.wrapCoreException(ex);
 		}
 	}
 
   public static void execute(Service s, AdaptrisMessage msg) throws CoreException {
     try {
-      s.prepare();
+      LifecycleHelper.prepare(s);
       LifecycleHelper.init(s);
       LifecycleHelper.start(s);
       s.doService(msg);
@@ -103,7 +134,7 @@ public class JsonPathSplitter extends MessageSplitterImp {
 	 *          The JSON path.
 	 */
 	public void setJsonPath(final DataInputParameter<String> jsonPath) {
-		this.jsonPath = jsonPath;
+    this.jsonPath = Args.notNull(jsonPath, "jsonPath");;
 	}
 
 	/**
@@ -122,6 +153,6 @@ public class JsonPathSplitter extends MessageSplitterImp {
 	 *          The message splitter.
 	 */
 	public void setMessageSplitter(final MessageSplitter messageSplitter) {
-		this.messageSplitter = messageSplitter;
+    this.messageSplitter = Args.notNull(messageSplitter, "messageSplitter");
 	}
 }

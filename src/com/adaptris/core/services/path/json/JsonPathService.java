@@ -8,8 +8,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
+import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -25,6 +28,7 @@ import com.adaptris.interlok.config.DataOutputParameter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
@@ -133,119 +137,146 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  *
  * @author amcgrath
  * @config json-path-service
- * @license BASIC
  */
 @XStreamAlias("json-path-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
+@DisplayOrder(order = {"source", "executions", "unwrapJson", "suppressPathNotFound"})
 public class JsonPathService extends ServiceImp {
 
   private static boolean warningLogged = false;
-	@NotNull
-	@AutoPopulated
-	private DataInputParameter<String> source = new StringPayloadDataInputParameter();
+  @NotNull
+  @AutoPopulated
+  private DataInputParameter<String> source = new StringPayloadDataInputParameter();
 
-	@Deprecated
-	private DataInputParameter<String> sourceDestination;
+  @Deprecated
+  private DataInputParameter<String> sourceDestination;
 
-	@XStreamImplicit(itemFieldName = "json-path-execution")
-	@NotNull
-	@Valid
-	@AutoPopulated
-	private List<Execution> executions = new ArrayList<>();
+  @XStreamImplicit(itemFieldName = "json-path-execution")
+  @NotNull
+  @Valid
+  @AutoPopulated
+  private List<Execution> executions = new ArrayList<>();
 
   protected transient Configuration jsonConfig;
 
-	/**
-	 * Whether to strip leading/trailing [] from the JSON.
-	 */
-	private boolean unwrapJson = false;
+  @InputFieldDefault(value = "false")
+  private Boolean unwrapJson;
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	public void doService(final AdaptrisMessage message) throws ServiceException {
-		try {
+  @InputFieldDefault(value = "false")
+  @AdvancedConfig
+  private Boolean suppressPathNotFound;
 
-			final DataInputParameter<String> src = sourceDestination != null ? sourceDestination : source;
-			final String rawJson = src.extract(message);
+
+  public JsonPathService() {
+    super();
+  }
+
+  public JsonPathService(DataInputParameter<String> source, List<Execution> executions) {
+    this();
+    setSource(source);
+    setExecutions(executions);
+  }
+
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public void doService(final AdaptrisMessage message) throws ServiceException {
+    try {
+
+      final DataInputParameter<String> src = sourceDestination != null ? sourceDestination : source;
+      final String rawJson = src.extract(message);
       ReadContext context = JsonPath.parse(rawJson, jsonConfig);
 
-			for (final Execution execution : executions) {
-
-				final DataInputParameter<String> executionSource = execution.getSource();
-				final DataOutputParameter<String> executionTarget = execution.getTarget();
-
-				final String jsonPath = executionSource.extract(message);
-        final String jsonString = unwrap(context.read(jsonPath).toString());
-				executionTarget.insert(jsonString, message);
-
-			}
-    }
-    catch (InterlokException e) {
+      for (final Execution execution : executions) {
+        execute(execution, context, message);
+      }
+    } catch (InterlokException e) {
       throw ExceptionHelper.wrapServiceException(e);
-		}
-	}
+    } catch (RuntimeException e) {
+      // So, most of json path throws RTE so we turn it into a checked exception.
+      throw ExceptionHelper.wrapServiceException(e);
+    }
+  }
 
-	/**
-	 * Strip (if necessary) the leading/trailing [] from the JSON.
-	 *
-	 * @param json
-	 *          The JSON string.
-	 */
-	private String unwrap(final String json) {
-		/* Do we need to strip the square brackets off of a value? */
-		if (unwrapJson) {
-			if (json.startsWith("[") && json.endsWith("]")) {
-				return json.substring(1, json.length() - 1);
-			}
-		}
-		return json;
-	}
+  private void execute(Execution execution, ReadContext context, AdaptrisMessage msg) throws InterlokException {
+    try {
+      final DataInputParameter<String> source = execution.getSource();
+      final DataOutputParameter<String> target = execution.getTarget();
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
-	@Override
-	public void prepare() throws CoreException {
+      final String jsonPath = source.extract(msg);
+      final String jsonString = unwrap(context.read(jsonPath).toString());
+      target.insert(jsonString, msg);
+    } catch (PathNotFoundException e) {
+      if (!suppressPathNotFound()) {
+        throw ExceptionHelper.wrapServiceException(e);
+      }
+    }
+  }
+
+
+  /**
+   * Strip (if necessary) the leading/trailing [] from the JSON.
+   *
+   * @param json
+   *        The JSON string.
+   */
+  private String unwrap(final String json) {
+    /* Do we need to strip the square brackets off of a value? */
+    if (unwrapJson()) {
+      if (json.startsWith("[") && json.endsWith("]")) {
+        return json.substring(1, json.length() - 1);
+      }
+    }
+    return json;
+  }
+
+  /**
+   * Unused method. For more information see {@inheritDoc}.
+   */
+  @Override
+  public void prepare() throws CoreException {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
-	}
+  }
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
-	@Override
-	protected void closeService() {
-		/* unused/empty method */
-	}
+  /**
+   * Unused method. For more information see {@inheritDoc}.
+   */
+  @Override
+  protected void closeService() {
+    /* unused/empty method */
+  }
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
-	@Override
-	protected void initService() throws CoreException {
-		/* unused/empty method */
-	}
+  /**
+   * Unused method. For more information see {@inheritDoc}.
+   */
+  @Override
+  protected void initService() throws CoreException {
+    if (!warningLogged && getSourceDestination() != null) {
+      log.warn("source-destination deprecated; use source instead");
+      warningLogged = true;
+    }
+  }
 
-	/**
-	 * @return The source destination.
-	 *
-	 * @deprecated since 3.2.0 use {@link #getSource()} instead.
-	 */
-	@Deprecated
-	public DataInputParameter<String> getSourceDestination() {
-		return sourceDestination;
-	}
+  /**
+   * @return The source destination.
+   *
+   * @deprecated since 3.2.0 use {@link #getSource()} instead.
+   */
+  @Deprecated
+  public DataInputParameter<String> getSourceDestination() {
+    return sourceDestination;
+  }
 
-	/**
-	 * @param sourceDestination
-	 *          The source destination.
-	 *
-	 * @deprecated since 3.2.0 use {@link #setSource()} instead.
-	 */
-	@Deprecated
+  /**
+   * @param sourceDestination
+   *        The source destination.
+   *
+   * @deprecated since 3.2.0 use {@link #setSource(DataInputParameter)} instead.
+   */
+  @Deprecated
   public void setSourceDestination(final DataInputParameter<String> sourceDestination) {
     if (!warningLogged) {
       log.warn("source-destination deprecated; use source instead");
@@ -254,60 +285,84 @@ public class JsonPathService extends ServiceImp {
     this.sourceDestination = Args.notNull(sourceDestination, "sourceDestination");
   }
 
-	/**
-	 * Get the source.
-	 *
-	 * @return The source.
-	 */
-	public DataInputParameter<String> getSource() {
-		return source;
-	}
+  /**
+   * Get the source.
+   *
+   * @return The source.
+   */
+  public DataInputParameter<String> getSource() {
+    return source;
+  }
 
-	/**
-	 * Set the source.
-	 *
-	 * @param source
-	 *          The source.
-	 */
-	public void setSource(final DataInputParameter<String> source) {
-		this.source = Args.notNull(source, "source");
-	}
+  /**
+   * Set the source.
+   *
+   * @param source
+   *        The source.
+   */
+  public void setSource(final DataInputParameter<String> source) {
+    this.source = Args.notNull(source, "source");
+  }
 
-	/**
-	 * Get the list of execution.
-	 *
-	 * @return The list of executions.
-	 */
-	public List<Execution> getExecutions() {
-		return executions;
-	}
+  /**
+   * Get the list of execution.
+   *
+   * @return The list of executions.
+   */
+  public List<Execution> getExecutions() {
+    return executions;
+  }
 
-	/**
-	 * Set the list of executions.
-	 *
-	 * @param executions
-	 *          The list of executions.
-	 */
-	public void setExecutions(final List<Execution> executions) {
-		this.executions = executions;
-	}
+  /**
+   * Set the list of executions.
+   *
+   * @param executions
+   *        The list of executions.
+   */
+  public void setExecutions(final List<Execution> executions) {
+    this.executions = executions;
+  }
 
-	/**
-	 * Get whether the JSON should be unwrapped.
-	 *
-	 * @return Whether the JSON should be unwrapped.
-	 */
-	public boolean getUnwrapJson() {
-		return unwrapJson;
-	}
+  /**
+   * Get whether the JSON should be unwrapped.
+   *
+   * @return Whether the JSON should be unwrapped.
+   */
+  public Boolean getUnwrapJson() {
+    return unwrapJson;
+  }
 
-	/**
-	 * Set whether the JSON should be unwrapped.
-	 *
-	 * @param unwrapJson
-	 *          Whether the JSON should be unwrapped.
-	 */
-	public void setUnwrapJson(final boolean unwrapJson) {
-		this.unwrapJson = unwrapJson;
-	}
+  /**
+   * Set whether the JSON should be unwrapped.
+   *
+   * @param unwrapJson
+   *        Whether the JSON should be unwrapped; default is false.
+   */
+  public void setUnwrapJson(final Boolean unwrapJson) {
+    this.unwrapJson = unwrapJson;
+  }
+
+  boolean unwrapJson() {
+    return getUnwrapJson() != null ? getUnwrapJson().booleanValue() : false;
+  }
+
+  /**
+   * @return true or false.
+   */
+  public Boolean getSuppressPathNotFound() {
+    return suppressPathNotFound;
+  }
+
+  /**
+   * Suppress exceptions caused by {@code PathNotFoundException}.
+   * 
+   * @param b to suppress exceptions arising from a json path not being found; default is null (false).
+   */
+  public void setSuppressPathNotFound(Boolean b) {
+    this.suppressPathNotFound = b;
+  }
+
+  boolean suppressPathNotFound() {
+    return getSuppressPathNotFound() != null ? getSuppressPathNotFound().booleanValue() : false;
+  }
 }

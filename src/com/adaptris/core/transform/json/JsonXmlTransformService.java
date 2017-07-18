@@ -28,7 +28,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  *
  * @config json-xml-transform-service
- * @license BASIC
  *
  * @author gdries
  */

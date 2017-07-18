@@ -1,4 +1,4 @@
-package com.adaptris.core.transform.json;
+package com.adaptris.core.json.schema;
 
 import java.io.IOException;
 
