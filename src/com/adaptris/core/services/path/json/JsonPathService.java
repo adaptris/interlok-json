@@ -230,26 +230,17 @@ public class JsonPathService extends ServiceImp {
     return json;
   }
 
-  /**
-   * Unused method. For more information see {@inheritDoc}.
-   */
   @Override
   public void prepare() throws CoreException {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
   }
 
-  /**
-   * Unused method. For more information see {@inheritDoc}.
-   */
   @Override
   protected void closeService() {
     /* unused/empty method */
   }
 
-  /**
-   * Unused method. For more information see {@inheritDoc}.
-   */
   @Override
   protected void initService() throws CoreException {
     if (!warningLogged && getSourceDestination() != null) {

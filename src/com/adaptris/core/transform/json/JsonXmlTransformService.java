@@ -67,25 +67,16 @@ public class JsonXmlTransformService extends ServiceImp {
 		msg.setContent(driver.transform(msg.getContent(), direction), msg.getContentEncoding());
 	}
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
 	@Override
 	public void prepare() throws CoreException {
 		/* unused/empty method */
 	}
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
 	@Override
 	protected void closeService() {
 		/* unused/empty method */
 	}
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
 	@Override
 	protected void initService() throws CoreException {
 		/* unused/empty method */
