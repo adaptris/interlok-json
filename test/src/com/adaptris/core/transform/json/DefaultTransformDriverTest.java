@@ -17,30 +17,15 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	private static final String ABC = "abc";
 
-	/**
-	 * Constructor.
-	 *
-	 * @param name
-	 *          Test name.
-	 */
 	public DefaultTransformDriverTest(final String name) {
 		super(name);
 	}
 
-	/**
-	 * JSON transformation driver.
-	 */
-	private DefaultJsonTransformationDriver driver;
-
-	/**
-	 * XML serializer.
-	 */
 	private XMLSerializer serializer;
 
 	@Override
 	@Before
 	public void setUp() {
-		driver = new DefaultJsonTransformationDriver();
 		serializer = new XMLSerializer();
 	}
 
@@ -49,6 +34,7 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testArrayName() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getArrayName());
 		assertEquals(serializer.getArrayName(), driver.arrayName());
 
@@ -57,12 +43,10 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertEquals(ABC, driver.getArrayName());
 	}
 
-	/**
-	 * Test element name.
-	 */
 	@Test
 	public void testElementName() {
-		assertNull(driver.getElementName());
+    DefaultJsonTransformationDriver driver = createDriver();
+    assertNull(driver.getElementName());
 		assertEquals(serializer.getElementName(), driver.elementName());
 
 		driver.setElementName(ABC);
@@ -70,11 +54,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertEquals(ABC, driver.getElementName());
 	}
 
-	/**
-	 * Test object name.
-	 */
 	@Test
 	public void testObjectName() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getObjectName());
 		assertEquals(serializer.getObjectName(), driver.objectName());
 
@@ -83,11 +65,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertEquals(ABC, driver.getObjectName());
 	}
 
-	/**
-	 * Test root name.
-	 */
 	@Test
 	public void testRootName() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getRootName());
 		assertEquals(serializer.getRootName(), driver.rootName());
 
@@ -96,11 +76,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertEquals(ABC, driver.getRootName());
 	}
 
-	/**
-	 * Test top-level object.
-	 */
 	@Test
 	public void testForceTopLevelObject() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getForceTopLevelObject());
 		assertEquals(serializer.isForceTopLevelObject(), driver.forceTopLevelObject());
 
@@ -109,11 +87,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertTrue(driver.getForceTopLevelObject());
 	}
 
-	/**
-	 * Test skipping whitespace.
-	 */
 	@Test
 	public void testSkipWhiteSpace() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getSkipWhitespace());
 		assertEquals(serializer.isSkipWhitespace(), driver.skipWhitespace());
 
@@ -122,11 +98,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertTrue(driver.getSkipWhitespace());
 	}
 
-	/**
-	 * Test trimming whitespace.
-	 */
 	@Test
 	public void testTrimSpaces() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getTrimSpaces());
 		assertEquals(serializer.isTrimSpaces(), driver.trimSpaces());
 
@@ -135,11 +109,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertTrue(driver.getTrimSpaces());
 	}
 
-	/**
-	 * Test hints compatibility.
-	 */
 	@Test
 	public void testTypeHintsCompatibility() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getTypeHintsCompatibility());
 		assertEquals(serializer.isTypeHintsCompatibility(), driver.typeHintsCompatibility());
 
@@ -148,11 +120,9 @@ public class DefaultTransformDriverTest extends BaseCase {
 		assertTrue(driver.getTypeHintsCompatibility());
 	}
 
-	/**
-	 * Test hints enabled.
-	 */
 	@Test
 	public void testTypeHintsEnabled() {
+    DefaultJsonTransformationDriver driver = createDriver();
 		assertNull(driver.getTypeHintsEnabled());
 		assertEquals(serializer.isTypeHintsEnabled(), driver.typeHintsEnabled());
 
@@ -160,4 +130,26 @@ public class DefaultTransformDriverTest extends BaseCase {
 
 		assertTrue(driver.getTypeHintsEnabled());
 	}
+
+  public void testJsonToXml() throws Exception {
+    DefaultJsonTransformationDriver driver = createDriver();
+    String s = driver.transform(JsonXmlTransformServiceTest.JSON_INPUT, TransformationDirection.JSON_TO_XML);
+    assertNotNull(s);
+  }
+
+  public void testJsonArrayToXml() throws Exception {
+    DefaultJsonTransformationDriver driver = createDriver();
+    String s = driver.transform(JsonXmlTransformServiceTest.ARRAY_JSON_INPUT, TransformationDirection.JSON_TO_XML);
+    assertNotNull(s);
+  }
+
+  public void testXmlToJson() throws Exception {
+    DefaultJsonTransformationDriver driver = createDriver();
+    String s = driver.transform(JsonXmlTransformServiceTest.DEFAULT_XML_INPUT, TransformationDirection.XML_TO_JSON);
+    assertNotNull(s);
+  }
+
+  protected DefaultJsonTransformationDriver createDriver() {
+    return new DefaultJsonTransformationDriver();
+  }
 }
