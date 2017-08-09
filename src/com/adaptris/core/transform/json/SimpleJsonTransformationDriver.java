@@ -27,8 +27,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * have to execute a {@link JsonTransformService} afterwards to change the cardinality.
  * </p>
  * <p>
- * If the input is a JSON array, then {@code json} will still be added as the root element, but there will be an additional
- * {@link json-array} (not configurable) child element that wraps the JSON array.
+ * If the input is a JSON array, then {@code json-array} (not configurable) will be added as the root element, that wraps the JSON
+ * array.
  * </p>
  * 
  * @config simple-transformation-driver

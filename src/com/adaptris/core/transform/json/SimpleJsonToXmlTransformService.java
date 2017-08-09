@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * JSON input will be wrapped by a &lt;json> element when it is exported to XML.
  * </p>
  *
- * @deprecated use {@link JsonXmlTransformService} with a {@link SimpleJsonTransformationDriver} instead.
+ * @deprecated since 3.0.5 use {@link JsonXmlTransformService} with a {@link SimpleJsonTransformationDriver} instead.
  * @config simple-json-to-xml-transform-service
  * @author sellidge
  */

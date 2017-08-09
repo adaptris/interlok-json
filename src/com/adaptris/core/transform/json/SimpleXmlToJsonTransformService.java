@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * XML input should contain a &lt;json> element that wraps the elements that need to be converted to JSON.
  * </p>
  *
- * @deprecated use {@link JsonXmlTransformService} with a {@link SimpleJsonTransformationDriver} instead.
+ * @deprecated since 3.0.5 use {@link JsonXmlTransformService} with a {@link SimpleJsonTransformationDriver} instead.
  * @config simple-xml-to-json-transform-service
  *
  * @author sellidge
