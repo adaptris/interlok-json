@@ -16,9 +16,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  * <p>
  * This uses the default <a href="http://www.json.org/java/index.html">json.org implementation</a> to convert between JSON and XML.
- * When converting to XML, it will add a root element called {@link json} (this is configurable via {@link #setJsonTag(String)}) as
- * the required XML root element. When converting <strong>from XML</strong> then it expects the same tag as the root element of the
- * XML.
+ * When converting <strong>to XML</strong>, it will add a root element called {@code json} (this is configurable via
+ * {@link #setJsonTag(String)}) as the required XML root element. When converting <strong>from XML</strong> then it expects the same
+ * tag as the root element of the XML.
  * </p>
  * <p>
  * If your input is a relatively JSON object, then this is the transformation driver to use; {@link DefaultJsonTransformationDriver}
@@ -26,7 +26,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * a JSON array with a single element; it will not be supported by this driver implementation. You can still use it, but you will
  * have to execute a {@link JsonTransformService} afterwards to change the cardinality.
  * </p>
- *
+ * <p>
+ * If the input is a JSON array, then {@code json} will still be added as the root element, but there will be an additional
+ * {@link json-array} (not configurable) child element that wraps the JSON array.
+ * </p>
+ * 
  * @config simple-transformation-driver
  *
  * @author gdries
