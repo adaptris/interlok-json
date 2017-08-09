@@ -297,7 +297,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 		return skipWhitespace;
 	}
 
-	public boolean skipWhitespace() {
+  boolean skipWhitespace() {
 		return skipWhitespace != null ? skipWhitespace : DEFAULT_SKIP_WHITE_SPACE;
 	}
 
