@@ -15,6 +15,7 @@ import com.adaptris.core.util.LifecycleHelper;
  *
  * @author Ashley Anderson
  */
+@SuppressWarnings("deprecation")
 public class JsonSchemaServiceTest extends BaseCase {
 
 	/**

@@ -50,7 +50,7 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testArrayName() {
 		assertNull(driver.getArrayName());
-		assertEquals(serializer.getArrayName(), driver.getArrayNameOrDefault());
+		assertEquals(serializer.getArrayName(), driver.arrayName());
 
 		driver.setArrayName(ABC);
 
@@ -63,7 +63,7 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testElementName() {
 		assertNull(driver.getElementName());
-		assertEquals(serializer.getElementName(), driver.getElementNameOrDefault());
+		assertEquals(serializer.getElementName(), driver.elementName());
 
 		driver.setElementName(ABC);
 
@@ -76,7 +76,7 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testObjectName() {
 		assertNull(driver.getObjectName());
-		assertEquals(serializer.getObjectName(), driver.getObjectNameOrDefault());
+		assertEquals(serializer.getObjectName(), driver.objectName());
 
 		driver.setObjectName(ABC);
 
@@ -89,7 +89,7 @@ public class DefaultTransformDriverTest extends BaseCase {
 	@Test
 	public void testRootName() {
 		assertNull(driver.getRootName());
-		assertEquals(serializer.getRootName(), driver.getRootNameOrDefault());
+		assertEquals(serializer.getRootName(), driver.rootName());
 
 		driver.setRootName(ABC);
 
@@ -101,12 +101,12 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testForceTopLevelObject() {
-		assertNull(driver.isForceTopLevelObject());
-		assertEquals(serializer.isForceTopLevelObject(), driver.isForceTopLevelObjectOrDefault());
+		assertNull(driver.getForceTopLevelObject());
+		assertEquals(serializer.isForceTopLevelObject(), driver.forceTopLevelObject());
 
 		driver.setForceTopLevelObject(true);
 
-		assertTrue(driver.isForceTopLevelObject());
+		assertTrue(driver.getForceTopLevelObject());
 	}
 
 	/**
@@ -114,12 +114,12 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testSkipWhiteSpace() {
-		assertNull(driver.isSkipWhitespace());
-		assertEquals(serializer.isSkipWhitespace(), driver.isSkipWhitespaceOrDefault());
+		assertNull(driver.getSkipWhitespace());
+		assertEquals(serializer.isSkipWhitespace(), driver.skipWhitespace());
 
 		driver.setSkipWhitespace(true);
 
-		assertTrue(driver.isSkipWhitespace());
+		assertTrue(driver.getSkipWhitespace());
 	}
 
 	/**
@@ -127,12 +127,12 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testTrimSpaces() {
-		assertNull(driver.isTrimSpaces());
-		assertEquals(serializer.isTrimSpaces(), driver.isTrimSpacesOrDefault());
+		assertNull(driver.getTrimSpaces());
+		assertEquals(serializer.isTrimSpaces(), driver.trimSpaces());
 
 		driver.setTrimSpaces(true);
 
-		assertTrue(driver.isTrimSpaces());
+		assertTrue(driver.getTrimSpaces());
 	}
 
 	/**
@@ -140,12 +140,12 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testTypeHintsCompatibility() {
-		assertNull(driver.isTypeHintsCompatibility());
-		assertEquals(serializer.isTypeHintsCompatibility(), driver.isTypeHintsCompatibilityOrDefault());
+		assertNull(driver.getTypeHintsCompatibility());
+		assertEquals(serializer.isTypeHintsCompatibility(), driver.typeHintsCompatibility());
 
 		driver.setTypeHintsCompatibility(true);
 
-		assertTrue(driver.isTypeHintsCompatibility());
+		assertTrue(driver.getTypeHintsCompatibility());
 	}
 
 	/**
@@ -153,11 +153,11 @@ public class DefaultTransformDriverTest extends BaseCase {
 	 */
 	@Test
 	public void testTypeHintsEnabled() {
-		assertNull(driver.isTypeHintsEnabled());
-		assertEquals(serializer.isTypeHintsEnabled(), driver.isTypeHintsEnabledOrDefault());
+		assertNull(driver.getTypeHintsEnabled());
+		assertEquals(serializer.isTypeHintsEnabled(), driver.typeHintsEnabled());
 
 		driver.setTypeHintsEnabled(true);
 
-		assertTrue(driver.isTypeHintsEnabled());
+		assertTrue(driver.getTypeHintsEnabled());
 	}
 }

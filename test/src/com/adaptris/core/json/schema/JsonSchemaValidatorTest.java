@@ -28,7 +28,8 @@ public class JsonSchemaValidatorTest {
 		try (final InputStream is = JsonSchemaValidatorTest.class.getResource("test_schema.json").openStream()) {
 			final JSONObject rawSchema = new JSONObject(new JSONTokener(is));
 			VALID_SCHEMA = SchemaLoader.load(rawSchema);
-		} catch (@SuppressWarnings("unused") final IOException e) {
+    }
+    catch (final IOException e) {
 			/* empty catch block */
 		}
 	}

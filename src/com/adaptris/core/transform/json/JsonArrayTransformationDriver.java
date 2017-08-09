@@ -7,9 +7,9 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 /**
- * Transformation driver that uses {@link JSONArray#fromObject(Object)} instead of
- * {@link JSONObject#fromObject(Object)}.
+ * Transformation driver that uses {@link JSONArray#fromObject(Object)} instead of {@link JSONObject#fromObject(Object)}.
  *
+ * @see DefaultJsonTransformationDriver
  * @since 3.0.4
  * @config json-array-transformation-driver
  */

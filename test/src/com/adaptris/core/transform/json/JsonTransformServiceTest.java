@@ -1,6 +1,7 @@
 package com.adaptris.core.transform.json;
 
 import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.ConfiguredProduceDestination;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.FileDataInputParameter;
@@ -101,7 +102,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   protected Object retrieveObjectForSampleConfig() {
     service.setSourceJson(payloadInput);
     FileDataInputParameter in = new FileDataInputParameter();
-    in.setUrl("file:///path/to/my/mapping.json");
+    in.setDestination(new ConfiguredProduceDestination("file:///path/to/my/mapping.json"));
     service.setMappingSpec(in);
     service.setTargetJson(payloadOutput);
     
