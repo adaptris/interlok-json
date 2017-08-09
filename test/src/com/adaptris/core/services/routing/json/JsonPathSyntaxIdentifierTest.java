@@ -1,15 +1,15 @@
 package com.adaptris.core.services.routing.json;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.adaptris.core.BranchingServiceCollection;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.services.LogMessageService;
 import com.adaptris.core.services.routing.AlwaysMatchSyntaxIdentifier;
 import com.adaptris.core.services.routing.SyntaxBranchingService;
 import com.adaptris.core.services.routing.SyntaxIdentifier;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class JsonPathSyntaxIdentifierTest extends ServiceCase {
 
@@ -39,6 +39,20 @@ public class JsonPathSyntaxIdentifierTest extends ServiceCase {
 
   public void testIsThisSyntax_NoMatches() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
+    identifier.addPattern("$.store.book[25].title");
+    assertFalse("JSONPath no matches", identifier.isThisSyntax(sampleJsonContent()));
+  }
+
+  public void testIsThisSyntax_FunctionNoMatch() throws Exception {
+    JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
+    identifier.addPattern("$.store.book[?(@.price < 5)]");
+    assertFalse("JSONPath no matches", identifier.isThisSyntax(sampleJsonContent()));
+  }
+
+  public void testIsThisSyntax_ImplicitAND() throws Exception {
+    JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
+    identifier.addPattern(JSON_PATH_VALID_1);
+    identifier.addPattern(JSON_PATH_VALID_2);
     identifier.addPattern("$.store.book[25].title");
     assertFalse("JSONPath no matches", identifier.isThisSyntax(sampleJsonContent()));
   }
