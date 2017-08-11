@@ -84,7 +84,11 @@
   <target name="jar.resources" depends="prepare">
     <!-- build the manifest file -->
     <adapter:create-manifest file="${build.dir}/Manifest.mf" title="${manifest.title}"/>
-
+    <copy todir="${classes.build.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*.xsl"/>
+      </fileset>
+    </copy>
   </target>
 
 
