@@ -3,7 +3,7 @@ package com.adaptris.core.transform.json;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.BaseCase;
-import com.adaptris.core.ConfiguredProduceDestination;
+import com.adaptris.core.ConfiguredDestination;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
@@ -15,6 +15,7 @@ import com.adaptris.core.util.LifecycleHelper;
  *
  * @author Ashley Anderson
  */
+@SuppressWarnings("deprecation")
 public class JsonSchemaServiceTest extends BaseCase {
 
 	/**
@@ -75,7 +76,7 @@ public class JsonSchemaServiceTest extends BaseCase {
   }
   private JsonSchemaService createService() {
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setDestination(new ConfiguredProduceDestination(SCHEMA_URL));
+    schemaUrl.setDestination(new ConfiguredDestination(SCHEMA_URL));
     return new JsonSchemaService(schemaUrl);
   }
 }

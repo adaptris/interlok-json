@@ -88,7 +88,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <ul>
  * <li>Key = "my-metadata-key1" Value = "Value1"</li>
  * <li>Key = "my-metadata-key2" Value = "Value2"</li>
- * <li></li>
  * </ul>
  * Just before transform execution, our variable substitution will run giving us final Shift content like this;
  *
@@ -666,25 +665,16 @@ public class JsonTransformService extends ServiceImp {
 		}
 	}
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
 	@Override
 	public void prepare() throws CoreException {
 		/* unused/empty method */
 	}
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
 	@Override
 	protected void closeService() {
 		/* unused/empty method */
 	}
 
-	/**
-	 * Unused method. For more information see {@inheritDoc}.
-	 */
 	@Override
 	protected void initService() throws CoreException {
 		/* unused/empty method */

@@ -16,8 +16,21 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  * <p>
  * This uses the default <a href="http://www.json.org/java/index.html">json.org implementation</a> to convert between JSON and XML.
+ * When converting <strong>to XML</strong>, it will add a root element called {@code json} (this is configurable via
+ * {@link #setJsonTag(String)}) as the required XML root element. When converting <strong>from XML</strong> then it expects the same
+ * tag as the root element of the XML.
  * </p>
- *
+ * <p>
+ * If your input is a relatively JSON object, then this is the transformation driver to use; {@link DefaultJsonTransformationDriver}
+ * adds a layer of XML complexity that you may not need. The key differentiator is that where the output <strong>should be</strong>
+ * a JSON array with a single element; it will not be supported by this driver implementation. You can still use it, but you will
+ * have to execute a {@link JsonTransformService} afterwards to change the cardinality.
+ * </p>
+ * <p>
+ * If the input is a JSON array, then {@code json-array} (not configurable) will be added as the root element, that wraps the JSON
+ * array.
+ * </p>
+ * 
  * @config simple-transformation-driver
  *
  * @author gdries
@@ -48,17 +61,6 @@ public class SimpleJsonTransformationDriver implements TransformationDriver {
 		}
 	}
 
-	/**
-	 * Convert XML to JSON.
-	 *
-	 * @param input
-	 *          XML to convert.
-	 *
-	 * @return The converted JSON.
-	 *
-	 * @throws ServiceException
-	 *           Thrown if there was a problem converting from XML to JSON.
-	 */
 	private String xmlToJSON(final String input) throws ServiceException {
 		try {
 
@@ -71,17 +73,6 @@ public class SimpleJsonTransformationDriver implements TransformationDriver {
 		}
 	}
 
-	/**
-	 * Convert JSON to XML.
-	 *
-	 * @param input
-	 *          The JSON to convert.
-	 *
-	 * @return The converted XML.
-	 *
-	 * @throws ServiceException
-	 *           Thrown if there was a problem converting from JSON to XML.
-	 */
 	private String jsonToXML(final String input) throws ServiceException {
 		try {
 
@@ -93,14 +84,6 @@ public class SimpleJsonTransformationDriver implements TransformationDriver {
 		}
 	}
 
-	/**
-	 * Convert a String to a JSONObject.
-	 *
-	 * @param input
-	 *          The JSON string.
-	 *
-	 * @return The JSON object.
-	 */
 	private JSONObject toJSONObject(final String input) {
 		JSONObject result = null;
 		try {

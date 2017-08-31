@@ -7,10 +7,11 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 /**
- * Transformation driver that uses instead of {@link JSONObject#fromObject(Object)} to read the JSON
- * payload.
+ * Transformation driver that uses instead of {@link JSONObject#fromObject(Object)} to read the JSON payload.
  *
  * @since 3.0.4
+ * @see DefaultJsonTransformationDriver
+ * @config json-object-transformation-driver
  */
 @XStreamAlias("json-object-transformation-driver")
 public class JsonObjectTransformationDriver extends DefaultJsonTransformationDriver {

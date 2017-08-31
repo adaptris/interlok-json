@@ -8,7 +8,7 @@ import java.util.Map;
 import com.bazaarvoice.jolt.Transform;
 
 /**
- * {@link Transform} implementation that turns all empty strings (@code ""} into null.
+ * {@link Transform} implementation that turns all empty strings {@code ""} into null.
  * <p>
  * You can use this by specifying the fully qualified class name as the {@code operation} in your jolt specification
  * </p>

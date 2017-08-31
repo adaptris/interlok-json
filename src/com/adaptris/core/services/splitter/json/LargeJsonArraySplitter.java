@@ -113,6 +113,7 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
       return ret;
     }
 
+    @SuppressWarnings("deprecation")
     private AdaptrisMessage constructAdaptrisMessage() throws IOException {
       AdaptrisMessage tmpMessage = factory.newMessage();
       int i = 0;

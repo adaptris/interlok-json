@@ -5,7 +5,7 @@ import java.util.EnumSet;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ConfiguredProduceDestination;
+import com.adaptris.core.ConfiguredDestination;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.FileDataInputParameter;
@@ -183,7 +183,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
 
   private JsonSchemaService createService() {
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setDestination(new ConfiguredProduceDestination(SCHEMA_URL));
+    schemaUrl.setDestination(new ConfiguredDestination(SCHEMA_URL));
     return new JsonSchemaService(schemaUrl);
   }
 

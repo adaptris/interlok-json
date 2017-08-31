@@ -1,8 +1,5 @@
 /**
- * <p>
- * Implementation(s) of {@link com.adaptris.interlok.config.DataInputParameter} providing the ability to extract data from a JSON
- * object.
- * </p>
+ * Base package containing common functionality.
  * 
  * <img alt="UML" src="package.svg"/>
  */

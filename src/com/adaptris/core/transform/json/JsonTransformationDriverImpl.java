@@ -89,7 +89,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 * @throws ServiceException
 	 *           Thrown if there was a problem converting from XML to JSON.
 	 */
-	private String xmlToJSON(final String input) throws ServiceException {
+  protected String xmlToJSON(final String input) throws ServiceException {
 		try {
 
 			return getSerializer().read(input).toString();
@@ -141,15 +141,15 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 */
 	private XMLSerializer getSerializer() {
 		final XMLSerializer serializer = new XMLSerializer();
-		serializer.setArrayName(getArrayNameOrDefault());
-		serializer.setElementName(getElementNameOrDefault());
-		serializer.setObjectName(getObjectNameOrDefault());
-		serializer.setRootName(getRootNameOrDefault());
-		serializer.setForceTopLevelObject(isForceTopLevelObjectOrDefault());
-		serializer.setSkipWhitespace(isSkipWhitespaceOrDefault());
-		serializer.setTrimSpaces(isTrimSpacesOrDefault());
-		serializer.setTypeHintsCompatibility(isTypeHintsCompatibilityOrDefault());
-		serializer.setTypeHintsEnabled(isTypeHintsEnabledOrDefault());
+    serializer.setArrayName(arrayName());
+		serializer.setElementName(elementName());
+		serializer.setObjectName(objectName());
+		serializer.setRootName(rootName());
+		serializer.setForceTopLevelObject(forceTopLevelObject());
+		serializer.setSkipWhitespace(skipWhitespace());
+		serializer.setTrimSpaces(trimSpaces());
+		serializer.setTypeHintsCompatibility(typeHintsCompatibility());
+		serializer.setTypeHintsEnabled(typeHintsEnabled());
 		return serializer;
 	}
 
@@ -167,7 +167,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return The array name, or default value.
 	 */
-	public String getArrayNameOrDefault() {
+  String arrayName() {
 		return arrayName != null ? arrayName : DEFAULT_ARRAYNAME;
 	}
 
@@ -195,7 +195,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return The element name, or default value.
 	 */
-	public String getElementNameOrDefault() {
+  String elementName() {
 		return elementName != null ? elementName : DEFAULT_ELEMENTNAME;
 	}
 
@@ -223,7 +223,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return The object name, or default value.
 	 */
-	public String getObjectNameOrDefault() {
+	public String objectName() {
 		return objectName != null ? objectName : DEFAULT_OBJECTNAME;
 	}
 
@@ -251,7 +251,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return The root name, or default value.
 	 */
-	public String getRootNameOrDefault() {
+  String rootName() {
 		return rootName != null ? rootName : DEFAULT_ROOTNAME;
 	}
 
@@ -270,16 +270,11 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return True if force top level is set.
 	 */
-	public Boolean isForceTopLevelObject() {
+	public Boolean getForceTopLevelObject() {
 		return forceTopLevelObject;
 	}
 
-	/**
-	 * Whether force top level is set, or default value if null.
-	 *
-	 * @return True if force top level is set.
-	 */
-	public boolean isForceTopLevelObjectOrDefault() {
+  boolean forceTopLevelObject() {
 		return forceTopLevelObject != null ? forceTopLevelObject : DEFAULT_FORCE_TOP_LEVEL_OBJECT;
 	}
 
@@ -289,7 +284,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 * @param forceTopLevelObject
 	 *          Whether to force top level object.
 	 */
-	public void setForceTopLevelObject(final boolean forceTopLevelObject) {
+  public void setForceTopLevelObject(final Boolean forceTopLevelObject) {
 		this.forceTopLevelObject = forceTopLevelObject;
 	}
 
@@ -298,16 +293,11 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return True if skip whitespace is set.
 	 */
-	public Boolean isSkipWhitespace() {
+	public Boolean getSkipWhitespace() {
 		return skipWhitespace;
 	}
 
-	/**
-	 * Whether skip whitespace is set, or default value if null.
-	 *
-	 * @return True if skip whitespace is set.
-	 */
-	public boolean isSkipWhitespaceOrDefault() {
+  boolean skipWhitespace() {
 		return skipWhitespace != null ? skipWhitespace : DEFAULT_SKIP_WHITE_SPACE;
 	}
 
@@ -317,7 +307,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 * @param skipWhitespace
 	 *          Whether to skip whitespace.
 	 */
-	public void setSkipWhitespace(final boolean skipWhitespace) {
+  public void setSkipWhitespace(final Boolean skipWhitespace) {
 		this.skipWhitespace = skipWhitespace;
 	}
 
@@ -326,16 +316,11 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return True if trim whitespace is set.
 	 */
-	public Boolean isTrimSpaces() {
+	public Boolean getTrimSpaces() {
 		return trimSpaces;
 	}
 
-	/**
-	 * Whether trim whitespace is set, or default value if null.
-	 *
-	 * @return True if trim whitespace is set.
-	 */
-	public boolean isTrimSpacesOrDefault() {
+  boolean trimSpaces() {
 		return trimSpaces != null ? trimSpaces : DEFAULT_TRIM_SPACES;
 	}
 
@@ -345,7 +330,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 * @param trimSpaces
 	 *          Whether to trim whitespace.
 	 */
-	public void setTrimSpaces(final boolean trimSpaces) {
+  public void setTrimSpaces(final Boolean trimSpaces) {
 		this.trimSpaces = trimSpaces;
 	}
 
@@ -354,16 +339,11 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return True if type hints compatibility is set.
 	 */
-	public Boolean isTypeHintsCompatibility() {
+	public Boolean getTypeHintsCompatibility() {
 		return typeHintsCompatibility;
 	}
 
-	/**
-	 * Whether type hints compatibility is set, or default value if null.
-	 *
-	 * @return True if type hints compatibility is set.
-	 */
-	public boolean isTypeHintsCompatibilityOrDefault() {
+  boolean typeHintsCompatibility() {
 		return typeHintsCompatibility != null ? typeHintsCompatibility : DEFAULT_TYPE_HINTS_COMPAT;
 	}
 
@@ -373,7 +353,7 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 * @param typeHintsCompatibility
 	 *          Whether type hints compatibility is enabled.
 	 */
-	public void setTypeHintsCompatibility(final boolean typeHintsCompatibility) {
+  public void setTypeHintsCompatibility(final Boolean typeHintsCompatibility) {
 		this.typeHintsCompatibility = typeHintsCompatibility;
 	}
 
@@ -382,16 +362,11 @@ public abstract class JsonTransformationDriverImpl implements TransformationDriv
 	 *
 	 * @return True if type hints is enabled.
 	 */
-	public Boolean isTypeHintsEnabled() {
+  public Boolean getTypeHintsEnabled() {
 		return typeHintsEnabled;
 	}
 
-	/**
-	 * Whether type hints are enabled, or default value if null.
-	 *
-	 * @return True if type hints is enabled.
-	 */
-	public boolean isTypeHintsEnabledOrDefault() {
+  boolean typeHintsEnabled() {
 		return typeHintsEnabled != null ? typeHintsEnabled : DEFAULT_TYPE_HINTS_ENABLED;
 	}
 
