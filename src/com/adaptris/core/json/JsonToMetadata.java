@@ -1,25 +1,20 @@
 package com.adaptris.core.json;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
+import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.services.path.json.JsonPathService;
-import com.adaptris.core.util.ExceptionHelper;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -58,6 +53,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class JsonToMetadata extends ServiceImp {
 
   @InputFieldDefault(value = "")
+  @InputFieldHint(style = "BLANKABLE")
   private String metadataPrefix;
 
   public JsonToMetadata() {
@@ -66,28 +62,14 @@ public class JsonToMetadata extends ServiceImp {
 
   @Override
   public void doService(final AdaptrisMessage msg) throws ServiceException {
-    try (BufferedReader buf = new BufferedReader(msg.getReader())) {
-      ObjectMapper mapper = new ObjectMapper();
-      JsonParser parser = mapper.getFactory().createParser(buf);
-      if (parser.nextToken() == JsonToken.START_OBJECT) {
-        ObjectNode node = mapper.readTree(parser);
-        for (String key : makeIterable(node.fieldNames())) {
-          JsonNode field = node.get(key);
-          String metadataKey = metadataPrefix() + key;
-          if (field.isValueNode()) {
-            msg.addMessageHeader(metadataKey, field.asText());
-          } else {
-            msg.addMessageHeader(metadataKey, field.toString());
-          }
-        }
-      } else {
-        log.warn("Message did not start with {}, nothing to do", JsonToken.START_OBJECT.asString());
+    try {
+      Map<String, String> metadata = JsonUtil.mapifyJson(msg);
+      for (Map.Entry<String, String> entry : metadata.entrySet()) {
+        String metadataKey = metadataPrefix() + entry.getKey();
+        msg.addMessageHeader(metadataKey, entry.getValue());
       }
-    }
-    catch (JsonParseException e) {
-      log.warn("Message not JSON [{}]", e.getMessage());
-    } catch (Exception e) {
-      throw ExceptionHelper.wrapServiceException(e);
+    } catch (IOException e) {
+      log.trace("Message not json, nothing to do");
     }
   }
 
