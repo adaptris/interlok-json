@@ -66,9 +66,7 @@ public class JsonToMetadata extends ServiceImp {
 
   @Override
   public void doService(final AdaptrisMessage msg) throws ServiceException {
-    try {
-      BufferedReader buf = new BufferedReader(msg.getReader());
-
+    try (BufferedReader buf = new BufferedReader(msg.getReader())) {
       ObjectMapper mapper = new ObjectMapper();
       JsonParser parser = mapper.getFactory().createParser(buf);
       if (parser.nextToken() == JsonToken.START_OBJECT) {
