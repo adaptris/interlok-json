@@ -15,39 +15,29 @@ import com.adaptris.core.util.LoggingHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Convenience service for inserting a JSON array into a database.
+ * Convenience service for inserting/updating a JSON array into a database.
  * 
  * <p>
- * This creates insert statements based on the contents of each JSON object inside the array. A new insert statement will generated
- * for each JSON object in the array. You will get better performance from {@link BatchInsertJsonArray}; use this if the fields in
- * the JSON object can change but you need to insert into the same table...
- * </p>
- * <pre>
- * {@code 
- * [
- *   { "firstname":"alice", "lastname":"smith", "dob":"2017-01-01" },
- *   { "firstname":"bob", "lastname":"smith", "dob":"2017-01-02" },
- *   { "firstname":"carol", "lastname":"smith", "dob":"2017-01-03" }
- * ]}
- * </pre>
- * will effectively execute the following statement {@code INSERT INTO table (firstname,lastname,dob) VALUES (?,?,?)} 3 times with
- * no batching.
+ * Creates an insert or update statement based on the contents of the JSON object inside the array.
+ * {@code [{ "firstname":"carol", "lastname":"smith", "dob":"2017-01-03", "id": "1234"}]}
+ * will effectively execute the following statement {@code INSERT INTO table (firstname,lastname,dob,id) VALUES (?,?,?,?)} or
+ * {@code UPDATE table SET firstname=?, lastname=?, dob=? WHERE id = ?;} if {@code 1234} already exists as a row.
  * </p>
  * <p>
  * Note that no parsing/assertion of the column names will be done, so if they are invalid SQL columns then it's going to be
  * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement.
  * </p>
  * 
- * @config json-array-jdbc-insert
+ * @config json-array-jdbc-upsert
  * @since 3.6.5
  *
  */
 @AdapterComponent
-@ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc")
-@XStreamAlias("json-array-jdbc-insert")
-public class InsertJsonArray extends InsertJsonObject {
+@ComponentProfile(summary = "Insert/Update a JSON Array into a database", tag = "service,json,jdbc")
+@XStreamAlias("json-array-jdbc-upsert")
+public class UpsertJsonArray extends UpsertJsonObject {
 
-  public InsertJsonArray() {
+  public UpsertJsonArray() {
 
   }
 
@@ -61,7 +51,7 @@ public class InsertJsonArray extends InsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleInsert(conn, JsonUtil.mapifyJson(m));
+        handleUpsert(conn, JsonUtil.mapifyJson(m));
       }
       commit(conn, msg);
     } catch (Exception e) {
@@ -71,4 +61,5 @@ public class InsertJsonArray extends InsertJsonObject {
       JdbcUtil.closeQuietly(conn);
     }
   }
+
 }
