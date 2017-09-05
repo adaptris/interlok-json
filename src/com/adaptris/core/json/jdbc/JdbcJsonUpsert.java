@@ -11,7 +11,7 @@ import com.adaptris.annotation.InputFieldDefault;
 
 /**
  * 
- * Base behaviour of inserting JSON directly into a db.
+ * Base behaviour for upsert JSON directly into a db.
  *
  */
 public abstract class JdbcJsonUpsert extends JdbcJsonInsert {
