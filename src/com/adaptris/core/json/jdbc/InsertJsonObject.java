@@ -2,6 +2,7 @@ package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
@@ -58,13 +59,15 @@ public class InsertJsonObject extends JdbcJsonInsert {
     }
   }
 
-  protected void handleInsert(Connection conn, Map<String, String> json) throws Exception {
+  protected void handleInsert(Connection conn, Map<String, String> json) throws ServiceException {
     PreparedStatement insertStmt = null;
     try {
       InsertWrapper inserter = new InsertWrapper(json);
       log.trace("INSERT [{}]", inserter.statement);
       insertStmt = inserter.addParams(prepareStatement(conn, inserter.statement), json);
       insertStmt.executeUpdate();
+    } catch (SQLException e) {
+      throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(insertStmt);
     }

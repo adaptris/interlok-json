@@ -3,6 +3,7 @@ package com.adaptris.core.json.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
@@ -58,7 +59,7 @@ public class UpsertJsonObject extends JdbcJsonUpsert {
     }
   }
 
-  protected void handleUpsert(Connection conn, Map<String, String> json) throws Exception {
+  protected void handleUpsert(Connection conn, Map<String, String> json) throws ServiceException {
     PreparedStatement selectStmt = null, insertStmt = null, updateStmt = null;
     ResultSet rs = null;
     try {
@@ -68,9 +69,6 @@ public class UpsertJsonObject extends JdbcJsonUpsert {
       log.trace("SELECT [{}]", selector.statement);
       log.trace("INSERT [{}]", inserter.statement);
       log.trace("UPDATE [{}]", updater.statement);
-      System.out.println(selector.statement);
-      System.out.println(inserter.statement);
-      System.out.println(updater.statement);
       selectStmt = selector.addParams(prepareStatement(conn, selector.statement), json);
       rs = selectStmt.executeQuery();
       if (rs.next()) {
@@ -80,6 +78,8 @@ public class UpsertJsonObject extends JdbcJsonUpsert {
         insertStmt = inserter.addParams(prepareStatement(conn, inserter.statement), json);
         insertStmt.executeUpdate();
       }
+    } catch (SQLException e) {
+      throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(rs);
       JdbcUtil.closeQuietly(selectStmt);

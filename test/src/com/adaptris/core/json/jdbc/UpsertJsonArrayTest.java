@@ -39,7 +39,17 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
     checkDob(CAROL, DOB);
   }
 
+  public void testService_BrokenColumn() throws Exception {
+    createDatabase();
+    JdbcJsonUpsert service = configureForTests(createService().withJsonId(ID_ELEMENT_VALUE));
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_COLUMN_ARRAY);
+    try {
+      execute(service, msg);
+      fail();
+    } catch (ServiceException expected) {
 
+    }
+  }
 
   public void testService_NotJsonArray() throws Exception {
     createDatabase();
