@@ -2,6 +2,7 @@ package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
@@ -24,7 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <p>
  * Note that no parsing/assertion of the column names will be done, so if they are invalid SQL columns then it's going to be
- * fail.
+ * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement.
  * </p>
  * 
  * @config json-jdbc-insert
@@ -47,12 +48,7 @@ public class InsertJsonObject extends JdbcJsonInsert {
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
-      Map<String, String> json = JsonUtil.mapifyJson(msg);
-      StatementWrapper wrapper = new StatementWrapper(json);
-      log.trace("Generated [{}]", wrapper.statement);
-      stmt = prepareStatement(conn, wrapper.statement);
-      wrapper.addParams(stmt, json);
-      stmt.executeUpdate();
+      handleInsert(conn, JsonUtil.mapifyJson(msg));
       commit(conn, msg);
     } catch (Exception e) {
       rollback(conn, msg);
@@ -62,4 +58,19 @@ public class InsertJsonObject extends JdbcJsonInsert {
       JdbcUtil.closeQuietly(stmt);
     }
   }
+
+  protected void handleInsert(Connection conn, Map<String, String> json) throws ServiceException {
+    PreparedStatement insertStmt = null;
+    try {
+      InsertWrapper inserter = new InsertWrapper(json);
+      log.trace("INSERT [{}]", inserter.statement);
+      insertStmt = inserter.addParams(prepareStatement(conn, inserter.statement), json);
+      insertStmt.executeUpdate();
+    } catch (SQLException e) {
+      throw ExceptionHelper.wrapServiceException(e);
+    } finally {
+      JdbcUtil.closeQuietly(insertStmt);
+    }
+  }
+
 }

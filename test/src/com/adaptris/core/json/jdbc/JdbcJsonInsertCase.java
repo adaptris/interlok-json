@@ -1,4 +1,4 @@
-package com.adaptris.core.services.jdbc;
+package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,18 +10,22 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.jdbc.JdbcConnection;
 import com.adaptris.core.json.jdbc.JdbcJsonInsert;
+import com.adaptris.core.services.jdbc.JdbcOutputExampleTest;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LifecycleHelper;
+import com.adaptris.util.TimeInterval;
 
 public abstract class JdbcJsonInsertCase extends ServiceCase {
 
 
-  protected static final String CONTENT = "[\r\n" + "   { \"firstname\":\"alice\", \"lastname\":\"smith\"},\r\n"
-      + "   { \"firstname\":\"bob\", \"lastname\":\"smith\"},\r\n" + "   { \"firstname\":\"carol\", \"lastname\":\"smith\" }\r\n"
-      + "]";
+  protected static final String ARRAY_CONTENT =
+      " [" + "   { \"firstname\":\"alice\", \"lastname\":\"smith\", \"dob\":\"2017-01-01\" },"
+          + "   { \"firstname\":\"bob\", \"lastname\":\"smith\", \"dob\":\"2017-01-02\" },"
+          + "   { \"firstname\":\"carol\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }" + " ]";
 
-  protected static final String OBJECT_CONTENT = "   { \"firstname\":\"alice\", \"lastname\":\"smith\"}";
-  protected static final String INVALID_COLUMN_ARRAY = " [ { \"$firstname\":\"alice\", \"$lastname\":\"smith\"}]";
+  protected static final String OBJECT_CONTENT = "{ \"firstname\":\"carol\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }";
+  protected static final String INVALID_COLUMN_ARRAY =
+      "[{ \"$firstname\":\"carol\", \"$lastname\":\"smith\", \"$dob\":\"2017-01-03\" }]";
 
   protected static final String JSON_JDBC_DRIVER = "json.jdbc.driver";
   protected static final String JSON_JDBC_URL = "json.jdbc.url";
@@ -86,7 +90,8 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
       c = createConnection();
       s = c.createStatement();
       executeQuietly(s, String.format("DROP TABLE %s", TABLE_NAME));
-      s.execute(String.format("CREATE TABLE %s (firstname VARCHAR(128) NOT NULL, lastname VARCHAR(128) NOT NULL)", TABLE_NAME));
+      s.execute(String.format("CREATE TABLE %s (firstname VARCHAR(128) NOT NULL, lastname VARCHAR(128) NOT NULL, dob VARCHAR(128))",
+          TABLE_NAME));
     } finally {
       JdbcUtil.closeQuietly(s);
       JdbcUtil.closeQuietly(c);
@@ -101,15 +106,31 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
     }
   }
 
+  @Override
+  protected JdbcJsonInsert retrieveObjectForSampleConfig() {
+    return configureForExamples(createService().withTable("myTable"));
+  }
+
   protected abstract JdbcJsonInsert createService();
 
-  protected static <T> T configure(T t) {
+  protected static <T> T configureForTests(T t) {
     JdbcJsonInsert service = (JdbcJsonInsert) t;
     JdbcConnection connection = new JdbcConnection();
     connection.setConnectUrl(PROPERTIES.getProperty(JSON_JDBC_URL));
     connection.setDriverImp(PROPERTIES.getProperty(JSON_JDBC_DRIVER));
     service.setConnection(connection);
     service.setTable(TABLE_NAME);
+    return t;
+  }
+
+  protected static <T> T configureForExamples(T t) {
+    JdbcJsonInsert service = (JdbcJsonInsert) t;
+    service.setTable("myTable");
+    JdbcConnection connection = new JdbcConnection();
+    connection.setConnectUrl("jdbc:mysql://localhost:3306/mydatabase");
+    connection.setConnectionAttempts(2);
+    connection.setConnectionRetryInterval(new TimeInterval(3L, "SECONDS"));
+    service.setConnection(connection);
     return t;
   }
 

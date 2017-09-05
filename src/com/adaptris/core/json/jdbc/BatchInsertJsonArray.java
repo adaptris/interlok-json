@@ -45,7 +45,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <p>
  * Note that no parsing/assertion of the column names will be done, so if they are invalid SQL columns then it's going to be
- * fail.
+ * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement.
  * </p>
  * 
  * @config json-array-jdbc-batch-insert
@@ -84,11 +84,11 @@ public class BatchInsertJsonArray extends JdbcJsonInsert {
       // Use the already existing LargeJsonArraySplitter, but force it with a default-mf
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
-      StatementWrapper wrapper = null;
+      InsertWrapper wrapper = null;
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
         Map<String, String> json = JsonUtil.mapifyJson(m);
         if (wrapper == null) {
-          wrapper = new StatementWrapper(json);
+          wrapper = new InsertWrapper(json);
           log.trace("Generated [{}]", wrapper.statement);
           stmt = prepareStatement(conn, wrapper.statement);
         }

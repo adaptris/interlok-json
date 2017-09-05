@@ -33,9 +33,13 @@ public abstract class JdbcJsonInsert extends JdbcService {
    * @param s the table to insert on.
    */
   public void setTable(String s) {
-    this.table = s;
+    this.table = Args.notBlank(s, "table");
   }
 
+  public JdbcJsonInsert withTable(String s) {
+    setTable(s);
+    return this;
+  }
 
   @Override
   protected void closeJdbcService() {}
@@ -60,11 +64,11 @@ public abstract class JdbcJsonInsert extends JdbcService {
 
 
 
-  protected class StatementWrapper {
+  protected class InsertWrapper {
     protected List<String> columns;
     protected String statement;
 
-    StatementWrapper(Map<String, String> json) {
+    InsertWrapper(Map<String, String> json) {
       columns = new ArrayList<>(json.keySet());
       statement = String.format("INSERT into %s (%s) VALUES (%s)", getTable(), createString(true), createString(false));
     }
@@ -81,14 +85,14 @@ public abstract class JdbcJsonInsert extends JdbcService {
       return sb.toString();
     }
 
-    protected void addParams(PreparedStatement statement, Map<String, String> obj) throws SQLException {
+    protected PreparedStatement addParams(PreparedStatement statement, Map<String, String> obj) throws SQLException {
       int paramIndex = 1;
       statement.clearParameters();
       for (Iterator<String> i = columns.iterator(); i.hasNext(); paramIndex++) {
         String key = i.next();
         statement.setObject(paramIndex, obj.get(key));
       }
-      return;
+      return statement;
     }
   }
 }
