@@ -9,6 +9,11 @@ import java.util.Map;
 
 import com.adaptris.annotation.InputFieldDefault;
 
+/**
+ * 
+ * Base behaviour of inserting JSON directly into a db.
+ *
+ */
 public abstract class JdbcJsonUpsert extends JdbcJsonInsert {
 
   static String DEFAULT_ID_FIELD = "id";

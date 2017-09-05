@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -45,6 +46,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @AdapterComponent
 @ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-array-jdbc-insert")
+@DisplayOrder(order = {"table"})
 public class InsertJsonArray extends InsertJsonObject {
 
   public InsertJsonArray() {

@@ -14,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -55,6 +56,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @AdapterComponent
 @ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-array-jdbc-batch-insert")
+@DisplayOrder(order = {"table", "batchWindow"})
 public class BatchInsertJsonArray extends JdbcJsonInsert {
 
   private static final InheritableThreadLocal<AtomicInteger> counter = new InheritableThreadLocal<AtomicInteger>() {

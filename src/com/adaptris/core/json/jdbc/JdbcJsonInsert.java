@@ -14,6 +14,11 @@ import com.adaptris.core.jdbc.JdbcService;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 
+/**
+ * 
+ * Base behaviour of inserting JSON directly into a db.
+ *
+ */
 public abstract class JdbcJsonInsert extends JdbcService {
   @NotBlank
   private String table;

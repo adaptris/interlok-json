@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
@@ -35,6 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @AdapterComponent
 @ComponentProfile(summary = "Insert a JSON object into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-jdbc-insert")
+@DisplayOrder(order = {"table"})
 public class InsertJsonObject extends JdbcJsonInsert {
 
   public InsertJsonObject() {

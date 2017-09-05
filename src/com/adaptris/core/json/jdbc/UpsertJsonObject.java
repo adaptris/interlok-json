@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
@@ -20,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Convenience service for inserting/updating a JSON object into a database.
  * 
  * <p>
- * Creates an insert or update statement based on the contents of the JSON object inside the array.
+ * Creates an insert or update statement based on the contents of the JSON object.
  * {@code { "firstname":"carol", "lastname":"smith", "dob":"2017-01-03", "id": "1234"}}
  * will effectively execute the following statement {@code INSERT INTO table (firstname,lastname,dob,id) VALUES (?,?,?,?)} or
  * {@code UPDATE table SET firstname=?, lastname=?, dob=? WHERE id = ?;} if {@code 1234} already exists as a row.
@@ -36,7 +37,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @AdapterComponent
 @ComponentProfile(summary = "Insert/Update a JSON object into a database", tag = "service,json,jdbc")
-@XStreamAlias("json-jdbc-upsert")
+@XStreamAlias("json-array-jdbc-upsert")
+@DisplayOrder(order = {"table", "jsonIdField"})
 public class UpsertJsonObject extends JdbcJsonUpsert {
 
   public UpsertJsonObject() {
