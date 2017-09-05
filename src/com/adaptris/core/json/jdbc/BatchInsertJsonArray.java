@@ -42,11 +42,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * ]}
  * </pre>
  * will effectively execute the following statement {@code INSERT INTO table (firstname,lastname,dob) VALUES (?,?,?)} 3 times;
- * batching as required.
+ * batching as required using {@link PreparedStatement#addBatch()} / {@link PreparedStatement#executeBatch()}.
  * </p>
  * <p>
  * Note that no parsing/assertion of the column names will be done, so if they are invalid SQL columns then it's going to be
- * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement.
+ * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement; so
+ * {@code { "firstname":"alice", "lastname":"smith", "address": { "address" : "Buckingham Palace", "postcode":"SW1A 1AA"}}} would
+ * still be 3 parameters, the address parameter will be {@code '{ "address" : "Buckingham Palace", "postcode":"SW1A 1AA"}'}
  * </p>
  * 
  * @config json-array-jdbc-batch-insert

@@ -36,7 +36,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * <p>
  * Note that no parsing/assertion of the column names will be done, so if they are invalid SQL columns then it's going to be
- * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement.
+ * fail. Additionally, nested JSON objects will be rendered as strings before being passed into the appropriate statement; so
+ * {@code { "firstname":"alice", "lastname":"smith", "address": { "address" : "Buckingham Palace", "postcode":"SW1A 1AA"}}} would
+ * still be 3 parameters, the address parameter will be {@code '{ "address" : "Buckingham Palace", "postcode":"SW1A 1AA"}'}
  * </p>
  * 
  * @config json-array-jdbc-insert
