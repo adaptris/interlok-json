@@ -38,7 +38,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @AdapterComponent
 @ComponentProfile(summary = "Insert/Update a JSON Array into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-array-jdbc-upsert")
-@DisplayOrder(order = {"table", "jsonIdField"})
+@DisplayOrder(order = {"table", "idField"})
 public class UpsertJsonArray extends UpsertJsonObject {
 
   public UpsertJsonArray() {

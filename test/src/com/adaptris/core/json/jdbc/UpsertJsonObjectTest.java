@@ -3,8 +3,6 @@ package com.adaptris.core.json.jdbc;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.json.jdbc.JdbcJsonInsert;
-import com.adaptris.core.json.jdbc.UpsertJsonObject;
 
 public class UpsertJsonObjectTest extends UpsertJsonCase {
 
@@ -13,8 +11,8 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
   }
 
   @Override
-  protected JdbcJsonInsert retrieveObjectForSampleConfig() {
-    return configureForExamples(createService().withJsonId("id").withTable("myTable"));
+  protected UpsertJsonObject retrieveObjectForSampleConfig() {
+    return (UpsertJsonObject) configureForExamples(createService().withId("id").withTable("myTable"));
   }
 
 
@@ -36,7 +34,7 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
     createDatabase();
     populateDatabase();
     UpsertJsonObject service = configureForTests(createService());
-    service.setJsonIdField(ID_ELEMENT_VALUE);
+    service.setIdField(ID_ELEMENT_VALUE);
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(OBJECT_CONTENT);
     execute(service, msg);
     doAssert(1);

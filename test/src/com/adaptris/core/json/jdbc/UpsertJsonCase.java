@@ -20,8 +20,8 @@ public abstract class UpsertJsonCase extends JdbcJsonInsertCase {
 
   public void testDatabaseId() {
     JdbcJsonUpsert upsert = (JdbcJsonUpsert) createService();
-    assertEquals(JdbcJsonUpsert.DEFAULT_ID_FIELD, upsert.jsonID());
-    assertEquals("hello", upsert.withJsonId("hello").jsonID());
+    assertEquals(JdbcJsonUpsert.DEFAULT_ID_FIELD, upsert.idField());
+    assertEquals("hello", ((JdbcJsonUpsert) upsert.withId("hello")).idField());
   }
 
 

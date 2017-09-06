@@ -11,8 +11,8 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
   }
 
   @Override
-  protected JdbcJsonInsert retrieveObjectForSampleConfig() {
-    return configureForExamples(createService().withJsonId("id").withTable("myTable"));
+  protected UpsertJsonArray retrieveObjectForSampleConfig() {
+    return (UpsertJsonArray) configureForExamples(createService().withId("id").withTable("myTable"));
   }
 
 
@@ -23,7 +23,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
 
   public void testService_InsertArray() throws Exception {
     createDatabase();
-    JdbcJsonUpsert service = configureForTests(createService().withJsonId(ID_ELEMENT_VALUE));
+    UpsertJsonArray service = (UpsertJsonArray) configureForTests(createService().withId(ID_ELEMENT_VALUE));
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_CONTENT);
     execute(service, msg);
     doAssert(3);
@@ -32,7 +32,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
   public void testService_UpdateArray() throws Exception {
     createDatabase();
     populateDatabase();
-    JdbcJsonUpsert service = configureForTests(createService().withJsonId(ID_ELEMENT_VALUE));
+    UpsertJsonArray service = (UpsertJsonArray) configureForTests(createService().withId(ID_ELEMENT_VALUE));
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_CONTENT);
     execute(service, msg);
     doAssert(3);
@@ -41,7 +41,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
 
   public void testService_BrokenColumn() throws Exception {
     createDatabase();
-    JdbcJsonUpsert service = configureForTests(createService().withJsonId(ID_ELEMENT_VALUE));
+    JdbcJsonUpsert service = (JdbcJsonUpsert) configureForTests(createService().withId(ID_ELEMENT_VALUE));
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_COLUMN_ARRAY);
     try {
       execute(service, msg);

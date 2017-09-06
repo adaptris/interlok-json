@@ -3,6 +3,3 @@ junit.SplitterServiceExamples.baseDir=${basedir}/build/example-xml/splitter/
 junit.JsonPathServiceExamples.baseDir=${basedir}/build/example-xml/json-path/
 junit.JsonJDBCServiceExamples.baseDir=${basedir}/build/example-xml/json-jdbc/
 junit.ServiceCase.baseDir=${basedir}/build/example-xml/
-
-junit.json.jdbc.url=jdbc:derby:memory:JsonDB;create=true
-junit.json.jdbc.driver=org.apache.derby.jdbc.EmbeddedDriver

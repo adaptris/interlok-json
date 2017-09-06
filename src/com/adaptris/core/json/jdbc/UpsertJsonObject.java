@@ -1,10 +1,6 @@
 package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
@@ -40,7 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @AdapterComponent
 @ComponentProfile(summary = "Insert/Update a JSON object into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-jdbc-upsert")
-@DisplayOrder(order = {"table", "jsonIdField"})
+@DisplayOrder(order = {"table", "idField"})
 public class UpsertJsonObject extends JdbcJsonUpsert {
 
   public UpsertJsonObject() {
@@ -60,35 +56,6 @@ public class UpsertJsonObject extends JdbcJsonUpsert {
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);
-    }
-  }
-
-  protected void handleUpsert(Connection conn, Map<String, String> json) throws ServiceException {
-    PreparedStatement selectStmt = null, insertStmt = null, updateStmt = null;
-    ResultSet rs = null;
-    try {
-      InsertWrapper inserter = new InsertWrapper(json);
-      SelectWrapper selector = new SelectWrapper(json);
-      UpdateWrapper updater = new UpdateWrapper(json);
-      log.trace("SELECT [{}]", selector.statement);
-      log.trace("INSERT [{}]", inserter.statement);
-      log.trace("UPDATE [{}]", updater.statement);
-      selectStmt = selector.addParams(prepareStatement(conn, selector.statement), json);
-      rs = selectStmt.executeQuery();
-      if (rs.next()) {
-        updateStmt = updater.addParams(prepareStatement(conn, updater.statement), json);
-        updateStmt.executeUpdate();
-      } else {
-        insertStmt = inserter.addParams(prepareStatement(conn, inserter.statement), json);
-        insertStmt.executeUpdate();
-      }
-    } catch (SQLException e) {
-      throw ExceptionHelper.wrapServiceException(e);
-    } finally {
-      JdbcUtil.closeQuietly(rs);
-      JdbcUtil.closeQuietly(selectStmt);
-      JdbcUtil.closeQuietly(insertStmt);
-      JdbcUtil.closeQuietly(updateStmt);
     }
   }
 }

@@ -20,6 +20,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
+import com.adaptris.core.services.jdbc.JdbcMapInsert;
 import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
@@ -59,7 +60,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-array-jdbc-batch-insert")
 @DisplayOrder(order = {"table", "batchWindow"})
-public class BatchInsertJsonArray extends JdbcJsonInsert {
+public class BatchInsertJsonArray extends JdbcMapInsert {
 
   private static final InheritableThreadLocal<AtomicInteger> counter = new InheritableThreadLocal<AtomicInteger>() {
     @Override
@@ -93,8 +94,8 @@ public class BatchInsertJsonArray extends JdbcJsonInsert {
         Map<String, String> json = JsonUtil.mapifyJson(m);
         if (wrapper == null) {
           wrapper = new InsertWrapper(json);
-          log.trace("Generated [{}]", wrapper.statement);
-          stmt = prepareStatement(conn, wrapper.statement);
+          log.trace("Generated [{}]", wrapper.statement());
+          stmt = prepareStatement(conn, wrapper.statement());
         }
         wrapper.addParams(stmt, json);
         execute(stmt);

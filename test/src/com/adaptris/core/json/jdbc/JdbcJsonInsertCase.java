@@ -9,7 +9,7 @@ import java.sql.Statement;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.jdbc.JdbcConnection;
-import com.adaptris.core.json.jdbc.JdbcJsonInsert;
+import com.adaptris.core.services.jdbc.JdbcMapInsert;
 import com.adaptris.core.services.jdbc.JdbcOutputExampleTest;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LifecycleHelper;
@@ -27,8 +27,9 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
   protected static final String INVALID_COLUMN_ARRAY =
       "[{ \"$firstname\":\"carol\", \"$lastname\":\"smith\", \"$dob\":\"2017-01-03\" }]";
 
-  protected static final String JSON_JDBC_DRIVER = "json.jdbc.driver";
-  protected static final String JSON_JDBC_URL = "json.jdbc.url";
+  protected static final String JDBC_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+  protected static final String JDBC_URL = "jdbc:derby:memory:JSON_DB;create=true";
+
   protected static final String TABLE_NAME = "json_people";
 
 
@@ -42,7 +43,7 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
 
 
   public void testService_Init() throws Exception {
-    JdbcJsonInsert service = createService();
+    JdbcMapInsert service = createService();
     try {
       LifecycleHelper.init(service);
       fail();
@@ -77,8 +78,8 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
 
   protected static Connection createConnection() throws Exception {
     Connection c = null;
-    Class.forName(PROPERTIES.getProperty(JSON_JDBC_DRIVER));
-    c = DriverManager.getConnection(PROPERTIES.getProperty(JSON_JDBC_URL));
+    Class.forName(JDBC_DRIVER);
+    c = DriverManager.getConnection(JDBC_URL);
     c.setAutoCommit(true);
     return c;
   }
@@ -107,24 +108,24 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
   }
 
   @Override
-  protected JdbcJsonInsert retrieveObjectForSampleConfig() {
+  protected JdbcMapInsert retrieveObjectForSampleConfig() {
     return configureForExamples(createService().withTable("myTable"));
   }
 
-  protected abstract JdbcJsonInsert createService();
+  protected abstract JdbcMapInsert createService();
 
   protected static <T> T configureForTests(T t) {
-    JdbcJsonInsert service = (JdbcJsonInsert) t;
+    JdbcMapInsert service = (JdbcMapInsert) t;
     JdbcConnection connection = new JdbcConnection();
-    connection.setConnectUrl(PROPERTIES.getProperty(JSON_JDBC_URL));
-    connection.setDriverImp(PROPERTIES.getProperty(JSON_JDBC_DRIVER));
+    connection.setConnectUrl(JDBC_URL);
+    connection.setDriverImp(JDBC_DRIVER);
     service.setConnection(connection);
     service.setTable(TABLE_NAME);
     return t;
   }
 
   protected static <T> T configureForExamples(T t) {
-    JdbcJsonInsert service = (JdbcJsonInsert) t;
+    JdbcMapInsert service = (JdbcMapInsert) t;
     service.setTable("myTable");
     JdbcConnection connection = new JdbcConnection();
     connection.setConnectUrl("jdbc:mysql://localhost:3306/mydatabase");

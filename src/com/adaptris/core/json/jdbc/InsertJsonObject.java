@@ -2,8 +2,6 @@ package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Map;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
@@ -11,6 +9,7 @@ import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
+import com.adaptris.core.services.jdbc.JdbcMapInsert;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
@@ -39,7 +38,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Insert a JSON object into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-jdbc-insert")
 @DisplayOrder(order = {"table"})
-public class InsertJsonObject extends JdbcJsonInsert {
+public class InsertJsonObject extends JdbcMapInsert {
 
   public InsertJsonObject() {
 
@@ -60,20 +59,6 @@ public class InsertJsonObject extends JdbcJsonInsert {
     } finally {
       JdbcUtil.closeQuietly(conn);
       JdbcUtil.closeQuietly(stmt);
-    }
-  }
-
-  protected void handleInsert(Connection conn, Map<String, String> json) throws ServiceException {
-    PreparedStatement insertStmt = null;
-    try {
-      InsertWrapper inserter = new InsertWrapper(json);
-      log.trace("INSERT [{}]", inserter.statement);
-      insertStmt = inserter.addParams(prepareStatement(conn, inserter.statement), json);
-      insertStmt.executeUpdate();
-    } catch (SQLException e) {
-      throw ExceptionHelper.wrapServiceException(e);
-    } finally {
-      JdbcUtil.closeQuietly(insertStmt);
     }
   }
 
