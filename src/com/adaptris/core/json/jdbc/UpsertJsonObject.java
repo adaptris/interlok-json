@@ -8,6 +8,7 @@ import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
+import com.adaptris.core.services.jdbc.JdbcMapUpsert;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
@@ -37,7 +38,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Insert/Update a JSON object into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-jdbc-upsert")
 @DisplayOrder(order = {"table", "idField"})
-public class UpsertJsonObject extends JdbcJsonUpsert {
+public class UpsertJsonObject extends JdbcMapUpsert {
 
   public UpsertJsonObject() {
 

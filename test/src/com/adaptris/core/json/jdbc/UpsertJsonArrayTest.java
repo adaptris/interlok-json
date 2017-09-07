@@ -3,6 +3,7 @@ package com.adaptris.core.json.jdbc;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
+import com.adaptris.core.services.jdbc.JdbcMapUpsert;
 
 public class UpsertJsonArrayTest extends UpsertJsonCase {
 
@@ -41,7 +42,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
 
   public void testService_BrokenColumn() throws Exception {
     createDatabase();
-    JdbcJsonUpsert service = (JdbcJsonUpsert) configureForTests(createService().withId(ID_ELEMENT_VALUE));
+    JdbcMapUpsert service = (JdbcMapUpsert) configureForTests(createService().withId(ID_ELEMENT_VALUE));
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_COLUMN_ARRAY);
     try {
       execute(service, msg);
@@ -53,7 +54,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
 
   public void testService_NotJsonArray() throws Exception {
     createDatabase();
-    UpsertJsonObject service = configureForTests(createService());
+    UpsertJsonArray service = configureForTests(createService());
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(OBJECT_CONTENT);
     try {
       execute(service, msg);

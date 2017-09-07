@@ -24,7 +24,7 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
   public void testService_Insert() throws Exception {
     createDatabase();
     UpsertJsonObject service = configureForTests(createService());
-    service.setJsonIdField(ID_ELEMENT_VALUE);
+    service.setIdField(ID_ELEMENT_VALUE);
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(OBJECT_CONTENT);
     execute(service, msg);
     doAssert(1);

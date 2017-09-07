@@ -9,6 +9,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
+import com.adaptris.core.services.jdbc.JdbcMapUpsert;
 import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
@@ -39,7 +40,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Insert/Update a JSON Array into a database", tag = "service,json,jdbc")
 @XStreamAlias("json-array-jdbc-upsert")
 @DisplayOrder(order = {"table", "idField"})
-public class UpsertJsonArray extends UpsertJsonObject {
+public class UpsertJsonArray extends JdbcMapUpsert {
 
   public UpsertJsonArray() {
 

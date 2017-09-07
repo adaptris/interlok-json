@@ -18,12 +18,6 @@ public abstract class UpsertJsonCase extends JdbcJsonInsertCase {
     super(arg0);
   }
 
-  public void testDatabaseId() {
-    JdbcJsonUpsert upsert = (JdbcJsonUpsert) createService();
-    assertEquals(JdbcJsonUpsert.DEFAULT_ID_FIELD, upsert.idField());
-    assertEquals("hello", ((JdbcJsonUpsert) upsert.withId("hello")).idField());
-  }
-
 
   protected static void populateDatabase() throws Exception {
     Connection c = null;
