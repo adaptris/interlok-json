@@ -33,6 +33,10 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
   @AdvancedConfig
   private Integer bufferSize;
 
+  public LargeJsonArraySplitter() {
+
+  }
+
   public Integer getBufferSize() {
     return bufferSize;
   }
@@ -53,6 +57,17 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
   int bufferSize() {
     return getBufferSize() != null ? getBufferSize().intValue() : DEFAULT_BUFFER_SIZE;
   }
+
+  public LargeJsonArraySplitter withBufferSize(Integer i) {
+    setBufferSize(i);
+    return this;
+  }
+
+  public LargeJsonArraySplitter withMessageFactory(AdaptrisMessageFactory fac) {
+    setMessageFactory(fac);
+    return this;
+  }
+
 
   @Override
   public CloseableIterable<AdaptrisMessage> splitMessage(final AdaptrisMessage msg) throws CoreException {
