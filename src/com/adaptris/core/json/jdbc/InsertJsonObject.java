@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @AdapterComponent
-@ComponentProfile(summary = "Insert a JSON object into a database", tag = "service,json,jdbc")
+@ComponentProfile(summary = "Insert a JSON object into a database", tag = "service,json,jdbc", since = "3.6.5")
 @XStreamAlias("json-jdbc-insert")
 @DisplayOrder(order = {"table"})
 public class InsertJsonObject extends JdbcMapInsert {
