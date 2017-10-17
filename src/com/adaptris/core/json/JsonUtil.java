@@ -2,8 +2,8 @@ package com.adaptris.core.json;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.adaptris.core.AdaptrisMessage;
@@ -30,7 +30,7 @@ public class JsonUtil {
    * @return a Map of strings.
    */
   public static Map<String, String> mapifyJson(final AdaptrisMessage msg) throws IOException {
-    Map<String, String> result = new HashMap<>();
+    Map<String, String> result = new LinkedHashMap<>();
     try (BufferedReader buf = new BufferedReader(msg.getReader())) {
       ObjectMapper mapper = new ObjectMapper();
       JsonParser parser = mapper.getFactory().createParser(buf);
