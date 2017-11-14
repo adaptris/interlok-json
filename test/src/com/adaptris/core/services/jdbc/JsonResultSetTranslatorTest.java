@@ -18,7 +18,6 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.json.jdbc.JsonResultSetTranslator;
-import com.adaptris.core.json.jdbc.JsonResultSetTranslatorImpl;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.jdbc.JdbcResult;
 import com.adaptris.jdbc.JdbcResultRow;
@@ -80,7 +79,7 @@ public class JsonResultSetTranslatorTest {
     return JsonPath.parse(msg.getInputStream(), jsonConfig);
   }
 
-  protected static void execute(JsonResultSetTranslatorImpl jsonTranslator, JdbcResult result, AdaptrisMessage msg)
+  protected static void execute(ResultSetTranslator jsonTranslator, JdbcResult result, AdaptrisMessage msg)
       throws Exception {
     try (JdbcResult r = result) {
       LifecycleHelper.prepare(jsonTranslator);

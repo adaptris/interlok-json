@@ -11,7 +11,6 @@ import com.adaptris.core.jdbc.JdbcConnection;
 import com.adaptris.core.json.jdbc.JdbcJsonArrayOutput;
 import com.adaptris.core.json.jdbc.JdbcJsonOutput;
 import com.adaptris.core.json.jdbc.JsonResultSetTranslator;
-import com.adaptris.core.json.jdbc.JsonResultSetTranslatorImpl;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
 
@@ -23,26 +22,26 @@ public class JdbcOutputExampleTest extends ServiceCase {
   private enum ResultSetBuilder {
     JSON_LEGACY {
       @Override
-      public JsonResultSetTranslatorImpl build() {
+      public ResultSetTranslator build() {
         return new JsonResultSetTranslator();
       }
 
     },
     JSON_OBJECT {
       @Override
-      public JsonResultSetTranslatorImpl build() {
+      public ResultSetTranslator build() {
         return new JdbcJsonOutput();
       }
 
     },
     JSON_ARRAY {
       @Override
-      public JsonResultSetTranslatorImpl build() {
+      public ResultSetTranslator build() {
         return new JdbcJsonArrayOutput();
       }
     };
 
-    public abstract JsonResultSetTranslatorImpl build();
+    public abstract ResultSetTranslator build();
   }
   public JdbcOutputExampleTest(String name) {
     super(name);

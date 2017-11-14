@@ -3,9 +3,13 @@ package com.adaptris.core.json.jdbc;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.AdaptrisComponent;
 import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.CoreException;
+import com.adaptris.core.services.jdbc.ResultSetTranslator;
 import com.adaptris.jdbc.JdbcResult;
 import com.adaptris.jdbc.JdbcResultRow;
 import com.adaptris.jdbc.JdbcResultSet;
@@ -21,11 +25,28 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @Deprecated
 @XStreamAlias("jdbc-json-payload-translator")
-public class JsonResultSetTranslator extends JsonResultSetTranslatorImpl {
+public class JsonResultSetTranslator implements ResultSetTranslator {
 
 	
   @Deprecated
 	private String uniqueId;
+
+  protected transient Logger log = LoggerFactory.getLogger(this.getClass());
+
+  @Override
+  public void init() throws CoreException {}
+
+  @Override
+  public void start() throws CoreException {}
+
+  @Override
+  public void stop() {}
+
+  @Override
+  public void close() {}
+
+  @Override
+  public void prepare() throws CoreException {}
 
 	/**
 	 * Perform JDBC data set to JSON translation.

@@ -19,6 +19,7 @@ import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.jdbc.JdbcConnection;
 import com.adaptris.core.json.jdbc.JdbcJsonOutput;
+import com.adaptris.core.services.jdbc.StyledResultTranslatorImp.ColumnStyle;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.jdbc.JdbcResult;
 import com.jayway.jsonpath.ReadContext;
@@ -41,7 +42,6 @@ public class ResultSetToJsonTest {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
 
     execute(jsonTranslator, createJdbcResult(), message);
-    System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
     assertNotNull(ctx.read("$.[0]"));
     assertNotNull(ctx.read("$.[1]"));
@@ -54,7 +54,6 @@ public class ResultSetToJsonTest {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
 
     execute(jsonTranslator, new JdbcResult(), message);
-    System.out.println(message.getContent());
     ReadContext ctx = createContext(message);
     try {
       ctx.read("$.[0]");
@@ -83,12 +82,12 @@ public class ResultSetToJsonTest {
     JdbcDataQueryService service = new JdbcDataQueryService();
     service.setConnection(new JdbcConnection(JDBC_URL, JDBC_DRIVER));
     service.setStatementCreator(new ConfiguredSQLStatement(SELECT_WITH_ALIAS));
-    service.setResultSetTranslator(new JdbcJsonOutput());
+    service.setResultSetTranslator(new JdbcJsonOutput().withColumnStyle(ColumnStyle.LowerCase));
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     ServiceCase.execute(service, msg);
     ReadContext ctx = createContext(msg);
-    assertEquals("john", ctx.read("$.[0].FIRST_NAME"));
-    assertEquals("smith", ctx.read("$.[0].LAST_NAME"));
+    assertEquals("john", ctx.read("$.[0].first_name"));
+    assertEquals("smith", ctx.read("$.[0].last_name"));
   }
 
   @Test
