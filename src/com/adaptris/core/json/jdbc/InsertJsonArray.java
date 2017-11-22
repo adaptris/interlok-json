@@ -65,7 +65,7 @@ public class InsertJsonArray extends InsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleInsert(conn, JsonUtil.mapifyJson(m));
+        handleInsert(conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
       commit(conn, msg);
     } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.adaptris.core.json;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
+import com.adaptris.util.text.NullPassThroughConverter;
 
 public class JsonToMetadataTest extends ServiceCase {
   
@@ -21,6 +22,15 @@ public class JsonToMetadataTest extends ServiceCase {
 
   public JsonToMetadataTest(String name) {
     super(name);
+  }
+
+  public void testSetNullConverter() throws Exception {
+    JsonToMetadata service = new JsonToMetadata();
+    assertNull(service.getNullConverter());
+    service.setNullConverter(new NullPassThroughConverter());
+    assertEquals(NullPassThroughConverter.class, service.getNullConverter().getClass());
+    service.setNullConverter(null);
+    assertNull(service.getNullConverter());
   }
 
   public void testMetadataPrefix() throws Exception {

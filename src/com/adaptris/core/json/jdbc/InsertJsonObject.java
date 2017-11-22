@@ -3,7 +3,10 @@ package com.adaptris.core.json.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+import javax.validation.Valid;
+
 import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
@@ -13,6 +16,7 @@ import com.adaptris.core.services.jdbc.JdbcMapInsert;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
+import com.adaptris.util.text.NullConverter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -40,6 +44,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @DisplayOrder(order = {"table"})
 public class InsertJsonObject extends JdbcMapInsert {
 
+  @AdvancedConfig
+  @Valid
+  private NullConverter nullConverter;
+
   public InsertJsonObject() {
 
   }
@@ -51,7 +59,7 @@ public class InsertJsonObject extends JdbcMapInsert {
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
-      handleInsert(conn, JsonUtil.mapifyJson(msg));
+      handleInsert(conn, JsonUtil.mapifyJson(msg, getNullConverter()));
       commit(conn, msg);
     } catch (Exception e) {
       rollback(conn, msg);
@@ -60,6 +68,23 @@ public class InsertJsonObject extends JdbcMapInsert {
       JdbcUtil.closeQuietly(conn);
       JdbcUtil.closeQuietly(stmt);
     }
+  }
+
+  /**
+   * @return the nullConverter
+   */
+  public NullConverter getNullConverter() {
+    return nullConverter;
+  }
+
+  /**
+   * Specify the behaviour when a {@code NullNode} is encountered.
+   * 
+   * @param nc the NullConverter to set, the default is effectively the string {@code "null"} as returned by
+   *        {@code NullNode#asText()}
+   */
+  public void setNullConverter(NullConverter nc) {
+    this.nullConverter = nc;
   }
 
 }

@@ -1,12 +1,14 @@
 package com.adaptris.core.json;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.annotation.InputFieldHint;
@@ -15,6 +17,7 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.services.path.json.JsonPathService;
+import com.adaptris.util.text.NullConverter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -56,6 +59,10 @@ public class JsonToMetadata extends ServiceImp {
   @InputFieldHint(style = "BLANKABLE")
   private String metadataPrefix;
 
+  @Valid
+  @AdvancedConfig
+  private NullConverter nullConverter;
+
   public JsonToMetadata() {
     super();
   }
@@ -63,7 +70,7 @@ public class JsonToMetadata extends ServiceImp {
   @Override
   public void doService(final AdaptrisMessage msg) throws ServiceException {
     try {
-      Map<String, String> metadata = JsonUtil.mapifyJson(msg);
+      Map<String, String> metadata = JsonUtil.mapifyJson(msg, getNullConverter());
       for (Map.Entry<String, String> entry : metadata.entrySet()) {
         String metadataKey = metadataPrefix() + entry.getKey();
         msg.addMessageHeader(metadataKey, entry.getValue());
@@ -99,13 +106,22 @@ public class JsonToMetadata extends ServiceImp {
     return StringUtils.defaultIfEmpty(getMetadataPrefix(), "");
   }
 
-  private Iterable<String> makeIterable(final Iterator<String> itr) {
-    return new Iterable<String>() {
-      @Override
-      public Iterator<String> iterator() {
-        return itr;
-      }
-    };
+
+  /**
+   * @return the nullConverter
+   */
+  public NullConverter getNullConverter() {
+    return nullConverter;
+  }
+
+  /**
+   * Specify the behaviour when a {@code NullNode} is encountered.
+   * 
+   * @param nc the NullConverter to set, the default is effectively the string {@code "null"} as returned by
+   *        {@code NullNode#asText()}
+   */
+  public void setNullConverter(NullConverter nc) {
+    this.nullConverter = nc;
   }
 
 }
