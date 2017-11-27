@@ -2,7 +2,10 @@ package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
 
+import javax.validation.Valid;
+
 import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
@@ -12,6 +15,7 @@ import com.adaptris.core.services.jdbc.JdbcMapUpsert;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
+import com.adaptris.util.text.NullConverter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -35,10 +39,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @AdapterComponent
-@ComponentProfile(summary = "Insert/Update a JSON object into a database", tag = "service,json,jdbc")
+@ComponentProfile(summary = "Insert/Update a JSON object into a database", tag = "service,json,jdbc", since = "3.6.5")
 @XStreamAlias("json-jdbc-upsert")
 @DisplayOrder(order = {"table", "idField"})
 public class UpsertJsonObject extends JdbcMapUpsert {
+
+  @Valid
+  @AdvancedConfig
+  private NullConverter nullConverter;
 
   public UpsertJsonObject() {
 
@@ -50,7 +58,7 @@ public class UpsertJsonObject extends JdbcMapUpsert {
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
-      handleUpsert(conn, JsonUtil.mapifyJson(msg));
+      handleUpsert(conn, JsonUtil.mapifyJson(msg, getNullConverter()));
       commit(conn, msg);
     } catch (Exception e) {
       rollback(conn, msg);
@@ -59,4 +67,22 @@ public class UpsertJsonObject extends JdbcMapUpsert {
       JdbcUtil.closeQuietly(conn);
     }
   }
+
+  /**
+   * @return the nullConverter
+   */
+  public NullConverter getNullConverter() {
+    return nullConverter;
+  }
+
+  /**
+   * Specify the behaviour when a {@code NullNode} is encountered.
+   * 
+   * @param nc the NullConverter to set, the default is effectively the string {@code "null"} as returned by
+   *        {@code NullNode#asText()}
+   */
+  public void setNullConverter(NullConverter nc) {
+    this.nullConverter = nc;
+  }
+
 }

@@ -46,7 +46,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @AdapterComponent
-@ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc")
+@ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc", since = "3.6.5")
 @XStreamAlias("json-array-jdbc-insert")
 @DisplayOrder(order = {"table"})
 public class InsertJsonArray extends InsertJsonObject {
@@ -65,7 +65,7 @@ public class InsertJsonArray extends InsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleInsert(conn, JsonUtil.mapifyJson(m));
+        handleInsert(conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
       commit(conn, msg);
     } catch (Exception e) {

@@ -10,7 +10,9 @@ import java.util.Map;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
+import com.adaptris.core.services.jdbc.JdbcDataQueryService;
 import com.adaptris.core.services.jdbc.ResultSetTranslator;
+import com.adaptris.core.services.jdbc.StyledResultTranslatorImp;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.jdbc.JdbcResult;
 import com.adaptris.jdbc.JdbcResultRow;
@@ -22,7 +24,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Implementation of {@link ResultSetTranslator} that outputs the first result set as json.
  * <p>
- * Takes the first result set, and writes out each row as part of a json array.
+ * Takes the first result set and writes out each row as part of a json array. You should use this output implementation if you
+ * are executing a SELECT via {@link JdbcDataQueryService}.
  * </p>
  * <pre>
    {@code
@@ -43,7 +46,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config jdbc-json-first-resultset-output
  */
 @XStreamAlias("jdbc-json-first-resultset-output")
-public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
+public class JdbcJsonOutput extends StyledResultTranslatorImp {
 
   protected transient ObjectMapper mapper = new ObjectMapper();
 
@@ -65,8 +68,9 @@ public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
     generator.writeStartArray();
     for (final JdbcResultRow row : result.getRows()) {
       Map<String, Object> jsonObject = new HashMap<String, Object>();
+
       for (final String field : row.getFieldNames()) {
-        jsonObject.put(field, row.getFieldValue(field));
+        jsonObject.put(getColumnNameStyle().format(field), row.getFieldValue(field));
       }
       generator.writeObject(jsonObject);
     }
@@ -88,4 +92,8 @@ public class JdbcJsonOutput extends JsonResultSetTranslatorImpl {
     };
   }
 
+  public JdbcJsonOutput withColumnStyle(ColumnStyle b) {
+    setColumnNameStyle(b);
+    return this;
+  }
 }

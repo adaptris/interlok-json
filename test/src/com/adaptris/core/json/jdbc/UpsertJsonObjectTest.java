@@ -3,6 +3,7 @@ package com.adaptris.core.json.jdbc;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
+import com.adaptris.util.text.NullPassThroughConverter;
 
 public class UpsertJsonObjectTest extends UpsertJsonCase {
 
@@ -20,6 +21,16 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
   protected UpsertJsonObject createService() {
     return new UpsertJsonObject();
   }
+
+  public void testSetNullConverter() throws Exception {
+    UpsertJsonObject service = createService();
+    assertNull(service.getNullConverter());
+    service.setNullConverter(new NullPassThroughConverter());
+    assertEquals(NullPassThroughConverter.class, service.getNullConverter().getClass());
+    service.setNullConverter(null);
+    assertNull(service.getNullConverter());
+  }
+
 
   public void testService_Insert() throws Exception {
     createDatabase();

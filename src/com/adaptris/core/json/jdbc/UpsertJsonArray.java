@@ -9,7 +9,6 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
-import com.adaptris.core.services.jdbc.JdbcMapUpsert;
 import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
@@ -37,10 +36,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @AdapterComponent
-@ComponentProfile(summary = "Insert/Update a JSON Array into a database", tag = "service,json,jdbc")
+@ComponentProfile(summary = "Insert/Update a JSON Array into a database", tag = "service,json,jdbc", since = "3.6.5")
 @XStreamAlias("json-array-jdbc-upsert")
 @DisplayOrder(order = {"table", "idField"})
-public class UpsertJsonArray extends JdbcMapUpsert {
+public class UpsertJsonArray extends UpsertJsonObject {
 
   public UpsertJsonArray() {
 
@@ -56,7 +55,7 @@ public class UpsertJsonArray extends JdbcMapUpsert {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleUpsert(conn, JsonUtil.mapifyJson(m));
+        handleUpsert(conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
       commit(conn, msg);
     } catch (Exception e) {
