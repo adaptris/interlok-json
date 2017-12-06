@@ -42,8 +42,8 @@
     <dependency org="com.bazaarvoice.jolt" name="jolt-core" rev="0.0.24" conf="compile->default"/>
     <dependency org="com.bazaarvoice.jolt" name="json-utils" rev="0.0.24" conf="compile->default"/>
 
-    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.6.2" conf="compile->default"/>
-    <dependency org="com.fasterxml.jackson.dataformat" name="jackson-dataformat-yaml" rev="2.6.2" conf="compile->default"/>
+    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.8.10" conf="compile->default"/>
+    <dependency org="com.fasterxml.jackson.dataformat" name="jackson-dataformat-yaml" rev="2.8.10" conf="compile->default"/>
 
     <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
         <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
