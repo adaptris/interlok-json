@@ -63,6 +63,7 @@
     <delete dir="${tests.output.dir}"/>
     <delete>
       <fileset file="${coverage.metadata.file}"/>
+      <fileset file="derby.log"/>
     </delete>
   </target>
 

@@ -9,8 +9,8 @@ import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.services.splitter.CloseableIterable;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
+import com.adaptris.core.util.CloseableIterable;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,32 +73,56 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
   public CloseableIterable<AdaptrisMessage> splitMessage(final AdaptrisMessage msg) throws CoreException {
     try {
       BufferedReader buf = new BufferedReader(msg.getReader(), bufferSize());
-
       ObjectMapper mapper = new ObjectMapper();
       JsonParser parser = mapper.getFactory().createParser(buf);
       if(parser.nextToken() != JsonToken.START_ARRAY) {
         throw new CoreException("Expected an array");
       }
-      return new JsonSplitGenerator(mapper, parser, msg, selectFactory(msg));
+      return createSplitter(new GeneratorConfig().withJsonParser(parser).withObjectMapper(mapper).withOriginalMessage(msg));
     } catch (IOException e) {
       throw new CoreException(e);
     }
   }
 
-  private class JsonSplitGenerator implements CloseableIterable<AdaptrisMessage>, Iterator<AdaptrisMessage> {
-    private final AdaptrisMessage msg;
-    private final JsonParser parser;
-    private final ObjectMapper mapper;
-    private final AdaptrisMessageFactory factory;
+  protected JsonSplitGenerator createSplitter(GeneratorConfig cfg) {
+    return new JsonSplitGenerator(cfg);
+  }
 
-    private AdaptrisMessage nextMessage;
-    private int numberOfMessages;
+  protected class GeneratorConfig {
+    ObjectMapper mapper;
+    JsonParser parser;
+    AdaptrisMessage originalMessage;
 
-    public JsonSplitGenerator(ObjectMapper mapper, JsonParser parser, AdaptrisMessage msg, AdaptrisMessageFactory factory) {
-      this.mapper = mapper;
-      this.parser = parser;
-      this.msg = msg;
-      this.factory = factory;
+    GeneratorConfig withJsonParser(JsonParser p) {
+      parser = p;
+      return this;
+    }
+
+    GeneratorConfig withObjectMapper(ObjectMapper m) {
+      mapper = m;
+      return this;
+    }
+
+    GeneratorConfig withOriginalMessage(AdaptrisMessage msg) {
+      originalMessage = msg;
+      return this;
+    }
+
+  }
+
+  protected class JsonSplitGenerator implements CloseableIterable<AdaptrisMessage>, Iterator<AdaptrisMessage> {
+    protected JsonParser parser;
+    protected transient ObjectMapper mapper;
+
+    private AdaptrisMessageFactory factory;
+    private transient AdaptrisMessage originalMsg;
+    private transient AdaptrisMessage nextMessage;
+
+    protected JsonSplitGenerator(GeneratorConfig cfg) {
+      this.mapper = cfg.mapper;
+      this.parser = cfg.parser;
+      this.originalMsg = cfg.originalMessage;
+      this.factory = selectFactory(originalMsg);
       logR.trace("Using message factory: {}", factory.getClass());
     }
 
@@ -113,11 +137,9 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
         try {
           nextMessage = constructAdaptrisMessage();
         } catch (IOException e) {
-          logR.warn("Could not construct next AdaptrisMessage", e);
           throw new RuntimeException("Could not construct next AdaptrisMessage", e);
         }
       }
-
       return nextMessage != null;
     }
 
@@ -129,22 +151,27 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     }
 
     @SuppressWarnings("deprecation")
-    private AdaptrisMessage constructAdaptrisMessage() throws IOException {
-      AdaptrisMessage tmpMessage = factory.newMessage();
-      int i = 0;
+    protected AdaptrisMessage constructAdaptrisMessage() throws IOException {
+      AdaptrisMessage tmpMessage = newMessage();
       if (parser.nextToken() == JsonToken.START_OBJECT) {
         ObjectNode node = mapper.readTree(parser);
         tmpMessage.setStringPayload(node.toString());
-        numberOfMessages++;
-        copyMetadata(msg, tmpMessage);
-        return tmpMessage;
+        return addMetadata(tmpMessage);
       }
       return null;
     }
 
+    protected AdaptrisMessage newMessage() {
+      return factory.newMessage();
+    }
+
+    protected AdaptrisMessage addMetadata(AdaptrisMessage splitMsg) {
+      copyMetadata(originalMsg, splitMsg);
+      return splitMsg;
+    }
+
     @Override
     public void close() throws IOException {
-      logR.trace("Split gave {} messages", numberOfMessages);
       parser.close();
     }
 
