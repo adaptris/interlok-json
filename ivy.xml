@@ -23,8 +23,6 @@
   <publications>
      <artifact name="adp-json" type="jar" ext="jar"/>
      <artifact name="adp-json" type="pom" ext="pom"/>
-
-
      <artifact type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
      <artifact type="examples" ext="jar" conf="examples" m:classifier="examples"/>
 
@@ -32,7 +30,7 @@
   <dependencies>
     <!-- Default driver dependency -->
     <dependency org="net.sf.json-lib" name="json-lib" rev="2.4" conf="compile->default">
-        <artifact name="json-lib" type="jar" ext="jar" m:classifier="jdk15"/>
+      <artifact name="json-lib" type="jar" ext="jar" m:classifier="jdk15"/>
     </dependency>
     <dependency org="xom" name="xom" rev="1.2.5" conf="compile->default" />
 
@@ -62,7 +60,8 @@
     <dependency org="org.apache.derby" name="derby" rev="10.10.1.1" conf="test->default"/>
 
     <!-- Schema validation dependency -->
-    <dependency org="org.everit.json" name="org.everit.json.schema" rev="1.4.0" conf="compile->default"/>
+    <dependency org="org.everit.json" name="org.everit.json.schema" rev="1.5.1" conf="compile->default"/>
+    <dependency org="com.google.guava" name="guava" rev="24.1.1-jre" conf="compile->default"/>
 
     <!-- For Various ANT Tasks -->
     <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="ant->default" transitive="false"/>
@@ -71,6 +70,14 @@
     <dependency org="nl.talsmasoftware" name="umldoclet" rev="1.0.3" conf="ant->default"/>
     <dependency org="net.sourceforge.plantuml" name="plantuml" rev="8046" conf="ant->default"/>
     <dependency org="com.adaptris" name="code-signing" rev="2019-RELEASE" conf="signing->default"/>
+
+    <!-- Excluded because we shouldn't need them just because of guava!! -->
+    <exclude org="org.codehaus.mojo" artifact="animal-sniffer-annotations"/>
+    <exclude org="com.google.j2objc" artifact="j2objc-annotations"/>
+    <exclude org="com.google.errorprone" artifact="error_prone_annotations"/>
+    <exclude org="org.checkerframework" artifact="checker-compat-qual"/>
+    <exclude org="com.google.findbugs" artifact="jsr305"/>
+
 
     <exclude org="c3p0"/>
     <exclude org="commons-logging"/>
