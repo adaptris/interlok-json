@@ -13,6 +13,22 @@ ext {
   slf4jVersion = '1.7.25'
 }
 
+ext.hasGraphViz = { ->
+  ant.property(environment: "env")
+  ant.path(id: "combined-PATH") {
+    pathelement(path: ant.properties["env.PATH"])
+    pathelement(path: ant.properties["env.Path"])
+  }
+  ant.property(name: "SYSPATH", refid: "combined-PATH")
+  ant.condition(property: "graphviz", value:"true", else: "false") {
+    or {
+      available(file: "dot.exe", filepath: ant.properties['SYSPATH'])
+      available(file: "dot", filepath:  ant.properties['SYSPATH'])
+    }
+  }
+  return ant.properties['graphviz'] == "true"
+}
+
 if (JavaVersion.current().isJava8Compatible()) {
   allprojects {
     tasks.withType(Javadoc) {
@@ -132,27 +148,6 @@ javadoc {
       ]
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
-
-    // we need to do this *only* of "dot" is available on the path
-    // otherwise we get a crap thing.
-    options.docletpath = configurations.umlDoclet.files.asType(List)
-    options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
-    options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
-    options.addStringOption "umlImageFormat", "SVG"
-    options.addStringOption "umlExcludedReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum"
-    options.addStringOption "umlIncludePrivateClasses","false"
-    options.addStringOption "umlIncludePackagePrivateClasses","false"
-    options.addStringOption "umlIncludeProtectedClasses","false"
-    options.addStringOption "umlIncludeAbstractSuperclassMethods","false"
-    options.addStringOption "umlIncludeConstructors","false"
-    options.addStringOption "umlIncludePublicFields","false"
-    options.addStringOption "umlIncludePackagePrivateFields","false"
-    options.addStringOption "umlIncludeProtectedFields", "false"
-    options.addStringOption "umlIncludeDeprecatedClasses", "false"
-    options.addStringOption "umlIncludePrivateInnerClasses", "false"
-    options.addStringOption "umlIncludePackagePrivateInnerClasses", "false"
-    options.addStringOption "umlIncludeProtectedInnerClasses","false"
-
     title= componentName
   }
 }
@@ -173,8 +168,6 @@ task deleteDerbyLog(type: Delete) {
   delete 'derby.log'
 }
 
-clean.dependsOn deleteDerbyLog
-check.dependsOn jacocoTestReport
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
@@ -190,6 +183,47 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
+
+task umlJavadoc(type: Javadoc) {
+  group 'Documentation'
+  description 'Build javadocs using plantuml + graphviz + umldoclet, if dot is available'
+
+  onlyIf {
+    hasGraphViz()
+  }
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  configure(options) {
+      links = [
+        interlokJavadocs,
+        interlokCommonJavadocs,
+      ]
+    taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
+    options.addStringOption "tagletpath", configurations.javadoc.asPath
+    options.docletpath = configurations.umlDoclet.files.asType(List)
+    options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+    options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
+    options.addStringOption "umlImageFormat", "SVG"
+    options.addStringOption "umlExcludedReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum"
+    options.addStringOption "umlIncludePrivateClasses","false"
+    options.addStringOption "umlIncludePackagePrivateClasses","false"
+    options.addStringOption "umlIncludeProtectedClasses","false"
+    options.addStringOption "umlIncludeAbstractSuperclassMethods","false"
+    options.addStringOption "umlIncludeConstructors","false"
+    options.addStringOption "umlIncludePublicFields","false"
+    options.addStringOption "umlIncludePackagePrivateFields","false"
+    options.addStringOption "umlIncludeProtectedFields", "false"
+    options.addStringOption "umlIncludeDeprecatedClasses", "false"
+    options.addStringOption "umlIncludePrivateInnerClasses", "false"
+    options.addStringOption "umlIncludePackagePrivateInnerClasses", "false"
+    options.addStringOption "umlIncludeProtectedInnerClasses","false"
+    title= componentName
+  }
+}
+
+javadoc.dependsOn umlJavadoc
+clean.dependsOn deleteDerbyLog
+check.dependsOn jacocoTestReport
 
 artifacts {
   archives javadocJar
