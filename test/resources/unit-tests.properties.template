@@ -1,5 +1,0 @@
-junit.TransformServiceExamples.baseDir=${basedir}/build/example-xml/transform/
-junit.SplitterServiceExamples.baseDir=${basedir}/build/example-xml/splitter/
-junit.JsonPathServiceExamples.baseDir=${basedir}/build/example-xml/json-path/
-junit.JsonJDBCServiceExamples.baseDir=${basedir}/build/example-xml/json-jdbc/
-junit.ServiceCase.baseDir=${basedir}/build/example-xml/
