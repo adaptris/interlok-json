@@ -42,6 +42,7 @@ repositories {
 
 configurations {
   javadoc {}
+  umlDoclet {}
   all*.exclude group: 'c3p0'
   all*.exclude group: 'commons-logging'
   all*.exclude group: 'javamail'
@@ -74,6 +75,7 @@ dependencies {
   compile ("com.google.guava:guava:24.1.1-jre")
 
   annotationProcessor ("com.adaptris:interlok-common:$adpCoreVersion") {changing= true}
+  umlDoclet("nl.talsmasoftware:umldoclet:1.0.16")
 
   testCompile ('junit:junit:4.12')
   testCompile ("com.adaptris:adp-stubs:$adpCoreVersion") { changing= true}
@@ -130,6 +132,27 @@ javadoc {
       ]
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
+
+    // we need to do this *only* of "dot" is available on the path
+    // otherwise we get a crap thing.
+    options.docletpath = configurations.umlDoclet.files.asType(List)
+    options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+    options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
+    options.addStringOption "umlImageFormat", "SVG"
+    options.addStringOption "umlExcludedReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum"
+    options.addStringOption "umlIncludePrivateClasses","false"
+    options.addStringOption "umlIncludePackagePrivateClasses","false"
+    options.addStringOption "umlIncludeProtectedClasses","false"
+    options.addStringOption "umlIncludeAbstractSuperclassMethods","false"
+    options.addStringOption "umlIncludeConstructors","false"
+    options.addStringOption "umlIncludePublicFields","false"
+    options.addStringOption "umlIncludePackagePrivateFields","false"
+    options.addStringOption "umlIncludeProtectedFields", "false"
+    options.addStringOption "umlIncludeDeprecatedClasses", "false"
+    options.addStringOption "umlIncludePrivateInnerClasses", "false"
+    options.addStringOption "umlIncludePackagePrivateInnerClasses", "false"
+    options.addStringOption "umlIncludeProtectedInnerClasses","false"
+
     title= componentName
   }
 }
@@ -163,9 +186,15 @@ task examplesJar(type: Jar, dependsOn: test) {
   from new File(buildDir, '/examples')
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
 artifacts {
   archives javadocJar
   archives examplesJar
+  archives sourcesJar
 }
 
 publishing {
@@ -175,6 +204,7 @@ publishing {
 
       artifact javadocJar { classifier "javadoc" }
       artifact examplesJar { classifier "examples" }
+      artifact sourcesJar { classifier "sources" }
 
       pom.withXml {
         asNode().appendNode("description", "Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting")
