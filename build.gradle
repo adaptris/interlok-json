@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 ext {
   adpCoreVersion = project.hasProperty('adpCoreVersion') ? project.getProperty('adpCoreVersion') : '3.7-SNAPSHOT'
   releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.7-SNAPSHOT'
@@ -14,19 +16,13 @@ ext {
 }
 
 ext.hasGraphViz = { ->
-  ant.property(environment: "env")
-  ant.path(id: "combined-PATH") {
-    pathelement(path: ant.properties["env.PATH"])
-    pathelement(path: ant.properties["env.Path"])
+  def app = "dot"
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    app = app + ".exe"
   }
-  ant.property(name: "SYSPATH", refid: "combined-PATH")
-  ant.condition(property: "graphviz", value:"true", else: "false") {
-    or {
-      available(file: "dot.exe", filepath: ant.properties['SYSPATH'])
-      available(file: "dot", filepath:  ant.properties['SYSPATH'])
-    }
+  return System.getenv("PATH").split(File.pathSeparator).any{
+    java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
   }
-  return ant.properties['graphviz'] == "true"
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
