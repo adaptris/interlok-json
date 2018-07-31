@@ -77,7 +77,7 @@ dependencies {
   compile ("net.sf.json-lib:json-lib:2.4:jdk15") {
     exclude group: 'xerces', module: 'xercesImpl'
   }
-  compile ("xom:xom:1.2.5") {
+  compile ("xom:xom:1.2.7-redhat-3") {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xerces', module: 'xercesImpl'
   }
