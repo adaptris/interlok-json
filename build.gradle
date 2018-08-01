@@ -250,12 +250,14 @@ publishing {
       artifact sourcesJar { classifier "sources" }
 
       pom.withXml {
+        asNode().appendNode("name", componentName)
         asNode().appendNode("description", "Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting")
+        asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/cookbook-json-transform.html")
         def properties = asNode().appendNode("properties")
-        properties.appendNode("url", "https://interlok.adaptris.net/interlok-docs/cookbook-json-transform.html")
         properties.appendNode("target", "3.8.0+")
         properties.appendNode("tags", "json,transform,jdbc")
         properties.appendNode("license", "false")
+        properties.appendNode("externalUrl", "http://www.json.org/")
       }
     }
   }
