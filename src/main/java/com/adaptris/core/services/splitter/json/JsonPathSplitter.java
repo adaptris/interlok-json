@@ -14,6 +14,7 @@ import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
+import com.adaptris.core.json.JsonPathExecution;
 import com.adaptris.core.services.path.json.JsonPathService;
 import com.adaptris.core.services.splitter.MessageSplitter;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
@@ -75,9 +76,9 @@ public class JsonPathSplitter extends MessageSplitterImp {
 
       final ConstantDataInputParameter source = new ConstantDataInputParameter(jsonPathToUse);
       final StringPayloadDataOutputParameter target = new StringPayloadDataOutputParameter();
-      final Execution execution = new Execution(source, target);
+      final JsonPathExecution execution = new JsonPathExecution(source, target);
 
-      final JsonPathService jsonPathService = new JsonPathService(jsonSource, new ArrayList<Execution>(Arrays.asList(execution)));
+      final JsonPathService jsonPathService = new JsonPathService(jsonSource, new ArrayList<JsonPathExecution>(Arrays.asList(execution)));
       execute(jsonPathService, clone);
 
       return getMessageSplitter().splitMessage(clone);

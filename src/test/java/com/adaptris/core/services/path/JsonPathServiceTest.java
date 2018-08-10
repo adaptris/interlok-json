@@ -14,6 +14,7 @@ import com.adaptris.core.common.MetadataDataInputParameter;
 import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
+import com.adaptris.core.json.JsonPathExecution;
 import com.adaptris.core.services.path.json.JsonPathService;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -51,12 +52,12 @@ public class JsonPathServiceTest extends ServiceCase {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
     
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
-    
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
     
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
     
     execute(jsonPathService, message);
     
@@ -69,12 +70,12 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
 
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
-    jsonPathService.setSuppressPathNotFound(true);
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
+    execution.setSuppressPathNotFound(true);
     execute(jsonPathService, message);
 
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
@@ -85,11 +86,11 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
 
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
     try {
       execute(jsonPathService, message);
       fail();
@@ -103,11 +104,11 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_TO_ARRAY);
 
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
     jsonPathService.setUnwrapJson(true);
       execute(jsonPathService, message);
     assertTrue(message.headersContainsKey(JSON_RESULT_KEY));
@@ -119,11 +120,11 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_TO_ARRAY);
 
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
     execute(jsonPathService, message);
     assertTrue(message.headersContainsKey(JSON_RESULT_KEY));
     assertEquals("[1,2,3,4]", message.getMetadataValue(JSON_RESULT_KEY));
@@ -135,11 +136,11 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
 
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage("");
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
     try {
       execute(jsonPathService, message);
       fail();
@@ -155,12 +156,12 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
 
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService = new JsonPathService();
 
-    jsonPathService.setExecutions(Arrays.asList(new Execution[] {execution}));
+    jsonPathService.setExecutions(Arrays.asList(new JsonPathExecution[] {execution}));
     jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
 
     execute(jsonPathService, message);
@@ -177,10 +178,10 @@ public class JsonPathServiceTest extends ServiceCase {
     
     MetadataDataInputParameter jsonMetadataDestination = new MetadataDataInputParameter(JSON_PATH);
     jsonMetadataDestination.setMetadataKey(JSON_PATH);
-    
-    Execution execution = new Execution(jsonMetadataDestination, targetMetadataDestination);
+
+    JsonPathExecution execution = new JsonPathExecution(jsonMetadataDestination, targetMetadataDestination);
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
         
     
     execute(jsonPathService, message);
@@ -195,16 +196,16 @@ public class JsonPathServiceTest extends ServiceCase {
     StringPayloadDataOutputParameter targetPayloadDestination = new StringPayloadDataOutputParameter();
     
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
-    
-    Execution execution = new Execution(constantDataDestination, targetPayloadDestination);
+
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetPayloadDestination);
     
     JsonPathService jsonPathService =
-        new JsonPathService(sourceMetadataDestination, Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(sourceMetadataDestination, Arrays.asList(new JsonPathExecution[] {execution}));
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage();
     message.addMetadata(JSON_RESULT_KEY, sampleJsonContent());
     
     jsonPathService.setSource(sourceMetadataDestination);
-    jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
+    jsonPathService.setExecutions(Arrays.asList(new JsonPathExecution[] { execution }));
     execute(jsonPathService, message);
     
     assertEquals(SWORD_OF_HONOUR, message.getContent());
@@ -219,13 +220,13 @@ public class JsonPathServiceTest extends ServiceCase {
     MetadataDataInputParameter sourceMetadataDestination = new MetadataDataInputParameter(JSON_RESULT_KEY);
     
     MetadataDataInputParameter sourceJsonPathDestination = new MetadataDataInputParameter(JSON_PATH);
-    
-    Execution execution = new Execution(sourceJsonPathDestination, new StringPayloadDataOutputParameter());
 
-    JsonPathService jsonPathService = new JsonPathService(sourceMetadataDestination, Arrays.asList(new Execution[] {execution}));
+    JsonPathExecution execution = new JsonPathExecution(sourceJsonPathDestination, new StringPayloadDataOutputParameter());
+
+    JsonPathService jsonPathService = new JsonPathService(sourceMetadataDestination, Arrays.asList(new JsonPathExecution[] {execution}));
     
     
-    jsonPathService.setExecutions(Arrays.asList(new Execution[] { execution }));
+    jsonPathService.setExecutions(Arrays.asList(new JsonPathExecution[] { execution }));
     jsonPathService.setSource(sourceMetadataDestination);
     
     execute(jsonPathService, message);
@@ -237,14 +238,14 @@ public class JsonPathServiceTest extends ServiceCase {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
             
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(STORE_BOOK_0_TITLE);
-    
-    Execution exec1 = new Execution(constantDataDestination, targetMetadataDestination);
-    
-    Execution exec2 = new Execution(constantDataDestination, new StringPayloadDataOutputParameter());
+
+    JsonPathExecution exec1 = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
+
+    JsonPathExecution exec2 = new JsonPathExecution(constantDataDestination, new StringPayloadDataOutputParameter());
     
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {exec1, exec2}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {exec1, exec2}));
 
     execute(jsonPathService, message);
     
@@ -255,15 +256,15 @@ public class JsonPathServiceTest extends ServiceCase {
   public void testSimpleResultFromPayloadToMultiplePayloadDestinations() throws Exception {    
     ConstantDataInputParameter constantDataDestination1 = new ConstantDataInputParameter(STORE_BOOK_0_TITLE);
     ConstantDataInputParameter constantDataDestination2 = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
-    
-    Execution exec1 = new Execution(constantDataDestination1, new StringPayloadDataOutputParameter());
-    
-    Execution exec2 = new Execution(constantDataDestination2, new StringPayloadDataOutputParameter());
+
+    JsonPathExecution exec1 = new JsonPathExecution(constantDataDestination1, new StringPayloadDataOutputParameter());
+
+    JsonPathExecution exec2 = new JsonPathExecution(constantDataDestination2, new StringPayloadDataOutputParameter());
     
     
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {exec1, exec2}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {exec1, exec2}));
 
     execute(jsonPathService, message);
     
@@ -272,12 +273,12 @@ public class JsonPathServiceTest extends ServiceCase {
   
   public void testComplexResultFromPayloadToPayload() throws Exception {
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$..book[?(@.isbn)]");
-    
-    Execution execution = new Execution(constantDataDestination, new StringPayloadDataOutputParameter());
+
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, new StringPayloadDataOutputParameter());
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
     
     execute(jsonPathService, message);
     
@@ -294,11 +295,11 @@ public class JsonPathServiceTest extends ServiceCase {
     ConstantDataInputParameter constantDataDestination1 = new ConstantDataInputParameter(STORE_BOOK_0_TITLE);
     ConstantDataInputParameter constantDataDestination2 = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
 
-    Execution exec1 = new Execution(constantDataDestination1, new MetadataDataOutputParameter("targetMetadataKey1"));
+    JsonPathExecution exec1 = new JsonPathExecution(constantDataDestination1, new MetadataDataOutputParameter("targetMetadataKey1"));
 
-    Execution exec2 = new Execution(constantDataDestination2, new MetadataDataOutputParameter("targetMetadataKey2"));
+    JsonPathExecution exec2 = new JsonPathExecution(constantDataDestination2, new MetadataDataOutputParameter("targetMetadataKey2"));
     jsonPathService = new JsonPathService(new StringPayloadDataInputParameter(),
-        new ArrayList<Execution>(Arrays.asList(new Execution[] {exec1, exec2})));
+        new ArrayList<>(Arrays.asList(new JsonPathExecution[] {exec1, exec2})));
     return jsonPathService;
   }
 

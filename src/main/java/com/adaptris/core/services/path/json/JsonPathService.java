@@ -19,6 +19,7 @@ import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.json.JsonPathExecution;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
@@ -32,6 +33,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
@@ -93,6 +95,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
      <target class="metadata-data-output-parameter">
        <metadata-key>metadata-key-1</metadata-key>
      </target>
+     <suppress-path-not-found>true</suppress-path-not-found>
    </json-path-execution>
    <json-path-execution>
      <source class="constant-data-input-parameter">
@@ -150,27 +153,23 @@ public class JsonPathService extends ServiceImp {
   @Deprecated
   private DataInputParameter<String> sourceDestination;
 
-  @XStreamImplicit(itemFieldName = "json-path-execution")
+  //@XStreamImplicit(itemFieldName = "json-path-execution")
   @NotNull
   @Valid
   @AutoPopulated
-  private List<Execution> executions = new ArrayList<>();
+  private List<JsonPathExecution> executions = new ArrayList<>();
 
   protected transient Configuration jsonConfig;
 
   @InputFieldDefault(value = "false")
   private Boolean unwrapJson;
 
-  @InputFieldDefault(value = "false")
-  @AdvancedConfig
-  private Boolean suppressPathNotFound;
-
 
   public JsonPathService() {
     super();
   }
 
-  public JsonPathService(DataInputParameter<String> source, List<Execution> executions) {
+  public JsonPathService(DataInputParameter<String> source, List<JsonPathExecution> executions) {
     this();
     setSource(source);
     setExecutions(executions);
@@ -187,7 +186,7 @@ public class JsonPathService extends ServiceImp {
       final String rawJson = src.extract(message);
       ReadContext context = JsonPath.parse(rawJson, jsonConfig);
 
-      for (final Execution execution : executions) {
+      for (final JsonPathExecution execution : executions) {
         execute(execution, context, message);
       }
     } catch (InterlokException e) {
@@ -198,7 +197,7 @@ public class JsonPathService extends ServiceImp {
     }
   }
 
-  private void execute(Execution execution, ReadContext context, AdaptrisMessage msg) throws InterlokException {
+  private void execute(JsonPathExecution execution, ReadContext context, AdaptrisMessage msg) throws InterlokException {
     try {
       final DataInputParameter<String> source = execution.getSource();
       final DataOutputParameter<String> target = execution.getTarget();
@@ -207,7 +206,7 @@ public class JsonPathService extends ServiceImp {
       final String jsonString = unwrap(context.read(jsonPath).toString());
       target.insert(jsonString, msg);
     } catch (PathNotFoundException e) {
-      if (!suppressPathNotFound()) {
+      if (!execution.suppressPathNotFound()) {
         throw ExceptionHelper.wrapServiceException(e);
       }
     }
@@ -298,7 +297,7 @@ public class JsonPathService extends ServiceImp {
    *
    * @return The list of executions.
    */
-  public List<Execution> getExecutions() {
+  public List<JsonPathExecution> getExecutions() {
     return executions;
   }
 
@@ -308,7 +307,7 @@ public class JsonPathService extends ServiceImp {
    * @param executions
    *        The list of executions.
    */
-  public void setExecutions(final List<Execution> executions) {
+  public void setExecutions(final List<JsonPathExecution> executions) {
     this.executions = executions;
   }
 
@@ -333,25 +332,5 @@ public class JsonPathService extends ServiceImp {
 
   boolean unwrapJson() {
     return getUnwrapJson() != null ? getUnwrapJson().booleanValue() : false;
-  }
-
-  /**
-   * @return true or false.
-   */
-  public Boolean getSuppressPathNotFound() {
-    return suppressPathNotFound;
-  }
-
-  /**
-   * Suppress exceptions caused by {@code PathNotFoundException}.
-   * 
-   * @param b to suppress exceptions arising from a json path not being found; default is null (false).
-   */
-  public void setSuppressPathNotFound(Boolean b) {
-    this.suppressPathNotFound = b;
-  }
-
-  boolean suppressPathNotFound() {
-    return getSuppressPathNotFound() != null ? getSuppressPathNotFound().booleanValue() : false;
   }
 }
