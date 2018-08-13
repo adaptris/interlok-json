@@ -148,27 +148,6 @@ public class JsonPathServiceTest extends ServiceCase {
     }
   }
 
-
-  @SuppressWarnings("deprecation")
-  public void testSimpleResultFromPayloadToMetadata_Deprecated() throws Exception {
-    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
-
-    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
-
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
-
-    AdaptrisMessage message = createMessage();
-    JsonPathService jsonPathService = new JsonPathService();
-
-    jsonPathService.setExecutions(Arrays.asList(new Execution[] {execution}));
-    jsonPathService.setSourceDestination(new StringPayloadDataInputParameter());
-
-    execute(jsonPathService, message);
-
-    assertTrue(message.headersContainsKey(JSON_RESULT_KEY));
-    assertEquals(SWORD_OF_HONOUR, message.getMetadataValue(JSON_RESULT_KEY));
-  }
-
   public void testSimpleResultFromPayloadToMetadataUsingMetadataJsonPath() throws Exception {
     AdaptrisMessage message = createMessage();
     message.addMetadata(JSON_PATH, STORE_BOOK_1_TITLE);

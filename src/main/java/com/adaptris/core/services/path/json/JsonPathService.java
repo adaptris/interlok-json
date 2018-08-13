@@ -147,9 +147,6 @@ public class JsonPathService extends ServiceImp {
   @AutoPopulated
   private DataInputParameter<String> source = new StringPayloadDataInputParameter();
 
-  @Deprecated
-  private DataInputParameter<String> sourceDestination;
-
   @XStreamImplicit(itemFieldName = "json-path-execution")
   @NotNull
   @Valid
@@ -183,7 +180,7 @@ public class JsonPathService extends ServiceImp {
   public void doService(final AdaptrisMessage message) throws ServiceException {
     try {
 
-      final DataInputParameter<String> src = sourceDestination != null ? sourceDestination : source;
+      final DataInputParameter<String> src = source;
       final String rawJson = src.extract(message);
       ReadContext context = JsonPath.parse(rawJson, jsonConfig);
 
@@ -243,35 +240,7 @@ public class JsonPathService extends ServiceImp {
 
   @Override
   protected void initService() throws CoreException {
-    if (!warningLogged && getSourceDestination() != null) {
-      log.warn("source-destination deprecated; use source instead");
-      warningLogged = true;
-    }
-  }
-
-  /**
-   * @return The source destination.
-   *
-   * @deprecated since 3.2.0 use {@link #getSource()} instead.
-   */
-  @Deprecated
-  public DataInputParameter<String> getSourceDestination() {
-    return sourceDestination;
-  }
-
-  /**
-   * @param sourceDestination
-   *        The source destination.
-   *
-   * @deprecated since 3.2.0 use {@link #setSource(DataInputParameter)} instead.
-   */
-  @Deprecated
-  public void setSourceDestination(final DataInputParameter<String> sourceDestination) {
-    if (!warningLogged) {
-      log.warn("source-destination deprecated; use source instead");
-      warningLogged = true;
-    }
-    this.sourceDestination = Args.notNull(sourceDestination, "sourceDestination");
+    // nothing to do.
   }
 
   /**
