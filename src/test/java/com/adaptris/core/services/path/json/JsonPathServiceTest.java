@@ -1,8 +1,10 @@
-package com.adaptris.core.services.path;
+package com.adaptris.core.services.path.json;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+
+import org.junit.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
@@ -15,7 +17,6 @@ import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.json.JsonPathExecution;
-import com.adaptris.core.services.path.json.JsonPathService;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -48,6 +49,15 @@ public class JsonPathServiceTest extends ServiceCase {
     return DefaultMessageFactory.getDefaultInstance().newMessage(sampleJsonContent());
   }
 
+  @Test
+  public void testUnwrapJson() throws Exception {
+    assertEquals("[1,2,3]", JsonPathService.unwrap("[1,2,3]", false));
+    assertEquals("[1,2,3", JsonPathService.unwrap("[1,2,3", true));
+    assertEquals("1,2,3]", JsonPathService.unwrap("1,2,3]", true));
+    assertEquals("1,2,3", JsonPathService.unwrap("[1,2,3]", true));
+  }
+
+  @Test
   public void testSimpleResultFromPayloadToMetadata() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -66,6 +76,7 @@ public class JsonPathServiceTest extends ServiceCase {
   }
 
   @SuppressWarnings("deprecation")
+  @Test
   public void testPathNotFound_Suppress_Execution() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -83,6 +94,7 @@ public class JsonPathServiceTest extends ServiceCase {
   }
 
   @SuppressWarnings("deprecation")
+  @Test
   public void testPathNotFound_NoSuppress_Execution() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -103,6 +115,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
   }
 
+  @Test
   public void testPathNotFound_Suppress() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -122,6 +135,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
   }
 
+  @Test
   public void testPathNotFound_NoSuppress() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -140,6 +154,7 @@ public class JsonPathServiceTest extends ServiceCase {
     }
   }
 
+  @Test
   public void testService_UnwrapJson() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -156,6 +171,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals("1,2,3,4", message.getMetadataValue(JSON_RESULT_KEY));
   }
 
+  @Test
   public void testService_NoUnwrapJson() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -172,6 +188,7 @@ public class JsonPathServiceTest extends ServiceCase {
   }
 
 
+  @Test
   public void testNotJson() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -190,6 +207,7 @@ public class JsonPathServiceTest extends ServiceCase {
     }
   }
 
+  @Test
   public void testSimpleResultFromPayloadToMetadataUsingMetadataJsonPath() throws Exception {
     AdaptrisMessage message = createMessage();
     message.addMetadata(JSON_PATH, STORE_BOOK_1_TITLE);
@@ -210,6 +228,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals(SWORD_OF_HONOUR, message.getMetadataValue(JSON_RESULT_KEY));
   }
 
+  @Test
   public void testSimpleResultFromMetadataToPayload() throws Exception {
     MetadataDataInputParameter sourceMetadataDestination = new MetadataDataInputParameter(JSON_RESULT_KEY);
 
@@ -231,6 +250,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals(SWORD_OF_HONOUR, message.getContent());
   }
 
+  @Test
   public void testSimpleResultFromMetadataToPayloadUsingMetadataJsonPath() throws Exception {
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage();
 
@@ -254,6 +274,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals(SWORD_OF_HONOUR, message.getContent());
   }
 
+  @Test
   public void testSimpleResultFromPayloadToMultipleDestinations() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
@@ -273,6 +294,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals(SAYINGS_OF_THE_CENTURY, message.getMetadataValue(JSON_RESULT_KEY));
   }
 
+  @Test
   public void testSimpleResultFromPayloadToMultiplePayloadDestinations() throws Exception {
     ConstantDataInputParameter constantDataDestination1 = new ConstantDataInputParameter(STORE_BOOK_0_TITLE);
     ConstantDataInputParameter constantDataDestination2 = new ConstantDataInputParameter(STORE_BOOK_1_TITLE);
@@ -291,6 +313,7 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals(SWORD_OF_HONOUR, message.getContent());
   }
 
+  @Test
   public void testComplexResultFromPayloadToPayload() throws Exception {
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$..book[?(@.isbn)]");
 
