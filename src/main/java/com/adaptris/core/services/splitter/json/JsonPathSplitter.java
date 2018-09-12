@@ -78,7 +78,7 @@ public class JsonPathSplitter extends MessageSplitterImp {
       final StringPayloadDataOutputParameter target = new StringPayloadDataOutputParameter();
       final JsonPathExecution execution = new JsonPathExecution(source, target);
 
-      final JsonPathService jsonPathService = new JsonPathService(jsonSource, new ArrayList<JsonPathExecution>(Arrays.asList(execution)));
+      final JsonPathService jsonPathService = new JsonPathService(jsonSource, new ArrayList<Execution>(Arrays.asList(execution)));
       execute(jsonPathService, clone);
 
       return getMessageSplitter().splitMessage(clone);

@@ -7,6 +7,8 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.BooleanUtils;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
@@ -33,7 +35,6 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
@@ -153,19 +154,24 @@ public class JsonPathService extends ServiceImp {
   @NotNull
   @Valid
   @AutoPopulated
-  private List<JsonPathExecution> executions = new ArrayList<>();
+  @XStreamImplicit
+  private List<Execution> executions = new ArrayList<>();
+
+  @InputFieldDefault(value = "false")
+  @AdvancedConfig
+  @Deprecated
+  private Boolean suppressPathNotFound;
 
   protected transient Configuration jsonConfig;
 
   @InputFieldDefault(value = "false")
   private Boolean unwrapJson;
 
-
   public JsonPathService() {
     super();
   }
 
-  public JsonPathService(DataInputParameter<String> source, List<JsonPathExecution> executions) {
+  public JsonPathService(DataInputParameter<String> source, List<Execution> executions) {
     this();
     setSource(source);
     setExecutions(executions);
@@ -182,7 +188,7 @@ public class JsonPathService extends ServiceImp {
       final String rawJson = src.extract(message);
       ReadContext context = JsonPath.parse(rawJson, jsonConfig);
 
-      for (final JsonPathExecution execution : executions) {
+      for (final Execution execution : executions) {
         execute(execution, context, message);
       }
     } catch (InterlokException e) {
@@ -193,16 +199,16 @@ public class JsonPathService extends ServiceImp {
     }
   }
 
-  private void execute(JsonPathExecution execution, ReadContext context, AdaptrisMessage msg) throws InterlokException {
+  private void execute(Execution execution, ReadContext context, AdaptrisMessage msg) throws InterlokException {
     try {
       final DataInputParameter<String> source = execution.getSource();
       final DataOutputParameter<String> target = execution.getTarget();
 
       final String jsonPath = source.extract(msg);
-      final String jsonString = unwrap(context.read(jsonPath).toString());
+      final String jsonString = unwrap(context.read(jsonPath).toString(), unwrapJson());
       target.insert(jsonString, msg);
     } catch (PathNotFoundException e) {
-      if (!execution.suppressPathNotFound()) {
+      if (!suppressPathNotFound(execution)) {
         throw ExceptionHelper.wrapServiceException(e);
       }
     }
@@ -215,9 +221,8 @@ public class JsonPathService extends ServiceImp {
    * @param json
    *        The JSON string.
    */
-  private String unwrap(final String json) {
-    /* Do we need to strip the square brackets off of a value? */
-    if (unwrapJson()) {
+  protected static String unwrap(final String json, boolean unwrapJson) {
+    if (unwrapJson) {
       if (json.startsWith("[") && json.endsWith("]")) {
         return json.substring(1, json.length() - 1);
       }
@@ -265,7 +270,7 @@ public class JsonPathService extends ServiceImp {
    *
    * @return The list of executions.
    */
-  public List<JsonPathExecution> getExecutions() {
+  public List<Execution> getExecutions() {
     return executions;
   }
 
@@ -275,8 +280,8 @@ public class JsonPathService extends ServiceImp {
    * @param executions
    *        The list of executions.
    */
-  public void setExecutions(final List<JsonPathExecution> executions) {
-    this.executions = executions;
+  public void setExecutions(final List<Execution> executions) {
+    this.executions = Args.notNull(executions, "executions");
   }
 
   /**
@@ -298,7 +303,36 @@ public class JsonPathService extends ServiceImp {
     this.unwrapJson = unwrapJson;
   }
 
-  boolean unwrapJson() {
-    return getUnwrapJson() != null ? getUnwrapJson().booleanValue() : false;
+  protected boolean unwrapJson() {
+    return BooleanUtils.toBooleanDefaultIfNull(getUnwrapJson(), false);
   }
+
+  /**
+   * @return true or false.
+   * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#setSuppressPathNotFound(Boolean)}
+   *             instead.
+   */
+  @Deprecated
+  public Boolean getSuppressPathNotFound() {
+    return suppressPathNotFound;
+  }
+
+  /**
+   * Suppress exceptions caused by {@code PathNotFoundException}.
+   *
+   * @param b to suppress exceptions arising from a json path not being found; default is null (false).
+   * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#getSuppressPathNotFound()} instead.
+   */
+  @Deprecated
+  public void setSuppressPathNotFound(Boolean b) {
+    this.suppressPathNotFound = b;
+  }
+
+  protected boolean suppressPathNotFound(Execution exec) {
+    if (exec instanceof JsonPathExecution) {
+      return ((JsonPathExecution) exec).suppressPathNotFound();
+    }
+    return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);
+  }
+
 }
