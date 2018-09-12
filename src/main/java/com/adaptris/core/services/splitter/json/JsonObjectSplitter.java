@@ -1,6 +1,7 @@
 package com.adaptris.core.services.splitter.json;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
+import com.adaptris.core.util.ExceptionHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import net.minidev.json.JSONArray;
@@ -60,22 +62,17 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	@Override
 	public List<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
 		final List<AdaptrisMessage> result = new ArrayList<>();
-		try {
-
-			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-			final Object object = jsonParser.parse(message.getInputStream());
-
+    final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+    try (InputStream in = message.getInputStream();) {
+      final Object object = jsonParser.parse(in);
 			if (object instanceof JSONArray) {
-
 				final JSONArray array = (JSONArray)object;
 				if (array.isEmpty()) {
 					result.add(message);
 				} else {
 					result.addAll(splitMessage(array, message));
 				}
-
 			} else if (object instanceof JSONObject) {
-
 				final JSONObject json = (JSONObject)object;
 				if (json.isEmpty()) {
 					result.add(message);
@@ -88,12 +85,13 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 				}
 
 			} else {
-				throw new Exception("Message payload was not JSON; could not be parsed to " + JSONObject.class + " from " + object.getClass());
+        throw new CoreException(
+            "Message payload was not JSON; could not be parsed to " + JSONObject.class + " from " + object.getClass());
 			}
 
 		} catch (final Exception e) {
 			LOGGER.error("Could not parse or split JSON object payload.", e);
-			throw new CoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
 		}
 		return result;
 	}
