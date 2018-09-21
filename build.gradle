@@ -88,7 +88,7 @@ dependencies {
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
   compile ("com.fasterxml.jackson.core:jackson-databind:2.9.6")
-  compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.6")
+  compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.7")
   compile ("commons-collections:commons-collections:3.2.2")
   compile ("commons-beanutils:commons-beanutils:1.9.3")
   compile ("xerces:xercesImpl:2.12.0")
