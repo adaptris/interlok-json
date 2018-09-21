@@ -15,6 +15,8 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.25'
+  jacksonVersion = "2.9.7"
+  log4j2Version = "2.8.1"
 }
 
 ext.hasGraphViz = { ->
@@ -87,8 +89,8 @@ dependencies {
   compile ("com.jayway.jsonpath:json-path:2.4.0")
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
-  compile ("com.fasterxml.jackson.core:jackson-databind:2.9.6")
-  compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.6")
+  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+  compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
   compile ("commons-collections:commons-collections:3.2.2")
   compile ("commons-beanutils:commons-beanutils:1.9.3")
   compile ("xerces:xercesImpl:2.12.0")
@@ -102,10 +104,10 @@ dependencies {
   testCompile ('junit:junit:4.12')
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.derby:derby:10.14.2.0")
-  testCompile ("org.apache.logging.log4j:log4j-core:2.8.1")
-  testCompile ("org.apache.logging.log4j:log4j-1.2-api:2.8.1")
-  testCompile ("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1")
-  testCompile ("org.apache.logging.log4j:log4j-api:2.8.1")
+  testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
+  testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
+  testCompile ("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
+  testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
   testCompile ("org.mockito:mockito-all:1.10.19")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
