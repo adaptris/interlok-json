@@ -136,6 +136,27 @@ public class JsonPathServiceTest extends ServiceCase {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
+  public void testPathNotFound_Suppress_OnService() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
+
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
+
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
+
+    AdaptrisMessage message = createMessage();
+    JsonPathService jsonPathService = new JsonPathService(new StringPayloadDataInputParameter(),
+        Arrays.asList(new JsonPathExecution[]
+        {
+            execution
+        }));
+    jsonPathService.setSuppressPathNotFound(true);
+    execute(jsonPathService, message);
+
+    assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
+  }
+
+  @Test
   public void testPathNotFound_NoSuppress() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 
