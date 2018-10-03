@@ -329,7 +329,7 @@ public class JsonPathService extends ServiceImp {
   }
 
   protected boolean suppressPathNotFound(Execution exec) {
-    if (exec instanceof JsonPathExecution) {
+    if (exec instanceof JsonPathExecution && ((JsonPathExecution) exec).getSuppressPathNotFound() != null) {
       return ((JsonPathExecution) exec).suppressPathNotFound();
     }
     return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);

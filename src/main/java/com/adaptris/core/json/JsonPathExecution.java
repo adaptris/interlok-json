@@ -1,5 +1,7 @@
 package com.adaptris.core.json;
 
+import org.apache.commons.lang3.BooleanUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.common.Execution;
@@ -43,7 +45,7 @@ public class JsonPathExecution extends Execution
 	}
 
 	public boolean suppressPathNotFound()
-	{
-		return getSuppressPathNotFound() != null ? getSuppressPathNotFound().booleanValue() : false;
+  {
+    return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);
 	}
 }
