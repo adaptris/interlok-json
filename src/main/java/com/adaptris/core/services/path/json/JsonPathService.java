@@ -7,6 +7,8 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.BooleanUtils;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
@@ -19,6 +21,7 @@ import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.json.JsonPathExecution;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
@@ -93,6 +96,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
      <target class="metadata-data-output-parameter">
        <metadata-key>metadata-key-1</metadata-key>
      </target>
+     <suppress-path-not-found>true</suppress-path-not-found>
    </json-path-execution>
    <json-path-execution>
      <source class="constant-data-input-parameter">
@@ -147,21 +151,21 @@ public class JsonPathService extends ServiceImp {
   @AutoPopulated
   private DataInputParameter<String> source = new StringPayloadDataInputParameter();
 
-  @XStreamImplicit(itemFieldName = "json-path-execution")
   @NotNull
   @Valid
   @AutoPopulated
+  @XStreamImplicit
   private List<Execution> executions = new ArrayList<>();
+
+  @InputFieldDefault(value = "false")
+  @AdvancedConfig
+  @Deprecated
+  private Boolean suppressPathNotFound;
 
   protected transient Configuration jsonConfig;
 
   @InputFieldDefault(value = "false")
   private Boolean unwrapJson;
-
-  @InputFieldDefault(value = "false")
-  @AdvancedConfig
-  private Boolean suppressPathNotFound;
-
 
   public JsonPathService() {
     super();
@@ -201,10 +205,10 @@ public class JsonPathService extends ServiceImp {
       final DataOutputParameter<String> target = execution.getTarget();
 
       final String jsonPath = source.extract(msg);
-      final String jsonString = unwrap(context.read(jsonPath).toString());
+      final String jsonString = unwrap(context.read(jsonPath).toString(), unwrapJson());
       target.insert(jsonString, msg);
     } catch (PathNotFoundException e) {
-      if (!suppressPathNotFound()) {
+      if (!suppressPathNotFound(execution)) {
         throw ExceptionHelper.wrapServiceException(e);
       }
     }
@@ -217,9 +221,8 @@ public class JsonPathService extends ServiceImp {
    * @param json
    *        The JSON string.
    */
-  private String unwrap(final String json) {
-    /* Do we need to strip the square brackets off of a value? */
-    if (unwrapJson()) {
+  protected static String unwrap(final String json, boolean unwrapJson) {
+    if (unwrapJson) {
       if (json.startsWith("[") && json.endsWith("]")) {
         return json.substring(1, json.length() - 1);
       }
@@ -278,7 +281,7 @@ public class JsonPathService extends ServiceImp {
    *        The list of executions.
    */
   public void setExecutions(final List<Execution> executions) {
-    this.executions = executions;
+    this.executions = Args.notNull(executions, "executions");
   }
 
   /**
@@ -300,27 +303,36 @@ public class JsonPathService extends ServiceImp {
     this.unwrapJson = unwrapJson;
   }
 
-  boolean unwrapJson() {
-    return getUnwrapJson() != null ? getUnwrapJson().booleanValue() : false;
+  protected boolean unwrapJson() {
+    return BooleanUtils.toBooleanDefaultIfNull(getUnwrapJson(), false);
   }
 
   /**
    * @return true or false.
+   * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#setSuppressPathNotFound(Boolean)}
+   *             instead.
    */
+  @Deprecated
   public Boolean getSuppressPathNotFound() {
     return suppressPathNotFound;
   }
 
   /**
    * Suppress exceptions caused by {@code PathNotFoundException}.
-   * 
+   *
    * @param b to suppress exceptions arising from a json path not being found; default is null (false).
+   * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#getSuppressPathNotFound()} instead.
    */
+  @Deprecated
   public void setSuppressPathNotFound(Boolean b) {
     this.suppressPathNotFound = b;
   }
 
-  boolean suppressPathNotFound() {
-    return getSuppressPathNotFound() != null ? getSuppressPathNotFound().booleanValue() : false;
+  protected boolean suppressPathNotFound(Execution exec) {
+    if (exec instanceof JsonPathExecution && ((JsonPathExecution) exec).getSuppressPathNotFound() != null) {
+      return ((JsonPathExecution) exec).suppressPathNotFound();
+    }
+    return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);
   }
+
 }

@@ -1,10 +1,12 @@
 package com.adaptris.core.services.splitter.json;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.util.ExceptionHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import net.minidev.json.JSONArray;
@@ -46,10 +48,10 @@ public class JsonArraySplitter extends JsonObjectSplitter {
 	public List<AdaptrisMessage> splitMessage(final AdaptrisMessage message) throws CoreException {
 		final List<AdaptrisMessage> result = new ArrayList<>();
 
-		try {
+    try (InputStream in = message.getInputStream()) {
 
 			final JSONParser jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-			final Object object = jsonParser.parse(message.getInputStream());
+      final Object object = jsonParser.parse(in);
 
 			if (object instanceof JSONObject) {
 
@@ -62,12 +64,13 @@ public class JsonArraySplitter extends JsonObjectSplitter {
 				result.addAll(splitMessages);
 
 			} else {
-				throw new Exception("Message payload was not JSON; could not be parsed to " + JSONObject.class + " from " + object.getClass());
+        throw new CoreException(
+            "Message payload was not JSON; could not be parsed to " + JSONObject.class + " from " + object.getClass());
 			}
 
 		} catch (final Exception e) {
 			LOGGER.error("Could not parse or split JSON array payload.", e);
-			throw new CoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
 		}
 
 		return result;

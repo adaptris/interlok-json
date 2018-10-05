@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.services.path.JsonPathServiceTest;
+import com.adaptris.core.services.path.json.JsonPathServiceTest;
 import com.adaptris.interlok.InterlokException;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;

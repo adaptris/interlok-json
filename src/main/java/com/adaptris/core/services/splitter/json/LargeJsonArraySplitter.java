@@ -3,7 +3,10 @@ package com.adaptris.core.services.splitter.json;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Iterator;
+
+import org.apache.commons.io.IOUtils;
 
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.core.AdaptrisMessage;
@@ -70,15 +73,19 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
 
 
   @Override
+  @SuppressWarnings("deprecation")
   public CloseableIterable<AdaptrisMessage> splitMessage(final AdaptrisMessage msg) throws CoreException {
     try {
       BufferedReader buf = new BufferedReader(msg.getReader(), bufferSize());
       ObjectMapper mapper = new ObjectMapper();
       JsonParser parser = mapper.getFactory().createParser(buf);
       if(parser.nextToken() != JsonToken.START_ARRAY) {
+        IOUtils.closeQuietly(buf);
+        IOUtils.closeQuietly(parser);
         throw new CoreException("Expected an array");
       }
-      return createSplitter(new GeneratorConfig().withJsonParser(parser).withObjectMapper(mapper).withOriginalMessage(msg));
+      return createSplitter(
+          new GeneratorConfig().withJsonParser(parser).withObjectMapper(mapper).withOriginalMessage(msg).withReader(buf));
     } catch (IOException e) {
       throw new CoreException(e);
     }
@@ -91,6 +98,7 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
   protected class GeneratorConfig {
     ObjectMapper mapper;
     JsonParser parser;
+    Reader reader;
     AdaptrisMessage originalMessage;
 
     GeneratorConfig withJsonParser(JsonParser p) {
@@ -108,10 +116,15 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
       return this;
     }
 
+    GeneratorConfig withReader(Reader rdr) {
+      reader = rdr;
+      return this;
+    }
   }
 
   protected class JsonSplitGenerator implements CloseableIterable<AdaptrisMessage>, Iterator<AdaptrisMessage> {
     protected JsonParser parser;
+    protected Reader reader;
     protected transient ObjectMapper mapper;
 
     private AdaptrisMessageFactory factory;
@@ -121,6 +134,7 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     protected JsonSplitGenerator(GeneratorConfig cfg) {
       this.mapper = cfg.mapper;
       this.parser = cfg.parser;
+      this.reader = cfg.reader;
       this.originalMsg = cfg.originalMessage;
       this.factory = selectFactory(originalMsg);
       logR.trace("Using message factory: {}", factory.getClass());
@@ -171,8 +185,10 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void close() throws IOException {
-      parser.close();
+      IOUtils.closeQuietly(parser);
+      IOUtils.closeQuietly(reader);
     }
 
     @Override
