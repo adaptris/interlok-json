@@ -153,7 +153,7 @@ public class JsonObjectSplitter extends MessageSplitterImp {
 	 * @throws IOException
 	 *           If IOUtils cannot copy from a Reader to a Writer.
 	 */
-	protected AdaptrisMessage createSplitMessage(final String json, final AdaptrisMessage message) throws IOException {
+	private AdaptrisMessage createSplitMessage(final String json, final AdaptrisMessage message) throws IOException {
 		final AdaptrisMessage newMessage = selectFactory(message).newMessage();
 		try (final Reader reader = new StringReader(json); final Writer writer = newMessage.getWriter()) {
 			IOUtils.copy(reader, writer);
