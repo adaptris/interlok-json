@@ -25,77 +25,87 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample
 			+ "{\"colour\": \"black\"}\n"
 			+ "]";
 
-	private static final String METADATA = "a=b,b=c";
-
 	public void testSplitArray() throws Exception
 	{
 		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD);
 
 		try (final CloseableIterable<AdaptrisMessage> i = createSplitter().splitMessage(message))
 		{
+			int count = 0;
 			for (final AdaptrisMessage m : i)
 			{
-				assertNull(m.getPayload());
 				switch (m.getMetadataValue("colour"))
 				{
 					case "red":
 					case "green":
 					case "blue":
 					case "black":
+						count++;
 						break;
 					default:
 						fail();
 				}
 			}
+			assertEquals(4, count);
 		}
 	}
-/*
-	public void testSplitObject() throws Exception
+
+	public void testSplitArrayWithMetadata() throws Exception
 	{
-		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-		message.addMetadata("json", JsonToXmlTransformServiceTest.JSON_INPUT);
+		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD);
+		message.addMetadata("a", "b");
+		message.addMetadata("b", "c");
 
-		final List<AdaptrisMessage> messages = new JsonMetadataSplitter().splitMessage(message);
-
-		assertEquals(3, messages.size());
-
-		JSONObject jsonObj = (JSONObject)JSONSerializer.toJSON(messages.get(0).getMetadataValue("json"));
-		assertTrue(jsonObj.containsKey("entry"));
-
-		jsonObj = (JSONObject)JSONSerializer.toJSON(messages.get(1).getMetadataValue("json"));
-		assertTrue(jsonObj.containsKey("notes"));
-
-		jsonObj = (JSONObject)JSONSerializer.toJSON(messages.get(2).getMetadataValue("json"));
-		assertTrue(jsonObj.containsKey("version"));
+		try (final CloseableIterable<AdaptrisMessage> i = createSplitter().splitMessage(message))
+		{
+			int count = 0;
+			for (final AdaptrisMessage m : i)
+			{
+				assertEquals("b", m.getMetadataValue("a"));
+				assertEquals("c", m.getMetadataValue("b"));
+				switch (m.getMetadataValue("colour"))
+				{
+					case "red":
+					case "green":
+					case "blue":
+					case "black":
+						count++;
+						break;
+					default:
+						fail();
+				}
+			}
+			assertEquals(4, count);
+		}
 	}
 
-	public void testSplitEmptyObject() throws Exception
+	public void testSplitEmptyArray() throws Exception
 	{
-		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-		message.addMetadata("json", "{}");
+		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage("[]");
 
-		final List<AdaptrisMessage> messages = new JsonMetadataSplitter().splitMessage(message);
-
-		assertEquals(1, messages.size());
-		assertEquals(1, messages.get(0).getMetadata().size());
-		assertTrue(((JSONObject)JSONSerializer.toJSON(messages.get(0).getMetadataValue("json"))).isEmpty());
+		try (final CloseableIterable<AdaptrisMessage> i = createSplitter().splitMessage(message))
+		{
+			for (final AdaptrisMessage m : i)
+			{
+				fail("Was not expecting any split messages; received : " + m);
+			}
+		}
 	}
 
 	public void testSplitNotJson()
 	{
 		try
 		{
-			final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-			message.addMetadata("json", "hello world");
+			final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage("hello world");
 
-			new JsonMetadataSplitter().splitMessage(message);
+			createSplitter().splitMessage(message);
 			fail();
 		}
 		catch (CoreException expected)
 		{
 			// expected behaviour
 		}
-	}*/
+	}
 
 	@Override
 	protected String getExampleCommentHeader(Object o)
