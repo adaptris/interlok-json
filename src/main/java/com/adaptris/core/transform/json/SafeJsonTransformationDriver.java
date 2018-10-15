@@ -65,7 +65,8 @@ public class SafeJsonTransformationDriver extends DefaultJsonTransformationDrive
     if (transformer == null) {
       URL url = getClass().getClassLoader().getResource(STRIP_SPACES_XSLT);
       try (InputStream in = url.openConnection().getInputStream()) {
-        Document xmlDoc = builder().parse(new InputSource(in));
+        // builder() defaults to in instance that disables xxe.
+        Document xmlDoc = builder().parse(in); // lgtm [java/xxe]
         transformer = TransformerFactory.newInstance().newTransformer(new DOMSource(xmlDoc, url.toExternalForm()));
       }
     }
@@ -74,7 +75,7 @@ public class SafeJsonTransformationDriver extends DefaultJsonTransformationDrive
 
   private DocumentBuilder builder() throws ParserConfigurationException {
     if (builder == null) {
-      builder = DocumentBuilderFactoryBuilder.newInstance().withNamespaceAware(true)
+      builder = DocumentBuilderFactoryBuilder.newRestrictedInstance().withNamespaceAware(true)
           .newDocumentBuilder(DocumentBuilderFactory.newInstance());
     }
     return builder;
