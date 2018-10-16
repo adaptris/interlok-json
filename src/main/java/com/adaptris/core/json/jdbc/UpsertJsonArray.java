@@ -55,7 +55,7 @@ public class UpsertJsonArray extends UpsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleUpsert(conn, JsonUtil.mapifyJson(m, getNullConverter()));
+        handleUpsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
       commit(conn, msg);
     } catch (Exception e) {
