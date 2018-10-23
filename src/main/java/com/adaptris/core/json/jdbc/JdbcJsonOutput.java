@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.adaptris.core.AdaptrisMessage;
@@ -67,7 +67,7 @@ public class JdbcJsonOutput extends StyledResultTranslatorImp {
   protected void writeResultSet(JdbcResultSet result, JsonGenerator generator) throws IOException {
     generator.writeStartArray();
     for (final JdbcResultRow row : result.getRows()) {
-      Map<String, Object> jsonObject = new HashMap<String, Object>();
+      Map<String, Object> jsonObject = new LinkedHashMap<>();
 
       for (final String field : row.getFieldNames()) {
         jsonObject.put(getColumnNameStyle().format(field), row.getFieldValue(field));
