@@ -48,7 +48,7 @@ version = releaseVersion
 def versionDir = "$buildDir/version"
 
 repositories {
-  jcenter()
+  mavenCentral()
   maven { url "$defaultNexusRepo" }
   maven { url "$nexusBaseUrl/content/groups/public" }
   maven { url "$nexusBaseUrl/content/repositories/snapshots" }
