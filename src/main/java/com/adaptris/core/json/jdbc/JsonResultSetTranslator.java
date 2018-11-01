@@ -6,6 +6,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.adaptris.annotation.Removal;
 import com.adaptris.core.AdaptrisComponent;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
@@ -24,6 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *             issues with massive result sets.
  */
 @Deprecated
+@Removal(version = "3.9.0")
 @XStreamAlias("jdbc-json-payload-translator")
 public class JsonResultSetTranslator implements ResultSetTranslator {
 

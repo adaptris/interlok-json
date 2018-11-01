@@ -1,5 +1,6 @@
 package com.adaptris.core.transform.json;
 
+import com.adaptris.annotation.Removal;
 import com.adaptris.interlok.config.DataInputParameter;
 
 /**
@@ -9,6 +10,7 @@ import com.adaptris.interlok.config.DataInputParameter;
  */
 // No XStreamAlias here, just in case people use it via the class name...
 @Deprecated
+@Removal(version = "3.9.0")
 public class JsonSchemaService extends com.adaptris.core.json.schema.JsonSchemaService {
   private static transient boolean warningLogged;
 
