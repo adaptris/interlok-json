@@ -130,7 +130,7 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     private AdaptrisMessageFactory factory;
     private transient AdaptrisMessage originalMsg;
     private transient AdaptrisMessage nextMessage;
-    private transient boolean iteratorInvoked = false;
+    private boolean iteratorInvoked = false;
 
     protected JsonSplitGenerator(GeneratorConfig cfg) {
       this.mapper = cfg.mapper;
