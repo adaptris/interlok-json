@@ -3,6 +3,7 @@ package com.adaptris.core.services.splitter.json;
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.json.JsonToMetadata;
 import com.fasterxml.jackson.core.JsonToken;
@@ -21,6 +22,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-metadata-splitter
  */
 @XStreamAlias("json-metadata-splitter")
+@ComponentProfile(since = "3.8.2")
 public class JsonMetadataSplitter extends LargeJsonArraySplitter {
 
   @Override
