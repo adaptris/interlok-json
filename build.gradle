@@ -167,6 +167,9 @@ task offlinePackageList(type: Copy) {
 
 
 javadoc {
+  onlyIf {
+    !hasGraphViz()
+  }
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
