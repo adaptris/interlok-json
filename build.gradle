@@ -100,7 +100,7 @@ dependencies {
   compile ("org.everit.json:org.everit.json.schema:1.5.1")
   compile ("com.google.guava:guava:27.0.1-jre")
 
-  annotationProcessor ("com.adaptris:interlok-common:$interlokCoreVersion") {changing= true}
+  annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.2")
 
   offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
@@ -246,6 +246,9 @@ task umlJavadoc(type: Javadoc) {
     options.addStringOption "umlIncludePrivateInnerClasses", "false"
     options.addStringOption "umlIncludePackagePrivateInnerClasses", "false"
     options.addStringOption "umlIncludeProtectedInnerClasses","false"
+    options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
+      group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
+      group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
     title= componentName
   }
 }
