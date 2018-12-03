@@ -130,6 +130,7 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     private AdaptrisMessageFactory factory;
     private transient AdaptrisMessage originalMsg;
     private transient AdaptrisMessage nextMessage;
+    private boolean iteratorInvoked = false;
 
     protected JsonSplitGenerator(GeneratorConfig cfg) {
       this.mapper = cfg.mapper;
@@ -142,6 +143,10 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
 
     @Override
     public Iterator<AdaptrisMessage> iterator() {
+      if (iteratorInvoked) {
+        throw new IllegalStateException("iterator already invoked");
+      }
+      iteratorInvoked = true;
       return this;
     }
 

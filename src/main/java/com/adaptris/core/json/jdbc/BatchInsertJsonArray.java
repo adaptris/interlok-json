@@ -93,7 +93,7 @@ public class BatchInsertJsonArray extends InsertJsonObject {
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
         Map<String, String> json = JsonUtil.mapifyJson(m, getNullConverter());
         if (wrapper == null) {
-          wrapper = new InsertWrapper(json);
+          wrapper = new InsertWrapper(table(msg), json);
           log.trace("Generated [{}]", wrapper.statement());
           stmt = prepareStatement(conn, wrapper.statement());
         }

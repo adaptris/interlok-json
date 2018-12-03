@@ -15,6 +15,7 @@ import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
+import com.adaptris.annotation.Removal;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -160,6 +161,7 @@ public class JsonPathService extends ServiceImp {
   @InputFieldDefault(value = "false")
   @AdvancedConfig
   @Deprecated
+  @Removal(version = "3.11.0")
   private Boolean suppressPathNotFound;
 
   protected transient Configuration jsonConfig;
@@ -313,6 +315,7 @@ public class JsonPathService extends ServiceImp {
    *             instead.
    */
   @Deprecated
+  @Removal(version = "3.11.0")
   public Boolean getSuppressPathNotFound() {
     return suppressPathNotFound;
   }
@@ -324,6 +327,7 @@ public class JsonPathService extends ServiceImp {
    * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#getSuppressPathNotFound()} instead.
    */
   @Deprecated
+  @Removal(version = "3.11.0")
   public void setSuppressPathNotFound(Boolean b) {
     this.suppressPathNotFound = b;
   }
