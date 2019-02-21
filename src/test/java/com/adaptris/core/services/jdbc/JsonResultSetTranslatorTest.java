@@ -5,16 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.json.jdbc.JsonResultSetTranslator;
@@ -46,16 +43,16 @@ public class JsonResultSetTranslatorTest {
   }
 
 
-	/**
-	 * Test the simple, valid path through the translation from a JDBC result to JSON.
-	 *
-	 * @throws Exception
-	 *           Unexpected; should not happen.
-	 */
-	@Test
+  /**
+   * Test the simple, valid path through the translation from a JDBC result to JSON.
+   *
+   * @throws Exception
+   *           Unexpected; should not happen.
+   */
+  @Test
   public void testTranslate() throws Exception {
-		final JsonResultSetTranslator jsonTranslator = new JsonResultSetTranslator();
-		final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    final JsonResultSetTranslator jsonTranslator = new JsonResultSetTranslator();
+    final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
 
     execute(jsonTranslator, createJdbcResult(), message);
     ReadContext ctx = createContext(message);
@@ -63,15 +60,15 @@ public class JsonResultSetTranslatorTest {
     assertNotNull(ctx.read("$.result.[0]"));
     assertEquals("Anna", ctx.read("$.result.[1].firstName"));
     assertEquals(expected.toString(), new String(message.getPayload()));
-	}
+  }
 
   @Test
-	public void testUniqueId() throws Exception {
+  public void testUniqueId() throws Exception {
     final JsonResultSetTranslator jsonTranslator = new JsonResultSetTranslator();
     assertNull(jsonTranslator.getUniqueId());
     jsonTranslator.setUniqueId("XXX");
     assertEquals("XXX", jsonTranslator.getUniqueId());
-	}
+  }
 
   protected static ReadContext createContext(AdaptrisMessage msg) throws IOException {
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
@@ -95,19 +92,18 @@ public class JsonResultSetTranslatorTest {
 
   protected static JdbcResult createJdbcResult() throws Exception {
     JdbcResult result = new JdbcResult();
-    final List<String> fieldNames = Arrays.asList("firstName", "lastName");
 
     final JdbcResultRow row_1 = new JdbcResultRow();
-    row_1.setFieldNames(fieldNames);
-    row_1.setFieldValues(Arrays.asList((Object) "John", (Object) "Doe"));
+    row_1.setFieldValue("firstName", "John", Types.VARCHAR);
+    row_1.setFieldValue("lastName", "Doe", Types.VARCHAR);
 
     final JdbcResultRow row_2 = new JdbcResultRow();
-    row_2.setFieldNames(fieldNames);
-    row_2.setFieldValues(Arrays.asList((Object) "Anna", (Object) "Smith"));
+    row_2.setFieldValue("firstName", "Anna", Types.VARCHAR);
+    row_2.setFieldValue("lastName", "Smith", Types.VARCHAR);
 
     final JdbcResultRow row_3 = new JdbcResultRow();
-    row_3.setFieldNames(fieldNames);
-    row_3.setFieldValues(Arrays.asList((Object) "Peter", (Object) "Jones"));
+    row_3.setFieldValue("firstName", "Peter", Types.VARCHAR);
+    row_3.setFieldValue("lastName", "Jones", Types.VARCHAR);
 
     final JdbcResultSet mock1 = mock(JdbcResultSet.class);
     when(mock1.getRows()).thenReturn(Arrays.asList(row_1, row_2, row_3));

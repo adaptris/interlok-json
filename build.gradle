@@ -1,4 +1,14 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.tools.ant.filters.*
+
+plugins {
+  id 'java'
+  id 'maven'
+  id 'maven-publish'
+  id 'jacoco'
+  // Manage optional dependencies in maven pom.
+  id 'nebula.optional-base' version '4.0.1'
+}
 
 ext {
   interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.8-SNAPSHOT'
@@ -9,13 +19,15 @@ ext {
   repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'unknown'
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
   defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
+  offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
-  interlokCommonJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
+  interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
   componentName='Interlok/JSON'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.25'
-  jacksonVersion = "2.9.7"
+  jacksonVersion = "2.9.8"
   log4j2Version = "2.9.1"
 }
 
@@ -37,11 +49,6 @@ if (JavaVersion.current().isJava8Compatible()) {
   }
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: "jacoco"
-
 sourceCompatibility = 1.8
 group   = 'com.adaptris'
 version = releaseVersion
@@ -58,6 +65,7 @@ repositories {
 configurations {
   javadoc {}
   umlDoclet {}
+  offlineJavadocPackages {}
   all*.exclude group: 'c3p0'
   all*.exclude group: 'commons-logging'
   all*.exclude group: 'javamail'
@@ -88,6 +96,7 @@ dependencies {
   compile ("com.jayway.jsonpath:json-path:2.4.0")
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
+  compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
   compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
   compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
   compile ("commons-collections:commons-collections:3.2.2")
@@ -97,8 +106,11 @@ dependencies {
   compile ("org.everit.json:org.everit.json.schema:1.5.1")
   compile ("com.google.guava:guava:27.0.1-jre")
 
-  annotationProcessor ("com.adaptris:interlok-common:$interlokCoreVersion") {changing= true}
-  umlDoclet("nl.talsmasoftware:umldoclet:1.1.2")
+  annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
+  umlDoclet("nl.talsmasoftware:umldoclet:1.1.3")
+
+  offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
+  offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
 
   testCompile ('junit:junit:4.12')
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
@@ -145,13 +157,28 @@ task generateVersion {
   }
 }
 
+task offlinePackageList(type: Copy) {
+  description 'Build an offline package-list for javadocs'
+  group 'Documentation'
+
+  project.configurations.offlineJavadocPackages.collect { dependency ->
+    from(zipTree(dependency)) {
+      into dependency.name
+    }
+  }
+  include "package-list"
+  into offlineJavadocPackageDir
+}
+
+
 
 javadoc {
+  onlyIf {
+    !hasGraphViz()
+  }
   configure(options) {
-      links = [
-        interlokJavadocs,
-        interlokCommonJavadocs,
-      ]
+    options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
+    options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
@@ -204,10 +231,8 @@ task umlJavadoc(type: Javadoc) {
   source = sourceSets.main.allJava
   classpath = project.sourceSets.main.compileClasspath
   configure(options) {
-      links = [
-        interlokJavadocs,
-        interlokCommonJavadocs,
-      ]
+    options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
+    options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.docletpath = configurations.umlDoclet.files.asType(List)
@@ -227,11 +252,15 @@ task umlJavadoc(type: Javadoc) {
     options.addStringOption "umlIncludePrivateInnerClasses", "false"
     options.addStringOption "umlIncludePackagePrivateInnerClasses", "false"
     options.addStringOption "umlIncludeProtectedInnerClasses","false"
+    options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
+      group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
+      group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
     title= componentName
   }
 }
 
-javadoc.dependsOn umlJavadoc
+
+javadoc.dependsOn offlinePackageList,umlJavadoc
 clean.dependsOn deleteDerbyLog
 check.dependsOn jacocoTestReport
 
