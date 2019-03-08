@@ -318,6 +318,7 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
     html.enabled = true
   }
   includeFilter = new File("$rootDir/gradle/spotbugs-filter.xml")
+  excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
 }
 javadoc.dependsOn offlinePackageList,umlJavadoc
 clean.dependsOn deleteDerbyLog
