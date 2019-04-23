@@ -1,6 +1,8 @@
 package com.adaptris.core.services.splitter.json;
 
 import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
@@ -31,6 +33,8 @@ import java.io.BufferedReader;
  * @config large-json-array-path-splitter
  */
 @XStreamAlias("large-json-array-path-splitter")
+@DisplayOrder(order = {"path", "encoding", "bufferSize"})
+@ComponentProfile(summary = "Split an arbitrarily large JSON array, with use of simple element traversal.", since = "3.8.4")
 public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
 
   @NotBlank
