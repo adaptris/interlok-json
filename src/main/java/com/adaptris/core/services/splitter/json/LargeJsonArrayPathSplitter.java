@@ -1,9 +1,6 @@
 package com.adaptris.core.services.splitter.json;
 
-import com.adaptris.annotation.AdvancedConfig;
-import com.adaptris.annotation.ComponentProfile;
-import com.adaptris.annotation.DisplayOrder;
-import com.adaptris.annotation.InputFieldDefault;
+import com.adaptris.annotation.*;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.Args;
@@ -38,6 +35,7 @@ import java.io.BufferedReader;
 public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
 
   @NotBlank
+  @InputFieldHint(expression = true)
   private String path;
 
   @AdvancedConfig
@@ -95,12 +93,13 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
   @SuppressWarnings("deprecation")
   public CloseableIterable<AdaptrisMessage> splitMessage(final AdaptrisMessage msg) throws CoreException {
     try {
+      String thePath = msg.resolve(getPath());
       BufferedReader buf = new BufferedReader(msg.getReader(), bufferSize());
       ObjectMapper mapper = new ObjectMapper();
       JsonParser parser = mapper.getFactory().createParser(buf);
       return new PathJsonSplitGenerator(
           new GeneratorConfig().withJsonParser(parser).withObjectMapper(mapper).withOriginalMessage(msg).withReader(buf),
-          new PathGeneratorConfig().withPath(getPath()).withSuppressPathNotFound(suppressPathNotFound()));
+          new PathGeneratorConfig().withPath(thePath).withSuppressPathNotFound(suppressPathNotFound()));
     } catch (Exception e) {
       throw new CoreException(e);
     }
