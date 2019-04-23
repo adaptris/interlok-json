@@ -36,6 +36,12 @@ public class LargeJsonArrayPathSplitterTest extends SplitterServiceExample {
     assertTrue(createSplitter().withSuppressPathNotFound(true).suppressPathNotFound());
   }
 
+  public void testWithSuppressPathNotAnArray() {
+    assertNull(createSplitter().getSuppressPathNotAnArray());
+    assertFalse(createSplitter().suppressPathNotAnArray());
+    assertTrue(createSplitter().withSuppressPathNotAnArray(true).suppressPathNotAnArray());
+  }
+
   public void testSplitArray() throws Exception {
     LargeJsonArrayPathSplitter s = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
@@ -121,9 +127,22 @@ public class LargeJsonArrayPathSplitterTest extends SplitterServiceExample {
     }
   }
 
-  public void testSplitNoMatchSupressPathNotFound() throws Exception {
+  public void testSplitNoMatchSuppressPathNotFound() throws Exception {
     LargeJsonArrayPathSplitter s = new LargeJsonArrayPathSplitter().withPath("/nomatch").withSuppressPathNotFound(true);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
+    int count = 0;
+    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+      for (AdaptrisMessage m : i) {
+        count++;
+        System.out.println(m.getPayloadForLogging());
+      }
+      assertEquals(0, count);
+    }
+  }
+
+  public void testSplitNoMatchSuppressPathNotAnArray() throws Exception {
+    LargeJsonArrayPathSplitter s = createSplitter().withSuppressPathNotAnArray(true);
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("{\"colours\" : {\"colour\": \"red\",\"value\": \"#f00\"} }");
     int count = 0;
     try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
       for (AdaptrisMessage m : i) {

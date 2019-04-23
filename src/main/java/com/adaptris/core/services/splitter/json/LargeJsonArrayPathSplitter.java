@@ -42,6 +42,10 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
   @InputFieldDefault(value = "false")
   private Boolean suppressPathNotFound;
 
+  @AdvancedConfig
+  @InputFieldDefault(value = "false")
+  private Boolean suppressPathNotAnArray;
+
 
   public LargeJsonArrayPathSplitter() {
 
@@ -77,6 +81,18 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
     return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);
   }
 
+  public Boolean getSuppressPathNotAnArray() {
+    return suppressPathNotAnArray;
+  }
+
+  public void setSuppressPathNotAnArray(Boolean suppressPathNotAnArray) {
+    this.suppressPathNotAnArray = suppressPathNotAnArray;
+  }
+
+  boolean suppressPathNotAnArray(){
+    return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotAnArray(), false);
+  }
+
 
   public LargeJsonArrayPathSplitter withPath(String path){
     setPath(path);
@@ -85,6 +101,11 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
 
   public LargeJsonArrayPathSplitter withSuppressPathNotFound(boolean suppressPathNotFound){
     setSuppressPathNotFound(suppressPathNotFound);
+    return this;
+  }
+
+  public LargeJsonArrayPathSplitter withSuppressPathNotAnArray(boolean suppressPathNotAnArray){
+    setSuppressPathNotAnArray(suppressPathNotAnArray);
     return this;
   }
 
@@ -99,7 +120,7 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
       JsonParser parser = mapper.getFactory().createParser(buf);
       return new PathJsonSplitGenerator(
           new GeneratorConfig().withJsonParser(parser).withObjectMapper(mapper).withOriginalMessage(msg).withReader(buf),
-          new PathGeneratorConfig().withPath(thePath).withSuppressPathNotFound(suppressPathNotFound()));
+          new PathGeneratorConfig().withPath(thePath).withSuppressPathNotFound(suppressPathNotFound()).withSuppressPathNotAnArray(suppressPathNotAnArray()));
     } catch (Exception e) {
       throw new CoreException(e);
     }
@@ -108,6 +129,7 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
   protected class PathGeneratorConfig {
     String path;
     private boolean suppressPathNotFound;
+    private boolean suppressPathNotAnArray;
 
     PathGeneratorConfig withPath(String path) {
       this.path = path;
@@ -116,6 +138,11 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
 
     PathGeneratorConfig withSuppressPathNotFound(boolean suppressPathNotFound) {
       this.suppressPathNotFound = suppressPathNotFound;
+      return this;
+    }
+
+    PathGeneratorConfig withSuppressPathNotAnArray(boolean suppressPathNotAnArray) {
+      this.suppressPathNotAnArray = suppressPathNotAnArray;
       return this;
     }
   }
@@ -135,7 +162,10 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
       }
       if (found) {
         if(parser.nextToken() != JsonToken.START_ARRAY){
-          throw new CoreException("Path result should be an array.");
+          if (!pathGeneratorConfig.suppressPathNotAnArray) {
+            throw new CoreException("Path result should be an array.");
+          }
+          parser.close();
         }
       } else {
         if (!pathGeneratorConfig.suppressPathNotFound) {
