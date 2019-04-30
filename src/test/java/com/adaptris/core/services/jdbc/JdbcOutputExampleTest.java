@@ -10,23 +10,14 @@ import com.adaptris.core.jdbc.DatabaseConnection;
 import com.adaptris.core.jdbc.JdbcConnection;
 import com.adaptris.core.json.jdbc.JdbcJsonArrayOutput;
 import com.adaptris.core.json.jdbc.JdbcJsonOutput;
-import com.adaptris.core.json.jdbc.JsonResultSetTranslator;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
 
-@SuppressWarnings("deprecation")
 public class JdbcOutputExampleTest extends ServiceCase {
   private static final String HYPHEN = "-";
   public static final String BASE_DIR_KEY = "JsonJDBCServiceExamples.baseDir";
 
   private enum ResultSetBuilder {
-    JSON_LEGACY {
-      @Override
-      public ResultSetTranslator build() {
-        return new JsonResultSetTranslator();
-      }
-
-    },
     JSON_OBJECT {
       @Override
       public ResultSetTranslator build() {
