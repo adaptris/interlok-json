@@ -59,9 +59,9 @@ public class UpsertJsonObject extends JdbcMapUpsert {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
       handleUpsert(table(msg), conn, JsonUtil.mapifyJson(msg, getNullConverter()));
-      commit(conn, msg);
+      JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
-      rollback(conn, msg);
+      JdbcUtil.rollback(conn, msg);
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);

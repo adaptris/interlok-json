@@ -57,9 +57,9 @@ public class UpsertJsonArray extends UpsertJsonObject {
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
         handleUpsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
-      commit(conn, msg);
+      JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
-      rollback(conn, msg);
+      JdbcUtil.rollback(conn, msg);
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);

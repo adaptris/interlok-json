@@ -101,9 +101,9 @@ public class BatchInsertJsonArray extends InsertJsonObject {
         execute(stmt);
       }
       finish(stmt);
-      commit(conn, msg);
+      JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
-      rollback(conn, msg);
+      JdbcUtil.rollback(conn, msg);
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);
