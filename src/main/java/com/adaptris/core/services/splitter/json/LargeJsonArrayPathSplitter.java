@@ -1,6 +1,15 @@
 package com.adaptris.core.services.splitter.json;
 
-import com.adaptris.annotation.*;
+import java.io.BufferedReader;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
+import com.adaptris.annotation.InputFieldDefault;
+import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.Args;
@@ -9,10 +18,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.validator.constraints.NotBlank;
-
-import java.io.BufferedReader;
 
 /**
  * Split an arbitrarily large JSON array.
@@ -111,7 +116,6 @@ public class LargeJsonArrayPathSplitter extends LargeJsonArraySplitter {
 
 
   @Override
-  @SuppressWarnings("deprecation")
   public CloseableIterable<AdaptrisMessage> splitMessage(final AdaptrisMessage msg) throws CoreException {
     try {
       String thePath = msg.resolve(getPath());

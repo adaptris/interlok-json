@@ -5,7 +5,7 @@ import java.util.List;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.transform.json.JsonToXmlTransformServiceTest;
+import com.adaptris.core.transform.json.JsonXmlJsonTest;
 
 public class JsonArraySplitterTest extends SplitterServiceExample {
 
@@ -28,7 +28,7 @@ public class JsonArraySplitterTest extends SplitterServiceExample {
 
   public void testSplitNotArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
-    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonToXmlTransformServiceTest.JSON_INPUT);
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
     assertEquals(1, s.splitMessage(src).size());
   }
 
@@ -53,7 +53,7 @@ public class JsonArraySplitterTest extends SplitterServiceExample {
   protected String getExampleCommentHeader(Object o) {
     return super.getExampleCommentHeader(o) + "\n<!-- \n If the incoming document is \n\n" + JsonObjectSplitterTest.JSON_ARRAY
         + "\n\nthis would create 4 new messages, 1 for each element" + "\nIf the incoming document is\n\n"
-        + JsonToXmlTransformServiceTest.JSON_INPUT
+        + JsonXmlJsonTest.JSON_INPUT
         + "\n\nthis would create a single message" + "\n-->\n";
   }
 }
