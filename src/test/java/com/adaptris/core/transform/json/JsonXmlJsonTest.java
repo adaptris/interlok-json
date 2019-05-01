@@ -36,6 +36,21 @@ public class JsonXmlJsonTest {
       "}" +
       "}";
 
+  public static final String XML_OUTPUT = "<json><entry><location>Seattle</location><name>Production System</name></entry>"
+      + "<entry><location>New York</location><name>R&amp;D sandbox</name></entry>"
+      + "<notes>Some Notes</notes><version>0.5</version></json>";
+
+  public static final String JSON_INPUT =
+      "{\n\"entry\":[\n" + "{\n\"location\":\"Seattle\"," + "\n\"name\":\"Production System\"},\n" + "{\"location\":\"New York\",\n"
+          + "\"name\":\"R&D sandbox\"\n" + "}\n" + "],\n" + "\"notes\":\"Some Notes\",\n" + "\"version\":0.5\n" + "}";
+  public static final String XML_INPUT =
+      "<json>\n" + "<version>0.5</version>\n" + "" + "<entry>\n" + "<name>Production System</name>\n"
+      + "<location>Seattle</location>\n" + "" + "</entry>\n" + "<entry>\n" + "<name>R&amp;D sandbox</name>\n"
+      + "<location>New York</location>\n" + "</entry>\n" + "<notes>Some Notes</notes>\n" + "</json>\n";
+
+  public static final String JSON_OUTPUT =
+      "{\"entry\":[{\"location\":\"Seattle\",\"name\":\"Production System\"},{\"location\":\"New York\",\"name\":\"R&D sandbox\"}],\"notes\":\"Some Notes\",\"version\":0.5}";
+
   private Configuration jsonConfig;
 
   @Before

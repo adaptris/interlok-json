@@ -67,9 +67,9 @@ public class InsertJsonArray extends InsertJsonObject {
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
         handleInsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
-      commit(conn, msg);
+      JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
-      rollback(conn, msg);
+      JdbcUtil.rollback(conn, msg);
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);
