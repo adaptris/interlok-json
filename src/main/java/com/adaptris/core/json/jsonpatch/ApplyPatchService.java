@@ -79,8 +79,8 @@ public class ApplyPatchService extends JsonPatchService {
   @AdvancedConfig
   @AutoPopulated
   @InputFieldDefault(value = "as per com.flipkart.zjsonpatch.CompatibilityFlags.defaults()")
-  @InputFieldHint(style = "com.flipkart.zjsonpatch.CompatibilityFlags")
-  private List<CompatibilityFlags> flags;
+  @InputFieldHint(style = "com.adaptris.core.json.jsonpatch.PatchApplyFlag")
+  private List<PatchApplyFlag> flags;
 
   public ApplyPatchService() {
 
@@ -145,7 +145,7 @@ public class ApplyPatchService extends JsonPatchService {
     return ObjectUtils.defaultIfNull(getSource(), new PayloadStreamInputParameter());
   }
 
-  public List<CompatibilityFlags> getFlags() {
+  public List<PatchApplyFlag> getFlags() {
     return flags;
   }
 
@@ -154,16 +154,16 @@ public class ApplyPatchService extends JsonPatchService {
    * 
    * @param flags the flags.
    */
-  public void setFlags(List<CompatibilityFlags> flags) {
+  public void setFlags(List<PatchApplyFlag> flags) {
     this.flags = flags;
   }
 
-  public ApplyPatchService withFlags(List<CompatibilityFlags> flags) {
+  public ApplyPatchService withFlags(List<PatchApplyFlag> flags) {
     setFlags(flags);
     return this;
   }
 
-  public ApplyPatchService withFlags(CompatibilityFlags... flags) {
+  public ApplyPatchService withFlags(PatchApplyFlag... flags) {
     return withFlags(new ArrayList(Arrays.asList(flags)));
   }
 
@@ -172,7 +172,7 @@ public class ApplyPatchService extends JsonPatchService {
       return CompatibilityFlags.defaults().clone();
     }
     EnumSet<CompatibilityFlags> patchFlags = EnumSet.noneOf(CompatibilityFlags.class);
-    patchFlags.addAll(this.flags);
+    getFlags().forEach((e) -> { patchFlags.add(e.actualValue());});
     return patchFlags;
   }
 }

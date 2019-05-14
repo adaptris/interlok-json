@@ -37,8 +37,8 @@ public class ApplyPatchTest extends ServiceCase {
     assertNull(service.getFlags());
     assertNotNull(service.flags());
     assertEquals(CompatibilityFlags.defaults(), service.flags());
-    service = new ApplyPatchService().withFlags(CompatibilityFlags.MISSING_VALUES_AS_NULLS,
-        CompatibilityFlags.REMOVE_NONE_EXISTING_ARRAY_ELEMENT);
+    service = new ApplyPatchService().withFlags(PatchApplyFlag.MISSING_VALUES_AS_NULLS,
+        PatchApplyFlag.REMOVE_NONE_EXISTING_ARRAY_ELEMENT);
     assertNotNull(service.getFlags());
     assertNotNull(service.flags());
     assertTrue(service.flags().contains(CompatibilityFlags.MISSING_VALUES_AS_NULLS));

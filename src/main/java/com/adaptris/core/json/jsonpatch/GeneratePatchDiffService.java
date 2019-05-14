@@ -78,8 +78,8 @@ public class GeneratePatchDiffService extends JsonPatchService {
   @AdvancedConfig
   @AutoPopulated
   @InputFieldDefault(value = "as per com.flipkart.zjsonpatch.DiffFlags.defaults()")
-  @InputFieldHint(style = "com.flipkart.zjsonpatch.DiffFlags")
-  private List<DiffFlags> flags;
+  @InputFieldHint(style = "com.adaptris.core.json.jsonpatch.PatchDiffFlag")
+  private List<PatchDiffFlag> flags;
 
 
   public GeneratePatchDiffService() {
@@ -145,7 +145,7 @@ public class GeneratePatchDiffService extends JsonPatchService {
     return this;
   }
 
-  public List<DiffFlags> getFlags() {
+  public List<PatchDiffFlag> getFlags() {
     return flags;
   }
 
@@ -155,16 +155,16 @@ public class GeneratePatchDiffService extends JsonPatchService {
    * 
    * @param flags the flags.
    */
-  public void setFlags(List<DiffFlags> flags) {
+  public void setFlags(List<PatchDiffFlag> flags) {
     this.flags = flags;
   }
 
-  public GeneratePatchDiffService withFlags(List<DiffFlags> flags) {
+  public GeneratePatchDiffService withFlags(List<PatchDiffFlag> flags) {
     setFlags(flags);
     return this;
   }
 
-  public GeneratePatchDiffService withFlags(DiffFlags... flags) {
+  public GeneratePatchDiffService withFlags(PatchDiffFlag... flags) {
     return withFlags(new ArrayList(Arrays.asList(flags)));
   }
 
@@ -173,7 +173,7 @@ public class GeneratePatchDiffService extends JsonPatchService {
       return DiffFlags.defaults().clone();
     }
     EnumSet<DiffFlags> diffFlags = EnumSet.noneOf(DiffFlags.class);
-    diffFlags.addAll(this.flags);
+    getFlags().forEach((e) -> { diffFlags.add(e.actualValue());});
     return diffFlags;
   }
 }

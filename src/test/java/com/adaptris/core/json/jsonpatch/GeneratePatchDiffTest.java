@@ -37,12 +37,13 @@ public class GeneratePatchDiffTest extends ServiceCase {
     assertNull(service.getFlags());
     assertNotNull(service.flags());
     assertEquals(DiffFlags.defaults(), service.flags());
-    service = new GeneratePatchDiffService().withFlags(DiffFlags.OMIT_COPY_OPERATION,
-        DiffFlags.OMIT_COPY_OPERATION);
+    service = new GeneratePatchDiffService().withFlags(PatchDiffFlag.OMIT_COPY_OPERATION,
+        PatchDiffFlag.OMIT_MOVE_OPERATION, PatchDiffFlag.ADD_ORIGINAL_VALUE_ON_REPLACE,
+        PatchDiffFlag.EMIT_TEST_OPERATIONS, PatchDiffFlag.OMIT_VALUE_ON_REMOVE);
     assertNotNull(service.getFlags());
     assertNotNull(service.flags());
     assertTrue(service.flags().contains(DiffFlags.OMIT_COPY_OPERATION));
-    assertFalse(service.flags().contains(DiffFlags.EMIT_TEST_OPERATIONS));
+    assertTrue(service.flags().contains(DiffFlags.OMIT_MOVE_OPERATION));
   }
 
   public void testService() throws Exception {
@@ -83,6 +84,7 @@ public class GeneratePatchDiffTest extends ServiceCase {
     GeneratePatchDiffService service = new GeneratePatchDiffService()
         .withDiffSource(new PayloadStreamInputParameter())
         .withDiffTarget(new MetadataStreamInputParameter("metadata key"))
+        .withFlags(PatchDiffFlag.OMIT_MOVE_OPERATION, PatchDiffFlag.OMIT_COPY_OPERATION)
         .withOutput(new PayloadStreamOutputParameter());
     
     return service;
