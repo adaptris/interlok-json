@@ -83,7 +83,7 @@ public class GeneratePatchDiffService extends JsonPatchService {
 
 
   public GeneratePatchDiffService() {
-
+    setFlags(new ArrayList<PatchDiffFlag>());
   }
 
 
