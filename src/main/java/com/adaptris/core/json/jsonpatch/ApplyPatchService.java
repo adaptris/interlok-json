@@ -83,7 +83,7 @@ public class ApplyPatchService extends JsonPatchService {
   private List<PatchApplyFlag> flags;
 
   public ApplyPatchService() {
-
+    setFlags(new ArrayList<PatchApplyFlag>());
   }
 
 
