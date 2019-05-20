@@ -20,16 +20,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.ObjectUtils;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
-import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -78,8 +80,8 @@ public class ApplyPatchService extends JsonPatchService {
   private MessageWrapper<InputStream> source;
   @AdvancedConfig
   @AutoPopulated
+  @NotNull
   @InputFieldDefault(value = "as per com.flipkart.zjsonpatch.CompatibilityFlags.defaults()")
-  @InputFieldHint(style = "com.adaptris.core.json.jsonpatch.PatchApplyFlag")
   private List<PatchApplyFlag> flags;
 
   public ApplyPatchService() {
@@ -102,6 +104,7 @@ public class ApplyPatchService extends JsonPatchService {
   @Override
   public void prepare() throws CoreException {
     Args.notNull(getPatchSource(), "patchSource");
+    Args.notNull(getFlags(), "flags");
   }
 
 
@@ -155,7 +158,7 @@ public class ApplyPatchService extends JsonPatchService {
    * @param flags the flags.
    */
   public void setFlags(List<PatchApplyFlag> flags) {
-    this.flags = flags;
+    this.flags = Args.notNull(flags, "flags");
   }
 
   public ApplyPatchService withFlags(List<PatchApplyFlag> flags) {
@@ -168,7 +171,7 @@ public class ApplyPatchService extends JsonPatchService {
   }
 
   EnumSet<CompatibilityFlags> flags() {
-    if (getFlags() == null) {
+    if (getFlags().size() == 0) {
       return CompatibilityFlags.defaults().clone();
     }
     EnumSet<CompatibilityFlags> patchFlags = EnumSet.noneOf(CompatibilityFlags.class);

@@ -20,15 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
-import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -77,8 +78,8 @@ public class GeneratePatchDiffService extends JsonPatchService {
   private MessageWrapper<InputStream> diffTarget;
   @AdvancedConfig
   @AutoPopulated
+  @NotNull
   @InputFieldDefault(value = "as per com.flipkart.zjsonpatch.DiffFlags.defaults()")
-  @InputFieldHint(style = "com.adaptris.core.json.jsonpatch.PatchDiffFlag")
   private List<PatchDiffFlag> flags;
 
 
@@ -104,6 +105,7 @@ public class GeneratePatchDiffService extends JsonPatchService {
   public void prepare() throws CoreException {
     Args.notNull(getDiffSource(), "diffSource");
     Args.notNull(getDiffTarget(), "diffTarget");
+    Args.notNull(getFlags(), "flags");
   }
 
 
@@ -156,7 +158,7 @@ public class GeneratePatchDiffService extends JsonPatchService {
    * @param flags the flags.
    */
   public void setFlags(List<PatchDiffFlag> flags) {
-    this.flags = flags;
+    this.flags = Args.notNull(flags, "flags");
   }
 
   public GeneratePatchDiffService withFlags(List<PatchDiffFlag> flags) {
@@ -169,7 +171,7 @@ public class GeneratePatchDiffService extends JsonPatchService {
   }
 
   EnumSet<DiffFlags> flags() {
-    if (getFlags() == null) {
+    if (getFlags().size() == 0) {
       return DiffFlags.defaults().clone();
     }
     EnumSet<DiffFlags> diffFlags = EnumSet.noneOf(DiffFlags.class);

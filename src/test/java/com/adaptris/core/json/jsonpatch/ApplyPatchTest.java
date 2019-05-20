@@ -16,6 +16,7 @@
 package com.adaptris.core.json.jsonpatch;
 
 import org.skyscreamer.jsonassert.JSONAssert;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -34,7 +35,7 @@ public class ApplyPatchTest extends ServiceCase {
 
   public void testFlags() throws Exception {
     ApplyPatchService service = new ApplyPatchService();
-    assertNull(service.getFlags());
+    assertNotNull(service.getFlags());
     assertNotNull(service.flags());
     assertEquals(CompatibilityFlags.defaults(), service.flags());
     service = new ApplyPatchService().withFlags(PatchApplyFlag.MISSING_VALUES_AS_NULLS,

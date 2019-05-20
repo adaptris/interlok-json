@@ -16,6 +16,7 @@
 package com.adaptris.core.json.jsonpatch;
 
 import org.skyscreamer.jsonassert.JSONAssert;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -34,7 +35,7 @@ public class GeneratePatchDiffTest extends ServiceCase {
   public void testFlags() throws Exception {
     GeneratePatchDiffService service =
         new GeneratePatchDiffService();
-    assertNull(service.getFlags());
+    assertNotNull(service.getFlags());
     assertNotNull(service.flags());
     assertEquals(DiffFlags.defaults(), service.flags());
     service = new GeneratePatchDiffService().withFlags(PatchDiffFlag.OMIT_COPY_OPERATION,
