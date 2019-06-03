@@ -136,19 +136,20 @@ public class BatchInsertJsonArray extends InsertJsonObject {
     return accumulate(rc);
   }
 
+
   protected static int accumulate(int[] rc) throws SQLException {
-    AtomicInteger rowsAffected = new AtomicInteger(0);
+    int rowsAffected = 0;
     List<Integer> result = Arrays.asList(ArrayUtils.toObject(rc));
     if (result.contains(Statement.EXECUTE_FAILED)) {
       throw new SQLException("Batch Execution Failed.");
     }
-    result.stream().forEach((e) -> {
-      // not one of the Statement constants.
-      if (e >= 0) {
-        rowsAffected.addAndGet(e);
+    for (int i : rc) {
+      // Not Statement.EXECUTE_FAILED or SUCCESS_NO_INFO
+      if (i >= 0) {
+        rowsAffected += i;
       }
-    });
-    return rowsAffected.intValue();
+    }
+    return rowsAffected;
   }
 
   /**
