@@ -39,6 +39,7 @@ public class JsonPathDataInputParameterTest {
     JsonPathDataInputParameter param = new JsonPathDataInputParameter("$.author");
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_OBJECT);
     assertEquals("J. R. R. Tolkien", param.extract(msg));
+    assertEquals("J. R. R. Tolkien", param.extract(msg));
   }
 
   @Test
