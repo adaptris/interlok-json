@@ -3,14 +3,17 @@ package com.adaptris.core.json.jsonpatch;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.validation.Valid;
+
 import org.apache.commons.lang3.ObjectUtils;
+
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceImp;
-import com.adaptris.core.common.PayloadStreamOutputParameter;
-import com.adaptris.interlok.types.InterlokMessage.MessageWrapper;
+import com.adaptris.core.common.PayloadOutputStreamWrapper;
+import com.adaptris.interlok.types.MessageWrapper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class JsonPatchService extends ServiceImp {
   @AutoPopulated
   @Valid
-  @InputFieldDefault(value = "PayloadStreamOutputParameter")
+  @InputFieldDefault(value = "PayloadOutputStreamWrapper")
   private MessageWrapper<OutputStream> output;
 
   protected transient ObjectMapper mapper;
@@ -55,7 +58,7 @@ public abstract class JsonPatchService extends ServiceImp {
   /**
    * Specify where the results of the operation is going to be stored.
    * 
-   * @param output the output; default is {@link PayloadStreamOutputParameter} if not specified.
+   * @param output the output; default is {@link PayloadOutputStreamWrapper} if not specified.
    */
   public void setOutput(MessageWrapper<OutputStream> output) {
     this.output = output;
@@ -67,7 +70,7 @@ public abstract class JsonPatchService extends ServiceImp {
   }
 
   protected MessageWrapper<OutputStream> output() {
-    return ObjectUtils.defaultIfNull(getOutput(), new PayloadStreamOutputParameter());
+    return ObjectUtils.defaultIfNull(getOutput(), new PayloadOutputStreamWrapper());
   }
 
 }

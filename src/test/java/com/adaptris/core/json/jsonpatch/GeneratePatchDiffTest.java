@@ -21,9 +21,9 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.common.MetadataStreamInputParameter;
-import com.adaptris.core.common.PayloadStreamInputParameter;
-import com.adaptris.core.common.PayloadStreamOutputParameter;
+import com.adaptris.core.common.MetadataInputStreamWrapper;
+import com.adaptris.core.common.PayloadInputStreamWrapper;
+import com.adaptris.core.common.PayloadOutputStreamWrapper;
 import com.flipkart.zjsonpatch.DiffFlags;
 
 public class GeneratePatchDiffTest extends ServiceCase {
@@ -48,13 +48,13 @@ public class GeneratePatchDiffTest extends ServiceCase {
   }
 
   public void testService() throws Exception {
-    MetadataStreamInputParameter diffSource = new MetadataStreamInputParameter("diffSource");
-    MetadataStreamInputParameter diffTarget = new MetadataStreamInputParameter("diffTarget");
+    MetadataInputStreamWrapper diffSource = new MetadataInputStreamWrapper("diffSource");
+    MetadataInputStreamWrapper diffTarget = new MetadataInputStreamWrapper("diffTarget");
     GeneratePatchDiffService service =
         new GeneratePatchDiffService()
             .withDiffSource(diffSource)
             .withDiffTarget(diffTarget)
-            .withOutput(new PayloadStreamOutputParameter());
+            .withOutput(new PayloadOutputStreamWrapper());
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     msg.addMessageHeader("diffSource", DIFF_SOURCE);
     msg.addMessageHeader("diffTarget", DIFF_TARGET);
@@ -63,12 +63,12 @@ public class GeneratePatchDiffTest extends ServiceCase {
   }
 
   public void testService_BrokenSource() throws Exception {
-    MetadataStreamInputParameter diffSource = new MetadataStreamInputParameter("diffSource");
+    MetadataInputStreamWrapper diffSource = new MetadataInputStreamWrapper("diffSource");
     BrokenWrapper diffTarget = new BrokenWrapper();
     GeneratePatchDiffService service = new GeneratePatchDiffService()
         .withDiffSource(diffSource)
         .withDiffTarget(diffTarget)
-        .withOutput(new PayloadStreamOutputParameter());
+        .withOutput(new PayloadOutputStreamWrapper());
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     msg.addMessageHeader("diffSource", DIFF_SOURCE);
     msg.addMessageHeader("diffTarget", DIFF_TARGET);
@@ -83,10 +83,10 @@ public class GeneratePatchDiffTest extends ServiceCase {
   @Override
   protected GeneratePatchDiffService retrieveObjectForSampleConfig() {
     GeneratePatchDiffService service = new GeneratePatchDiffService()
-        .withDiffSource(new PayloadStreamInputParameter())
-        .withDiffTarget(new MetadataStreamInputParameter("metadata key"))
+        .withDiffSource(new PayloadInputStreamWrapper())
+        .withDiffTarget(new MetadataInputStreamWrapper("metadata key containing another json object"))
         .withFlags(PatchDiffFlag.OMIT_MOVE_OPERATION, PatchDiffFlag.OMIT_COPY_OPERATION)
-        .withOutput(new PayloadStreamOutputParameter());
+        .withOutput(new PayloadOutputStreamWrapper());
     
     return service;
   }

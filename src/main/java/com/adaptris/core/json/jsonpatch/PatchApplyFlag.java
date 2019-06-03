@@ -9,6 +9,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Since {@code com.flipkart.zjsonpatch.CompatibilityFlags} doesn't have a XStreamAlias, it renders
  * poorly for configuration; this enum is simply here to make things look nice.
  * </p>
+ * 
+ * @config json-patch-apply-flag
  */
 @XStreamAlias("json-patch-apply-flag")
 public enum PatchApplyFlag {

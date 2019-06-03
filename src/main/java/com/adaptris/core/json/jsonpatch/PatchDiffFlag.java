@@ -9,6 +9,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Since {@code com.flipkart.zjsonpatch.DiffFlags} doesn't have a XStreamAlias, it renders poorly
  * for configuration; this enum is simply here to make things look nice.
  * </p>
+ * 
+ * @config json-patch-diff-flag
  */
 @XStreamAlias("json-patch-diff-flag")
 public enum PatchDiffFlag {

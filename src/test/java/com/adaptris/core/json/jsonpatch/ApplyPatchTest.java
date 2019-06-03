@@ -21,9 +21,9 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.common.MetadataStreamInputParameter;
-import com.adaptris.core.common.PayloadStreamInputParameter;
-import com.adaptris.core.common.PayloadStreamOutputParameter;
+import com.adaptris.core.common.MetadataInputStreamWrapper;
+import com.adaptris.core.common.PayloadInputStreamWrapper;
+import com.adaptris.core.common.PayloadOutputStreamWrapper;
 import com.flipkart.zjsonpatch.CompatibilityFlags;
 
 public class ApplyPatchTest extends ServiceCase {
@@ -46,10 +46,10 @@ public class ApplyPatchTest extends ServiceCase {
   }
 
   public void testService() throws Exception {
-    MetadataStreamInputParameter patchSource = new MetadataStreamInputParameter("patchSource");
+    MetadataInputStreamWrapper patchSource = new MetadataInputStreamWrapper("patchSource");
     ApplyPatchService service = new ApplyPatchService().withPatchSource(patchSource)
-        .withSource(new PayloadStreamInputParameter())
-        .withOutput(new PayloadStreamOutputParameter());
+        .withSource(new PayloadInputStreamWrapper())
+        .withOutput(new PayloadOutputStreamWrapper());
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SOURCE);
     msg.addMessageHeader("patchSource", PATCH_TRANSFORM);
     execute(service, msg);
@@ -59,8 +59,8 @@ public class ApplyPatchTest extends ServiceCase {
   public void testService_BrokenSource() throws Exception {
     BrokenWrapper patchSource = new BrokenWrapper();
     ApplyPatchService service = new ApplyPatchService().withPatchSource(patchSource)
-        .withSource(new PayloadStreamInputParameter())
-        .withOutput(new PayloadStreamOutputParameter());
+        .withSource(new PayloadInputStreamWrapper())
+        .withOutput(new PayloadOutputStreamWrapper());
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SOURCE);
     msg.addMessageHeader("patchSource", PATCH_TRANSFORM);
     try {
@@ -75,9 +75,9 @@ public class ApplyPatchTest extends ServiceCase {
   @Override
   protected ApplyPatchService retrieveObjectForSampleConfig() {
     ApplyPatchService service =
-        new ApplyPatchService().withSource(new PayloadStreamInputParameter())
-            .withPatchSource(new MetadataStreamInputParameter("metadata key"))
-            .withOutput(new PayloadStreamOutputParameter());
+        new ApplyPatchService().withSource(new PayloadInputStreamWrapper())
+            .withPatchSource(new MetadataInputStreamWrapper("metadata key"))
+            .withOutput(new PayloadOutputStreamWrapper());
     return service;
   }
 }

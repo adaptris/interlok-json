@@ -1,8 +1,9 @@
 package com.adaptris.core.json.jsonpatch;
 
 import java.io.InputStream;
+
 import com.adaptris.interlok.types.InterlokMessage;
-import com.adaptris.interlok.types.InterlokMessage.MessageWrapper;
+import com.adaptris.interlok.types.MessageWrapper;
 
 public class BrokenWrapper implements MessageWrapper<InputStream> {
 
