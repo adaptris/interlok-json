@@ -114,8 +114,8 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
 
   protected abstract JdbcMapInsert createService();
 
-  protected static <T> T configureForTests(T t) {
-    JdbcMapInsert service = (JdbcMapInsert) t;
+  protected static <T extends JdbcMapInsert> T configureForTests(T t) {
+    JdbcMapInsert service = t;
     JdbcConnection connection = new JdbcConnection();
     connection.setConnectUrl(JDBC_URL);
     connection.setDriverImp(JDBC_DRIVER);

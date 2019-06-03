@@ -44,10 +44,12 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
   public void testService_Update() throws Exception {
     createDatabase();
     populateDatabase();
-    UpsertJsonObject service = configureForTests(createService());
+    UpsertJsonObject service = configureForTests(createService()).withRowsAffectedMetadataKey("rowsAffected");
     service.setIdField(ID_ELEMENT_VALUE);
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(OBJECT_CONTENT);
     execute(service, msg);
+    assertTrue(msg.headersContainsKey("rowsAffected"));
+    assertEquals("1", msg.getMetadataValue("rowsAffected"));
     doAssert(1);
     checkDob(CAROL, DOB);
   }

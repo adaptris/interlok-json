@@ -24,6 +24,7 @@ import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
+import com.adaptris.util.NumberUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -83,6 +84,7 @@ public class BatchInsertJsonArray extends InsertJsonObject {
   public void doService(AdaptrisMessage msg) throws ServiceException {
     Connection conn = null;
     PreparedStatement stmt = null;
+    int rowsAffected = 0;
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
@@ -98,9 +100,10 @@ public class BatchInsertJsonArray extends InsertJsonObject {
           stmt = prepareStatement(conn, wrapper.statement());
         }
         wrapper.addParams(stmt, json);
-        execute(stmt);
+        rowsAffected += execute(stmt);
       }
-      finish(stmt);
+      rowsAffected += finish(stmt);
+      addUpdatedMetadata(rowsAffected, msg);
       JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
       JdbcUtil.rollback(conn, msg);
@@ -112,26 +115,40 @@ public class BatchInsertJsonArray extends InsertJsonObject {
   }
 
 
-  private void execute(PreparedStatement insert) throws SQLException {
+  private int execute(PreparedStatement insert) throws SQLException {
     int count = counter.get().incrementAndGet();
     insert.addBatch();
     if (count % batchWindow() == 0) {
       log.trace("BatchWindow reached, executeBatch()");
-      executeBatch(insert);
+      return executeBatch(insert);
     }
+    return 0;
   }
 
-  private void finish(PreparedStatement insert) throws SQLException {
-    executeBatch(insert);
+  private int finish(PreparedStatement insert) throws SQLException {
+    int rowsAffected = executeBatch(insert);
     counter.set(new AtomicInteger());
+    return rowsAffected;
   }
 
-  private void executeBatch(PreparedStatement insert) throws SQLException {
+  private int executeBatch(PreparedStatement insert) throws SQLException {
     int[] rc = insert.executeBatch();
+    return accumulate(rc);
+  }
+
+  protected static int accumulate(int[] rc) throws SQLException {
+    AtomicInteger rowsAffected = new AtomicInteger(0);
     List<Integer> result = Arrays.asList(ArrayUtils.toObject(rc));
     if (result.contains(Statement.EXECUTE_FAILED)) {
       throw new SQLException("Batch Execution Failed.");
     }
+    result.stream().forEach((e) -> {
+      // not one of the Statement constants.
+      if (e >= 0) {
+        rowsAffected.addAndGet(e);
+      }
+    });
+    return rowsAffected.intValue();
   }
 
   /**
@@ -151,7 +168,7 @@ public class BatchInsertJsonArray extends InsertJsonObject {
   }
 
   int batchWindow() {
-    return getBatchWindow() != null ? getBatchWindow().intValue() : DEFAULT_BATCH_WINDOW;
+    return NumberUtils.toIntDefaultIfNull(getBatchWindow(), DEFAULT_BATCH_WINDOW);
   }
 
 }
