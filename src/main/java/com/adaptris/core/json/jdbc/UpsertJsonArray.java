@@ -48,6 +48,7 @@ public class UpsertJsonArray extends UpsertJsonObject {
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
     Connection conn = null;
+    int rowsAffected = 0;
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
@@ -55,8 +56,9 @@ public class UpsertJsonArray extends UpsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleUpsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
+        rowsAffected += handleUpsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
+      addUpdatedMetadata(rowsAffected, msg);
       JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
       JdbcUtil.rollback(conn, msg);
