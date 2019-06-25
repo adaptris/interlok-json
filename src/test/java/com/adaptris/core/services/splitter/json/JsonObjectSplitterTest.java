@@ -5,7 +5,7 @@ import java.util.List;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.transform.json.JsonToXmlTransformServiceTest;
+import com.adaptris.core.transform.json.JsonXmlJsonTest;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -31,7 +31,7 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
 
   public void testSplitObject() throws Exception {
     JsonObjectSplitter s = new JsonObjectSplitter();
-    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonToXmlTransformServiceTest.JSON_INPUT);
+    AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
     List<AdaptrisMessage> msgs = s.splitMessage(src);
 
     assertEquals(3, msgs.size());
@@ -68,7 +68,7 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
   @Override
   protected String getExampleCommentHeader(Object o) {
     return super.getExampleCommentHeader(o) + "\n<!-- \n If the incoming document is \n\n"
-        + JsonToXmlTransformServiceTest.JSON_INPUT
+        + JsonXmlJsonTest.JSON_INPUT
         + "\n\nthis would create 3 new messages, 1 each for 'entry', 'notes', 'version'." + "\nIf the incoming document is \n\n"
         + JSON_ARRAY + "\n\nthis would create 4 messages, 1 for each element" + "\n-->\n";
   }

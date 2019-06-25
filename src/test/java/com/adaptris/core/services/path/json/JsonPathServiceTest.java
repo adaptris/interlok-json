@@ -93,7 +93,6 @@ public class JsonPathServiceTest extends ServiceCase {
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
   }
 
-  @SuppressWarnings("deprecation")
   @Test
   public void testPathNotFound_NoSuppress_Execution() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);

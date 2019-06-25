@@ -58,6 +58,7 @@ public class InsertJsonArray extends InsertJsonObject {
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
     Connection conn = null;
+    int rowsAffected = 0;
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
@@ -65,11 +66,12 @@ public class InsertJsonArray extends InsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        handleInsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
+        rowsAffected += handleInsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
       }
-      commit(conn, msg);
+      addUpdatedMetadata(rowsAffected, msg);
+      JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
-      rollback(conn, msg);
+      JdbcUtil.rollback(conn, msg);
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);

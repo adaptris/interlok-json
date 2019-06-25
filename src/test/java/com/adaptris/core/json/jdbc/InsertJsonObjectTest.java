@@ -23,9 +23,11 @@ public class InsertJsonObjectTest extends JdbcJsonInsertCase {
 
   public void testService() throws Exception {
     createDatabase();
-    InsertJsonObject service = configureForTests(createService());
+    InsertJsonObject service = configureForTests(createService()).withRowsAffectedMetadataKey("rowsAffected");
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(OBJECT_CONTENT);
     execute(service, msg);
+    assertTrue(msg.headersContainsKey("rowsAffected"));
+    assertEquals("1", msg.getMetadataValue("rowsAffected"));
     doAssert(1);
   }
 
@@ -41,6 +43,7 @@ public class InsertJsonObjectTest extends JdbcJsonInsertCase {
     }
   }
 
+  @Override
   protected InsertJsonObject createService() {
     return new InsertJsonObject();
   }

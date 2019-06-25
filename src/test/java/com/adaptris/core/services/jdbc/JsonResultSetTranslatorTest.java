@@ -1,20 +1,14 @@
 package com.adaptris.core.services.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.EnumSet;
-import org.codehaus.jettison.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.json.jdbc.JsonResultSetTranslator;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.jdbc.JdbcResult;
 import com.adaptris.jdbc.JdbcResultRow;
@@ -31,44 +25,7 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
  *
  * @author Ashley Anderson <ashley.anderson@reedbusiness.com>
  */
-@SuppressWarnings("deprecation")
 public class JsonResultSetTranslatorTest {
-
-  private JSONObject expected;
-
-  @Before
-  public void setUp() throws Exception {
-    expected = new JSONObject(
-        "{\"result\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}");
-  }
-
-
-  /**
-   * Test the simple, valid path through the translation from a JDBC result to JSON.
-   *
-   * @throws Exception
-   *           Unexpected; should not happen.
-   */
-  @Test
-  public void testTranslate() throws Exception {
-    final JsonResultSetTranslator jsonTranslator = new JsonResultSetTranslator();
-    final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-
-    execute(jsonTranslator, createJdbcResult(), message);
-    ReadContext ctx = createContext(message);
-    assertNotNull(ctx.read("$.result"));
-    assertNotNull(ctx.read("$.result.[0]"));
-    assertEquals("Anna", ctx.read("$.result.[1].firstName"));
-    assertEquals(expected.toString(), new String(message.getPayload()));
-  }
-
-  @Test
-  public void testUniqueId() throws Exception {
-    final JsonResultSetTranslator jsonTranslator = new JsonResultSetTranslator();
-    assertNull(jsonTranslator.getUniqueId());
-    jsonTranslator.setUniqueId("XXX");
-    assertEquals("XXX", jsonTranslator.getUniqueId());
-  }
 
   protected static ReadContext createContext(AdaptrisMessage msg) throws IOException {
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())

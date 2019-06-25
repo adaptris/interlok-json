@@ -59,10 +59,10 @@ public class InsertJsonObject extends JdbcMapInsert {
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
-      handleInsert(table(msg), conn, JsonUtil.mapifyJson(msg, getNullConverter()));
-      commit(conn, msg);
+      addUpdatedMetadata(handleInsert(table(msg), conn, JsonUtil.mapifyJson(msg, getNullConverter())), msg);
+      JdbcUtil.commit(conn, msg);
     } catch (Exception e) {
-      rollback(conn, msg);
+      JdbcUtil.rollback(conn, msg);
       throw ExceptionHelper.wrapServiceException(e);
     } finally {
       JdbcUtil.closeQuietly(conn);

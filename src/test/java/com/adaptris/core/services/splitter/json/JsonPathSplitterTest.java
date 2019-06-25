@@ -42,11 +42,8 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
 
   @Override
   JsonPathSplitter createSplitter() {
-    JsonPathSplitter splitter = new JsonPathSplitter();
-    StringPayloadDataInputParameter jsonSource = new StringPayloadDataInputParameter();
-    ConstantDataInputParameter jsonPath = new ConstantDataInputParameter("$.store.book");
-    splitter.setJsonPath(jsonPath);
-    splitter.setJsonSource(jsonSource);
+    JsonPathSplitter splitter =
+        new JsonPathSplitter(new StringPayloadDataInputParameter(), new ConstantDataInputParameter("$.store.book"));
     splitter.setMessageSplitter(new JsonArraySplitter());
     return splitter;
   }

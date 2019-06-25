@@ -3,7 +3,6 @@ package com.adaptris.core.json.jdbc;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.json.jdbc.InsertJsonArray;
 
 public class InsertJsonArrayTest extends JdbcJsonInsertCase {
 
@@ -14,9 +13,11 @@ public class InsertJsonArrayTest extends JdbcJsonInsertCase {
 
   public void testService() throws Exception {
     createDatabase();
-    InsertJsonArray service = configureForTests(createService());
+    InsertJsonArray service = configureForTests(createService()).withRowsAffectedMetadataKey("rowsAffected");
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_CONTENT);
     execute(service, msg);
+    assertTrue(msg.headersContainsKey("rowsAffected"));
+    assertEquals("3", msg.getMetadataValue("rowsAffected"));
     doAssert(3);
   }
 
@@ -44,6 +45,7 @@ public class InsertJsonArrayTest extends JdbcJsonInsertCase {
     }
   }
 
+  @Override
   protected InsertJsonArray createService() {
     return new InsertJsonArray();
   }

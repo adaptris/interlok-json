@@ -7,13 +7,13 @@ plugins {
   id 'maven-publish'
   id 'jacoco'
   // Manage optional dependencies in maven pom.
-  id 'nebula.optional-base' version '4.0.1'
-  id 'com.github.spotbugs' version '1.6.10'
+  id 'nebula.optional-base' version '5.0.3'
+  id 'com.github.spotbugs' version '2.0.0'
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.8-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.8-SNAPSHOT'
+  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.9-SNAPSHOT'
+  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.9-SNAPSHOT'
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -28,7 +28,7 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.26'
-  jacksonVersion = "2.9.8"
+  jacksonVersion = "2.9.9"
   log4j2Version = "2.11.2"
 }
 
@@ -59,7 +59,7 @@ repositories {
   mavenCentral()
   maven { url "$defaultNexusRepo" }
   maven { url "$nexusBaseUrl/content/groups/public" }
-  maven { url "$nexusBaseUrl/content/repositories/snapshots" }
+  maven { url "$nexusBaseUrl/content/groups/interlok" }
 }
 
 
@@ -76,6 +76,7 @@ configurations {
   all*.exclude group: 'net.sf.saxon', module: 'saxon'
   all*.exclude group: 'org.codehaus.woodstox'
   all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.mail.glassfish'
+  all*.exclude group: 'com.vaadin.external.google', module: 'android-json'
 }
 
 configurations.all {
@@ -105,15 +106,17 @@ dependencies {
   compile ("xerces:xercesImpl:2.12.0")
 
   compile ("org.everit.json:org.everit.json.schema:1.5.1")
-  compile ("com.google.guava:guava:27.1-jre")
+  compile ("com.google.guava:guava:28.0-jre")
+  compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.8")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
-  umlDoclet("nl.talsmasoftware:umldoclet:1.1.3")
+  umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
   offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
   offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
 
   testCompile ('junit:junit:4.12')
+  testCompile ("org.skyscreamer:jsonassert:1.5.0")
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.derby:derby:10.14.2.0")
   testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
