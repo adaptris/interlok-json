@@ -21,6 +21,7 @@ import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
 import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
+import com.adaptris.core.util.CloseableIterable;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
@@ -92,17 +93,19 @@ public class BatchInsertJsonArray extends InsertJsonObject {
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       InsertWrapper wrapper = null;
-      for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        Map<String, String> json = JsonUtil.mapifyJson(m, getNullConverter());
-        if (wrapper == null) {
-          wrapper = new InsertWrapper(table(msg), json);
-          log.trace("Generated [{}]", wrapper.statement());
-          stmt = prepareStatement(conn, wrapper.statement());
+      try (CloseableIterable<AdaptrisMessage> itr = splitter.splitMessage(msg)) {
+        for (AdaptrisMessage m : itr) {
+          Map<String, String> json = JsonUtil.mapifyJson(m, getNullConverter());
+          if (wrapper == null) {
+            wrapper = new InsertWrapper(table(msg), json);
+            log.trace("Generated [{}]", wrapper.statement());
+            stmt = prepareStatement(conn, wrapper.statement());
+          }
+          wrapper.addParams(stmt, json);
+          rowsAffected += execute(stmt);
         }
-        wrapper.addParams(stmt, json);
-        rowsAffected += execute(stmt);
+        rowsAffected += finish(stmt);
       }
-      rowsAffected += finish(stmt);
       addUpdatedMetadata(rowsAffected, msg);
       JdbcUtil.commit(conn, msg);
     } catch (Exception e) {

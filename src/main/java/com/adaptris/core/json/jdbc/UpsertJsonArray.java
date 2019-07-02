@@ -10,6 +10,7 @@ import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
 import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
+import com.adaptris.core.util.CloseableIterable;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LoggingHelper;
@@ -55,8 +56,10 @@ public class UpsertJsonArray extends UpsertJsonObject {
       // Use the already existing LargeJsonArraySplitter, but force it with a default-mf
       LargeJsonArraySplitter splitter =
           new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
-      for (AdaptrisMessage m : splitter.splitMessage(msg)) {
-        rowsAffected += handleUpsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
+      try (CloseableIterable<AdaptrisMessage> itr = splitter.splitMessage(msg)) {
+        for (AdaptrisMessage m : splitter.splitMessage(msg)) {
+          rowsAffected += handleUpsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
+        }
       }
       addUpdatedMetadata(rowsAffected, msg);
       JdbcUtil.commit(conn, msg);
