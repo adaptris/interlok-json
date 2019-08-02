@@ -61,7 +61,7 @@ public class JsonArrayAggregator extends MessageAggregatorImpl {
   public void joinMessage(AdaptrisMessage original, Collection<AdaptrisMessage> messages) throws CoreException {
     try (Writer w = new BufferedWriter(original.getWriter()); JsonGenerator generator = mapper.getFactory().createGenerator(w)) {
       generator.writeStartArray();
-      for (AdaptrisMessage msg : messages) {
+      for (AdaptrisMessage msg : filter(messages)) {
         write(msg, generator);
         overwriteMetadata(msg, original);
       }
