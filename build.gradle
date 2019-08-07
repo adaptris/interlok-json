@@ -27,7 +27,7 @@ ext {
   componentName='Interlok/JSON'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.26'
+  slf4jVersion = '1.7.27'
   jacksonVersion = "2.9.9"
   jacksonDatabindVersion = "2.9.9.2"
   log4j2Version = "2.12.0"
