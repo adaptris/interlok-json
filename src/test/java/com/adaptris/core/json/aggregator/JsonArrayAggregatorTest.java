@@ -4,15 +4,10 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.adaptris.core.*;
+import com.adaptris.core.services.conditional.conditions.ConditionImpl;
 import org.apache.commons.lang.StringUtils;
 
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.NullService;
-import com.adaptris.core.Service;
-import com.adaptris.core.ServiceCase;
-import com.adaptris.core.ServiceCollection;
-import com.adaptris.core.ServiceList;
 import com.adaptris.core.services.LogMessageService;
 import com.adaptris.core.services.splitter.SplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
@@ -22,6 +17,8 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+
+import static com.adaptris.core.services.aggregator.ZipAggregator.DEFAULT_FILENAME_METADATA;
 
 public class JsonArrayAggregatorTest extends ServiceCase {
 
@@ -42,7 +39,6 @@ public class JsonArrayAggregatorTest extends ServiceCase {
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
   }
 
-
   public void testAggregate() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
     List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
@@ -55,6 +51,20 @@ public class JsonArrayAggregatorTest extends ServiceCase {
     assertEquals("alice", context.read("$[0].firstname"));
     assertEquals("bob", context.read("$[1].firstname"));
     assertEquals("carol", context.read("$[2].firstname"));
+  }
+
+  public void testAggregate_WithFilter() throws Exception {
+    AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
+    List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
+    JsonArrayAggregator aggr = new JsonArrayAggregator();
+    aggr.setFilterCondition(new FilterOutBobCondition());
+    aggr.joinMessage(original, msgs);
+    assertNotSame("Hello", original.getContent());
+    // Should be in order.
+    ReadContext context = JsonPath.parse(original.getInputStream(), jsonConfig);
+    assertNotNull(context.read("$[0].firstname"));
+    assertEquals("alice", context.read("$[0].firstname"));
+    assertEquals("carol", context.read("$[1].firstname"));
   }
 
   public void testAggregator_JsonArray() throws Exception {
@@ -74,7 +84,6 @@ public class JsonArrayAggregatorTest extends ServiceCase {
     assertNotSame("Hello", original.getContent());
     assertEquals("[]", StringUtils.deleteWhitespace(original.getContent()));
   }
-
 
   @Override
   protected Object retrieveObjectForSampleConfig() {
@@ -100,5 +109,17 @@ public class JsonArrayAggregatorTest extends ServiceCase {
       result.add(AdaptrisMessageFactory.getDefaultInstance().newMessage(s));
     }
     return result;
+  }
+
+  public static class FilterOutBobCondition extends ConditionImpl {
+    @Override
+    public boolean evaluate(AdaptrisMessage message) throws CoreException {
+      if (message.getContent().contains("bob"))
+        return false;
+      return true;
+    }
+    public void close() {
+      throw new RuntimeException();
+    }
   }
 }
