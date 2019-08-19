@@ -239,7 +239,7 @@ public class JsonInsertService extends ServiceImp
 		}
 		JsonPath jsonPath = JsonPath.compile(sb.toString());
 		String value = execution.getNewValue().extract(msg);
-		log.trace("JSON path = " + jsonPath);
+		log.trace("JSON path = " + jsonPath.getPath());
 		log.trace("New key   = " + key);
 		log.trace("New value = " + value);
 		context.put(jsonPath, key, value);
