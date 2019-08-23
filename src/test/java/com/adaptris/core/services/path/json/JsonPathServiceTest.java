@@ -3,9 +3,7 @@ package com.adaptris.core.services.path.json;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-
 import org.junit.Test;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -38,8 +36,11 @@ public class JsonPathServiceTest extends ServiceCase {
   private static final String SWORD_OF_HONOUR = "Sword of Honour";
   private static final String STORE_BOOK_1_TITLE = "$.store.book[1].title";
 
-  public JsonPathServiceTest(String name) {
-    super(name);
+  private static Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+      .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+
+  public JsonPathServiceTest() {
+    super();
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
@@ -56,6 +57,46 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals("1,2,3]", JsonPathService.unwrap("1,2,3]", true));
     assertEquals("1,2,3", JsonPathService.unwrap("[1,2,3]", true));
   }
+
+  @Test
+  public void testExtract_JsonObject() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.store.bicycle");
+    AdaptrisMessage message = createMessage();
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
+    JsonPathService jsonPathService =
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
+    execute(jsonPathService, message);
+
+    // Should be {"color":"red","price":19.95} so we can extract the color and price
+    String json = message.getMetadataValue(JSON_RESULT_KEY);
+    ReadContext context = JsonPath.parse(json, jsonConfig);
+    String color = context.read("$.color");
+    assertEquals("red", color);
+    Double price = context.read("$.price");
+    assertEquals(19.95, price);
+  }
+
+  @Test
+  public void testExtract_JsonArray() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.store.book");
+    AdaptrisMessage message = createMessage();
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
+    JsonPathService jsonPathService =
+        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new JsonPathExecution[] {execution}));
+    execute(jsonPathService, message);
+
+    // This gets us all the books, which is an array, so we can interrogate all this as well.
+    // [{book}, {book}, {book}]
+    String json = message.getMetadataValue(JSON_RESULT_KEY);
+    ReadContext context = JsonPath.parse(json, jsonConfig);
+    String title0 = context.read("$.[0].title");
+    assertEquals(SAYINGS_OF_THE_CENTURY, title0);
+    String title1 = context.read("$.[1].title");
+    assertEquals(SWORD_OF_HONOUR, title1);
+  }
+
 
   @Test
   public void testSimpleResultFromPayloadToMetadata() throws Exception {
