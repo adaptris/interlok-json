@@ -27,9 +27,10 @@ ext {
   componentName='Interlok/JSON'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.26'
+  slf4jVersion = '1.7.27'
   jacksonVersion = "2.9.9"
-  log4j2Version = "2.11.2"
+  jacksonDatabindVersion = "2.9.9.3"
+  log4j2Version = "2.12.1"
 }
 
 ext.hasGraphViz = { ->
@@ -94,20 +95,20 @@ dependencies {
     exclude group: 'xerces', module: 'xercesImpl'
   }
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
-  compile ("org.json:json:20180813")
+  compile ("org.json:json:20190722")
   compile ("com.jayway.jsonpath:json-path:2.4.0")
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
   compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
   compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
   compile ("commons-collections:commons-collections:3.2.2")
-  compile ("commons-beanutils:commons-beanutils:1.9.3")
+  compile ("commons-beanutils:commons-beanutils:1.9.4")
   compile ("xerces:xercesImpl:2.12.0")
 
   compile ("org.everit.json:org.everit.json.schema:1.5.1")
   compile ("com.google.guava:guava:28.0-jre")
-  compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.8")
+  compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.9")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")

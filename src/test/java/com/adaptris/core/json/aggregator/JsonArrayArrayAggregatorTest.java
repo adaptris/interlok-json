@@ -50,6 +50,19 @@ public class JsonArrayArrayAggregatorTest extends ServiceCase {
     assertEquals("carol", context.read("$[2].firstname"));
   }
 
+  public void testAggregate_WithFilter() throws Exception {
+    AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
+    List<AdaptrisMessage> msgs = create(String.format("[%s, %s]", OBJECT_CONTENT_1, OBJECT_CONTENT_2), OBJECT_CONTENT_3);
+    JsonArrayArrayAggregator aggr = new JsonArrayArrayAggregator();
+    aggr.setFilterCondition(new JsonArrayAggregatorTest.FilterOutBobCondition());
+    aggr.joinMessage(original, msgs);
+    assertNotSame("Hello", original.getContent());
+    // Should be in order.
+    ReadContext context = JsonPath.parse(original.getInputStream(), jsonConfig);
+    assertNotNull(context.read("$[0].firstname"));
+    assertEquals("carol", context.read("$[0].firstname"));
+  }
+
   public void testAggregator_NotJson() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
     List<AdaptrisMessage> msgs = create("not", "valid", "json");
@@ -58,7 +71,6 @@ public class JsonArrayArrayAggregatorTest extends ServiceCase {
     assertNotSame("Hello", original.getContent());
     assertEquals("[]", StringUtils.deleteWhitespace(original.getContent()));
   }
-
 
   @Override
   protected Object retrieveObjectForSampleConfig() {
