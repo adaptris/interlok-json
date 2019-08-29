@@ -1,16 +1,18 @@
 package com.adaptris.core.transform.json;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.MetadataElement;
 import com.adaptris.core.ServiceCase;
+import com.adaptris.core.ServiceException;
 import com.adaptris.core.metadata.RegexMetadataFilter;
+import com.adaptris.core.stubs.DefectiveMessageFactory;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class MetadataToJsonServiceTest extends ServiceCase {
 
@@ -43,7 +45,7 @@ public class MetadataToJsonServiceTest extends ServiceCase {
   }
 
   @Test
-  public void testDoServiceFitler() throws Exception {
+  public void testDoServiceFilter() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     msg.addMetadata("key1", "ABCDE");
     msg.addMetadata("key2", "1234");
@@ -58,6 +60,30 @@ public class MetadataToJsonServiceTest extends ServiceCase {
       fail();
     } catch (PathNotFoundException expected){
       assertEquals("No results for path: $['skip']", expected.getMessage());
+    }
+  }
+
+  @Test
+  public void testDoService_NewLine() throws Exception {
+    HashSet<MetadataElement> metadata =
+        new HashSet<>(Arrays.asList(new MetadataElement("key1", "ABCDE"), new MetadataElement("key2", "1234")));
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage("", metadata);
+    ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
+    assertFalse(msg.getContent().endsWith(System.lineSeparator()));
+    ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(true), msg);
+    assertTrue(msg.getContent().endsWith(System.lineSeparator()));
+  }
+
+  @Test
+  public void testDoService_Exception() throws Exception {
+    HashSet<MetadataElement> metadata =
+        new HashSet<>(Arrays.asList(new MetadataElement("key1", "ABCDE"), new MetadataElement("key2", "1234")));
+    AdaptrisMessage msg = new DefectiveMessageFactory(DefectiveMessageFactory.WhenToBreak.METADATA_GET).newMessage("", metadata);
+    try {
+      ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
+      fail();
+    } catch (ServiceException expected) {
+
     }
   }
 
