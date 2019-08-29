@@ -1,14 +1,10 @@
 package com.adaptris.core.json.exception;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.commons.io.IOUtils;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreConstants;
 import com.adaptris.core.CoreException;
@@ -38,16 +34,11 @@ public class ExceptionAsJson implements ExceptionSerializer {
 
   @Override
   public void serialize(Exception exception, AdaptrisMessage msg) throws CoreException {
-    Writer out = null;
-    try {
-      out = msg.getWriter(encoding(msg));
+    try (Writer out = msg.getWriter(encoding(msg))) {
       mapper.writerWithDefaultPrettyPrinter().writeValue(out, createReport(exception, msg));
     }
     catch (IOException e) {
       throw ExceptionHelper.wrapCoreException(e);
-    }
-    finally {
-      IOUtils.closeQuietly(out);
     }
   }
 
