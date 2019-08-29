@@ -45,6 +45,8 @@ public class MetadataToJsonService extends ServiceImp {
   @InputFieldDefault(value = "no-op-metadata-filter")
   private MetadataFilter metadataFilter;
 
+  private transient ObjectMapper mapper;
+
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
     try {
@@ -61,6 +63,7 @@ public class MetadataToJsonService extends ServiceImp {
 
   @Override
   protected void initService() throws CoreException {
+    mapper = new ObjectMapper();
   }
 
   @Override
@@ -81,7 +84,6 @@ public class MetadataToJsonService extends ServiceImp {
   }
 
   private void write(Map<String, Object> json, AdaptrisMessage msg) throws Exception {
-    ObjectMapper mapper = new ObjectMapper();
     String jsonString = mapper.writeValueAsString(json);
     try (PrintWriter pw = new PrintWriter(msg.getWriter(StandardCharsets.UTF_8.name()))) {
       if (addTrailingNewline()) {
