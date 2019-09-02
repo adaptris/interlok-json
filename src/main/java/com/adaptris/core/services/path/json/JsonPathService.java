@@ -3,12 +3,10 @@ package com.adaptris.core.services.path.json;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-
+import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.BooleanUtils;
-
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
@@ -25,9 +23,9 @@ import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.json.JsonPathExecution;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
-import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -147,7 +145,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @DisplayOrder(order = {"source", "executions", "unwrapJson", "suppressPathNotFound"})
 public class JsonPathService extends ServiceImp {
 
-  private static boolean warningLogged = false;
   @NotNull
   @AutoPopulated
   private DataInputParameter<String> source = new StringPayloadDataInputParameter();
@@ -193,21 +190,19 @@ public class JsonPathService extends ServiceImp {
       for (final Execution execution : executions) {
         execute(execution, context, message);
       }
-    } catch (InterlokException e) {
-      throw ExceptionHelper.wrapServiceException(e);
-    } catch (RuntimeException e) {
-      // So, most of json path throws RTE so we turn it into a checked exception.
+    } catch (Exception e) {
       throw ExceptionHelper.wrapServiceException(e);
     }
   }
 
-  private void execute(Execution execution, ReadContext context, AdaptrisMessage msg) throws InterlokException {
+  private void execute(Execution execution, ReadContext context, AdaptrisMessage msg) throws Exception {
     try {
       final DataInputParameter<String> source = execution.getSource();
       final DataOutputParameter<String> target = execution.getTarget();
 
       final String jsonPath = source.extract(msg);
-      final String jsonString = unwrap(context.read(jsonPath).toString(), unwrapJson());
+      Object node = context.read(jsonPath);
+      final String jsonString = unwrap(toString(node), unwrapJson());
       target.insert(jsonString, msg);
     } catch (PathNotFoundException e) {
       if (!suppressPathNotFound(execution)) {
@@ -216,6 +211,15 @@ public class JsonPathService extends ServiceImp {
     }
   }
 
+  protected static String toString(Object jsonObject) throws Exception {
+    ObjectMapper mapper = new ObjectMapper();
+    // A JSON Object is effectively a map, so we need to write that out as JSON.
+    // If it's a JSONArray, then "toString" works fine.
+    if (Map.class.isAssignableFrom(jsonObject.getClass())) {
+      return mapper.writeValueAsString(jsonObject);
+    }
+    return jsonObject.toString();
+  }
 
   /**
    * Strip (if necessary) the leading/trailing [] from the JSON.
