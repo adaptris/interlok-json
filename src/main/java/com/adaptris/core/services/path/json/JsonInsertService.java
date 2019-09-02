@@ -151,7 +151,9 @@ import java.util.List;
  * @config json-path-service
  */
 
-
+@XStreamAlias("json-insert-service")
+@AdapterComponent
+@ComponentProfile(summary = "Insert/append a JSON value from metadata into the payload", tag = "service,json,insert,append,metadata")
 public class JsonInsertService extends ServiceImp
 {
 	private static final transient Logger log = LoggerFactory.getLogger(ServiceImp.class.getName());
