@@ -2,7 +2,9 @@ package com.adaptris.core.transform.json;
 
 import java.util.Arrays;
 import java.util.HashSet;
+
 import org.junit.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.MetadataElement;
@@ -71,6 +73,8 @@ public class MetadataToJsonServiceTest extends ServiceCase {
     ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
     assertFalse(msg.getContent().endsWith(System.lineSeparator()));
     ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(true), msg);
+    long newlineCount = msg.getContent().chars().filter(ch -> ch == '\n').count();
+    assertEquals(1, newlineCount);
     assertTrue(msg.getContent().endsWith(System.lineSeparator()));
   }
 
