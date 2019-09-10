@@ -206,7 +206,7 @@ public class JsonInsertService extends ServiceImp
 			}
 			json = context.jsonString();
 			target.insert(json, message);
-			log.trace("Update JSON = ", json);
+			log.trace("Update JSON = " + json);
 		}
 		catch (Exception e)
 		{
