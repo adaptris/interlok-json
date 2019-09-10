@@ -81,24 +81,26 @@ import java.util.List;
  * metadata values into the specified path, like this:
  *
  * <pre>{@code
- * <json-path-service>
- *   <json-path-execution>
- *     <source class="metadata-data-input-parameter">
- *       <metadata-key>metadata-key-1</metadata-key>
- *     </source>
- *     <target class="constant-data-output-parameter">
+ * <json-insert-service>
+ *   <source class="string-payload-data-input-parameter"/>
+ *   <target class="string-payload-data-output-parameter"/>
+ *   <json-insert-execution>
+ *     <json-path class="constant-data-input-parameter">
  *       <value>$.store.book[0].title</value>
- *     </target>
- *   </json-path-execution>
- *   <json-path-execution>
- *     <source class="metadata-data-input-parameter">
+ *     </json-path>
+ *     <new-value class="metadata-data-input-parameter">
+ *       <metadata-key>metadata-key-1</metadata-key>
+ *     </new-value>
+ *   </json-insert-execution>
+ *   <json-insert-execution>
+ *     <json-path class="constant-data-input-parameter">
+ *       <value>$.store.book[1].title/value>
+ *     </json-path>
+ *     <new-value class="metadata-data-input-parameter">
  *       <metadata-key>metadata-key-2</metadata-key>
- *     </source>
- *     <target class="constant-data-output-parameter">
- *       <value>$.store.book[1].title</value>
- *     </target>
- *   </json-path-execution>
- * </json-path-service>
+ *     </new-value>
+ *   </json-insert-execution>
+ * </json-insert-service>
  * }</pre>
  * <p>
  * The first target above will set the first book title, the second
