@@ -24,6 +24,9 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,12 +204,12 @@ public class JsonInsertService extends ServiceImp
 		{
 			String json = source.extract(message);
 			log.trace("JSON document = " + json);
-			WriteContext context = JsonPath.parse(json, jsonConfig);
 			for (JsonInsertExecution execution : executions)
 			{
+				WriteContext context = JsonPath.parse(json, jsonConfig);
 				execute(execution, context, message);
+				json = context.jsonString();
 			}
-			json = context.jsonString();
 			target.insert(json, message);
 			log.trace("Update JSON = " + json);
 		}
@@ -228,25 +231,99 @@ public class JsonInsertService extends ServiceImp
 		 * Hence getting the key from the final part of the path.
 		 */
 		String s = execution.getJsonPath().extract(msg);
-		String path[] = s.split("\\.");
-		String key = path[path.length - 1];
 		StringBuilder sb = new StringBuilder();
-		boolean dot = false;
-		for (int i = 0; i < path.length - 1; i++)
+		String key = null;
+		if (s.endsWith("]"))
 		{
-			if (dot)
+			/* append a value to an array */
+			int length = s.lastIndexOf('[');
+			sb.append(s.substring(0, length));
+		}
+		else
+		{
+			/* add a value to an object */
+			String path[] = s.split("\\.");
+			key = path[path.length - 1];
+			boolean dot = false;
+			for (int i = 0; i < path.length - 1; i++)
 			{
-				sb.append('.');
+				if (dot)
+				{
+					sb.append('.');
+				}
+				sb.append(path[i]);
+				dot = true;
 			}
-			sb.append(path[i]);
-			dot = true;
 		}
 		JsonPath jsonPath = JsonPath.compile(sb.toString());
-		String value = execution.getNewValue().extract(msg);
+		Object value = parseValue(execution.getNewValue().extract(msg));
 		log.trace("JSON path = " + jsonPath.getPath());
 		log.trace("New key   = " + key);
 		log.trace("New value = " + value);
-		context.put(jsonPath, key, value);
+		if (key != null)
+		{
+			context.put(jsonPath, key, value);
+		}
+		else
+		{
+			if (value instanceof JSONObject)
+			{
+				JSONObject json = (JSONObject)value;
+				/* why doesn't JSON path do this itself? */
+				context.add(jsonPath, json.toMap());
+			}
+			else if (value instanceof JSONArray)
+			{
+				JSONArray json = (JSONArray)value;
+				context.add(jsonPath, json.toList());
+			}
+			else
+			{
+				context.add(jsonPath, value);
+			}
+		}
+	}
+
+	private Object parseValue(String value)
+	{
+		try
+		{
+			return new JSONArray(value);
+		}
+		catch (JSONException e)
+		{
+			/* not a JSON array; continue */
+		}
+		try
+		{
+			return new JSONObject(value);
+		}
+		catch (JSONException e)
+		{
+			/* not a JSON object; continue */
+		}
+		try
+		{
+			return new Integer(value);
+		}
+		catch (NumberFormatException e)
+		{
+			/* not an integer; continue */
+		}
+		try
+		{
+			return new Double(value);
+		}
+		catch (NumberFormatException e)
+		{
+			/* not a decimal; continue */
+		}
+		if (value.equalsIgnoreCase(Boolean.TRUE.toString()) || value.equalsIgnoreCase(Boolean.FALSE.toString()))
+		{
+			return new Boolean(value);
+		}
+		/* give up; treat value as a string */
+		return value;
 	}
 
 	@Override

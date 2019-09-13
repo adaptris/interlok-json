@@ -18,6 +18,15 @@ public class JsonInsertServiceTest extends ServiceCase
 {
 	private static final String PATHS[] = { "$.store.book[0].title", "$.store.book[1].title" };
 	private static final String TITLES[] = { "Sayings of the Century", "Sword of Honour"};
+	private static final String NEW_BOOK = "{"
+			+ "\"category\": \"fantasy\","
+			+ "\"author\": \"Terry Pratchett\","
+			+ "\"title\": \"The Colour of Magic\","
+			+ "\"isbn\": \"978-1473205321\","
+			+ "}";
+	private static final String NEW_PRICE = Double.toString(9.99);
+	private static final String NEW_AVAILABILITY = Boolean.TRUE.toString();
+	private static final String NEW_STOCK = Integer.toString(100);
 
 	public JsonInsertServiceTest(String name)
 	{
@@ -32,16 +41,34 @@ public class JsonInsertServiceTest extends ServiceCase
 		message.addMetadata("title-2", TITLES[1]);
 
 		List<JsonInsertExecution> executions = new ArrayList<>();
-		executions.add(new JsonInsertExecution(new ConstantDataInputParameter(PATHS[0]),
-				new MetadataDataInputParameter("title-1")));
-		executions.add(new JsonInsertExecution(new ConstantDataInputParameter(PATHS[1]),
-				new MetadataDataInputParameter("title-2")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter(PATHS[0]), new MetadataDataInputParameter("title-1")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter(PATHS[1]), new MetadataDataInputParameter("title-2")));
 
 		JsonInsertService service = new JsonInsertService(new StringPayloadDataInputParameter(), executions);
-
 		execute(service, message);
 
 		assertEquals(expected(), message.getContent());
+	}
+
+	@Test
+	public void testInsertJSONObject() throws Exception
+	{
+		AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(content());
+		message.addMetadata("new-book", NEW_BOOK);
+		message.addMetadata("new-price", NEW_PRICE);
+		message.addMetadata("new-availability", NEW_AVAILABILITY);
+		message.addMetadata("new-stock", NEW_STOCK);
+
+		List<JsonInsertExecution> executions = new ArrayList<>();
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4]"), new MetadataDataInputParameter("new-book")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].price"), new MetadataDataInputParameter("new-price")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].availability"), new MetadataDataInputParameter("new-availability")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].stock"), new MetadataDataInputParameter("new-stock")));
+
+		JsonInsertService service = new JsonInsertService(new StringPayloadDataInputParameter(), executions);
+		execute(service, message);
+
+		assertEquals(EXPECTED, message.getContent());
 	}
 
 	@Test
@@ -152,6 +179,57 @@ public class JsonInsertServiceTest extends ServiceCase
 				+ "\"some_integers\":[1,2,3,4]"
 			+ "}";
 	}
+
+	private static final String EXPECTED = "{" +
+				"\"store\":{" +
+					"\"book\":[" +
+						"{" +
+							"\"category\":\"reference\"," +
+							"\"author\":\"Nigel Rees\"," +
+							"\"price\":8.95" +
+						"}," +
+						"{" +
+							"\"category\":\"fiction\"," +
+							"\"author\":\"Evelyn Waugh\"," +
+							"\"price\":12.99" +
+						"}," +
+						"{" +
+							"\"category\":\"fiction\"," +
+							"\"author\":\"Herman Melville\"," +
+							"\"title\":\"Moby Dick\"," +
+							"\"isbn\":\"0-553-21311-3\"," +
+							"\"price\":8.99" +
+						"}," +
+						"{" +
+							"\"category\":\"fiction\"," +
+							"\"author\":\"J. R. R. Tolkien\"," +
+							"\"title\":\"The Lord of the Rings\"," +
+							"\"isbn\":\"0-395-19395-8\"," +
+							"\"price\":22.99" +
+						"}," +
+						"{" +
+							"\"author\":\"Terry Pratchett\"," +
+							"\"isbn\":\"978-1473205321\"," +
+							"\"category\":\"fantasy\"," +
+							"\"title\":\"The Colour of Magic\"," +
+							"\"price\":9.99," +
+							"\"availability\":true," +
+							"\"stock\":100" +
+						"}" +
+					"]," +
+					"\"bicycle\":{" +
+						"\"color\":\"red\"," +
+						"\"price\":19.95" +
+					"}" +
+				"}," +
+				"\"expensive\":10," +
+				"\"some_integers\":[" +
+					"1," +
+					"2," +
+					"3," +
+					"4" +
+				"]" +
+			"}";
 
 	@Override
 	protected Object retrieveObjectForSampleConfig()
