@@ -74,6 +74,7 @@ public class JsonInsertServiceTest extends ServiceCase
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].stock"), new MetadataDataInputParameter("new-stock")));
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.more_integers"), new MetadataDataInputParameter("more-integers")));
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.more_integers[1]"), new MetadataDataInputParameter("many-integers")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.more_integers[2]"), new MetadataDataInputParameter("new-stock")));
 
 		JsonInsertService service = new JsonInsertService(new StringPayloadDataInputParameter(), executions);
 		execute(service, message);
@@ -253,7 +254,8 @@ public class JsonInsertServiceTest extends ServiceCase
 						"10," +
 						"11," +
 						"12" +
-					"]" +
+					"]," +
+					"100" +
 				"]" +
 			"}";
 
