@@ -266,6 +266,7 @@ public class JsonInsertService extends ServiceImp
 		}
 		else
 		{
+			/* the only time there won't be a key is when appending to an array */
 			if (value instanceof JSONObject)
 			{
 				JSONObject json = (JSONObject)value;

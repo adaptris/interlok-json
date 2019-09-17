@@ -27,6 +27,9 @@ public class JsonInsertServiceTest extends ServiceCase
 	private static final String NEW_PRICE = Double.toString(9.99);
 	private static final String NEW_AVAILABILITY = Boolean.TRUE.toString();
 	private static final String NEW_STOCK = Integer.toString(100);
+	private static final String NO_AVAILABILITY = Boolean.FALSE.toString();
+	private static final String MORE_INTEGERS = "[ [ 5, 6, 7, 8 ] ]";
+	private static final String MANY_INTEGERS = "[ 9, 10, 11, 12 ]";
 
 	public JsonInsertServiceTest(String name)
 	{
@@ -58,12 +61,19 @@ public class JsonInsertServiceTest extends ServiceCase
 		message.addMetadata("new-price", NEW_PRICE);
 		message.addMetadata("new-availability", NEW_AVAILABILITY);
 		message.addMetadata("new-stock", NEW_STOCK);
+		message.addMetadata("no-availability", NO_AVAILABILITY);
+		message.addMetadata("more-integers", MORE_INTEGERS);
+		message.addMetadata("many-integers", MANY_INTEGERS);
 
 		List<JsonInsertExecution> executions = new ArrayList<>();
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[0].availability"), new MetadataDataInputParameter("no-availability")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[1].availability"), new MetadataDataInputParameter("no-availability")));
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4]"), new MetadataDataInputParameter("new-book")));
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].price"), new MetadataDataInputParameter("new-price")));
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].availability"), new MetadataDataInputParameter("new-availability")));
 		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.store.book[4].stock"), new MetadataDataInputParameter("new-stock")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.more_integers"), new MetadataDataInputParameter("more-integers")));
+		executions.add(new JsonInsertExecution(new ConstantDataInputParameter("$.more_integers[1]"), new MetadataDataInputParameter("many-integers")));
 
 		JsonInsertService service = new JsonInsertService(new StringPayloadDataInputParameter(), executions);
 		execute(service, message);
@@ -186,12 +196,14 @@ public class JsonInsertServiceTest extends ServiceCase
 						"{" +
 							"\"category\":\"reference\"," +
 							"\"author\":\"Nigel Rees\"," +
-							"\"price\":8.95" +
+							"\"price\":8.95," +
+							"\"availability\":false" +
 						"}," +
 						"{" +
 							"\"category\":\"fiction\"," +
 							"\"author\":\"Evelyn Waugh\"," +
-							"\"price\":12.99" +
+							"\"price\":12.99," +
+							"\"availability\":false" +
 						"}," +
 						"{" +
 							"\"category\":\"fiction\"," +
@@ -228,6 +240,20 @@ public class JsonInsertServiceTest extends ServiceCase
 					"2," +
 					"3," +
 					"4" +
+				"]," +
+				"\"more_integers\":[" +
+					"[" +
+						"5," +
+						"6," +
+						"7," +
+						"8" +
+					"]," +
+					"[" +
+						"9," +
+						"10," +
+						"11," +
+						"12" +
+					"]" +
 				"]" +
 			"}";
 
