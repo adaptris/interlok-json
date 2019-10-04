@@ -118,6 +118,9 @@ class JsonSchemaValidator {
 	 * @return True if the JSON is valid when compared with the schema, false otherwise.
 	 */
 	public boolean isValid() {
+		if(json == null){
+			return false;
+		}
 		try {
 			validate(json);
 			return true;
