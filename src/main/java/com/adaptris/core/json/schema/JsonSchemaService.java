@@ -45,8 +45,15 @@ public class JsonSchemaService extends ServiceImp {
   @AutoPopulated
   private ValidationExceptionHandler onValidationException;
 
+  @AdvancedConfig
+  @NotNull
+  @Valid
+  @AutoPopulated
+  private JsonSchemaLoader jsonSchemaLoader;
+
   public JsonSchemaService() {
     setOnValidationException(new DefaultValidationExceptionHandler());
+    setJsonSchemaLoader(new DefaultJsonSchemaLoader());
   }
 
   public JsonSchemaService(DataInputParameter<String> url) {
@@ -58,7 +65,8 @@ public class JsonSchemaService extends ServiceImp {
   public void doService(final AdaptrisMessage message) throws ServiceException {
     try {
       /* either validate a single JSON object or an array of JSON objects (or fail) */
-      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(loadSchema(message));
+      JSONObject rawSchema = new JSONObject(schemaUrl.extract(message));
+      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(getJsonSchemaLoader().loadSchema(rawSchema, message));
       jsonSchemaValidator.validate(asJSON(message.getContent()));
     }
     catch (final ValidationException e) {
@@ -78,11 +86,6 @@ public class JsonSchemaService extends ServiceImp {
       result = new JSONArray(new JSONTokener(input));
     }
     return result;
-  }
-
-  private Schema loadSchema(AdaptrisMessage input) throws JSONException, InterlokException {
-    JSONObject rawSchema = new JSONObject(schemaUrl.extract(input));
-    return SchemaLoader.load(rawSchema);
   }
 
   @Override
@@ -129,5 +132,21 @@ public class JsonSchemaService extends ServiceImp {
    */
   public void setOnValidationException(ValidationExceptionHandler v) {
     this.onValidationException = v;
+  }
+
+  /**
+   * Set the JSON schema loader
+   * @param jsonSchemaLoader the JSON schema loader
+   */
+  public void setJsonSchemaLoader(JsonSchemaLoader jsonSchemaLoader) {
+    this.jsonSchemaLoader = jsonSchemaLoader;
+  }
+
+  /**
+   * Get the JSON schema loader
+   * @return the JSON schema loader
+   */
+  public JsonSchemaLoader getJsonSchemaLoader() {
+    return jsonSchemaLoader;
   }
 }

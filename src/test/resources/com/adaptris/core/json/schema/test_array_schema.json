@@ -1,0 +1,6 @@
+{
+    "type": "array",
+    "items": {
+        "$ref": "classpath://com/adaptris/core/json/schema/test_schema.json"
+    }
+}
