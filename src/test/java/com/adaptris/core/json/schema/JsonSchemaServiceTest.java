@@ -1,8 +1,8 @@
 package com.adaptris.core.json.schema;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ConfiguredDestination;
@@ -26,22 +26,26 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
  */
 public class JsonSchemaServiceTest extends TransformServiceExample {
 
-	/**
-	 * Default constructor.
-	 */
-	public JsonSchemaServiceTest() {
-		super("JSON schema validation service.");
-	}
+  /**
+   * Default constructor.
+   */
+  public JsonSchemaServiceTest() {
+    super("JSON schema validation service.");
+  }
 
-	public JsonSchemaServiceTest(final String name) {
-		super(name);
-	}
+  public JsonSchemaServiceTest(final String name) {
+    super(name);
+  }
 
   private static final String SCHEMA_URL = "file:///com/adaptris/core/json/schema/test_schema.json";
+  private static final String CLASSPATH_SCHEMA_URL = "file:///com/adaptris/core/json/schema/test_array_schema.json";
+  private static final String RELATIVE_SCHEMA_URL = "file:///com/adaptris/core/json/schema/test_array_schema_relative.json";
 
-	private static final String VALID_JSON = "{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }";
+  private static final String KEY_SCHEMA_DIR = "json.schema.baseDir";
+
+  private static final String VALID_JSON = "{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }";
   private static final String INVALID_JSON = "{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }";
-  private static final String JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }]";
+  private static final String JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }]";
   private static final String INVALID_JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }]";
 
   public void testInit() throws Exception {
@@ -57,10 +61,17 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
-	public void testSuccess() throws Exception {
+  public void testJsonSchemaLoader(){
+    JsonSchemaService jsonSchemaService = new JsonSchemaService();
+    assertTrue(jsonSchemaService.getJsonSchemaLoader() instanceof DefaultJsonSchemaLoader);
+    jsonSchemaService.setJsonSchemaLoader(new AdvancedJsonSchemaLoader());
+    assertTrue(jsonSchemaService.getJsonSchemaLoader() instanceof AdvancedJsonSchemaLoader);
+  }
+
+  public void testSuccess() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
     execute(createService(), message);
-	}
+  }
 
   public void testFailure() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
@@ -176,10 +187,63 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
-	@Override
-	protected Object retrieveObjectForSampleConfig() {
+  public void testAdvancedJsonSchemaLoaderClasspath() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
+    final FileDataInputParameter schemaUrl = new FileDataInputParameter();
+    schemaUrl.setDestination(new ConfiguredDestination(CLASSPATH_SCHEMA_URL));
+    JsonSchemaService service = new JsonSchemaService(schemaUrl);
+    service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader().withClassPathAwareClient(true));
+    execute(service, message);
+  }
+
+
+  public void testAdvancedJsonSchemaLoader_NonClasspath() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
+    JsonSchemaService service = createService();
+    service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader());
+    execute(service, message);
+
+  }
+
+  public void testAdvancedJsonSchemaLoader_ResolutionScopeAndClasspath() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
+    final FileDataInputParameter schemaUrl = new FileDataInputParameter();
+    schemaUrl.setDestination(new ConfiguredDestination(RELATIVE_SCHEMA_URL));
+    JsonSchemaService service = new JsonSchemaService(schemaUrl);
+    service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader()
+        .withClassPathAwareClient(true)
+        .withResolutionScope("classpath://com/adaptris/core/json/schema/"));
+    execute(service, message);
+  }
+
+  public void testAdvancedJsonSchemaLoader_ResolutionScopeAndFs() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
+    final FileDataInputParameter schemaUrl = new FileDataInputParameter();
+    schemaUrl.setDestination(new ConfiguredDestination(RELATIVE_SCHEMA_URL));
+    JsonSchemaService service = new JsonSchemaService(schemaUrl);
+    service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader()
+        .withResolutionScope(String.format("file:///%s", PROPERTIES.getProperty(KEY_SCHEMA_DIR))));
+    execute(service, message);
+  }
+
+  public void testAdvancedJsonSchemaLoader_Failed() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_ARRAY);
+    final FileDataInputParameter schemaUrl = new FileDataInputParameter();
+    schemaUrl.setDestination(new ConfiguredDestination(CLASSPATH_SCHEMA_URL));
+    JsonSchemaService service = new JsonSchemaService(schemaUrl);
+    service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader().withClassPathAwareClient(true));
+    try {
+      execute(createService(), message);
+      fail();
+    }
+    catch (ServiceException expected) {
+    }
+  }
+
+  @Override
+  protected Object retrieveObjectForSampleConfig() {
     return createService();
-	}
+  }
 
   private JsonSchemaService createService() {
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();

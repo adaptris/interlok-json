@@ -34,6 +34,25 @@ ext {
   mockitoVersion = '3.1.0'
 }
 
+ext.testResourcesDir = { ->
+  return "${project.projectDir}/src/test/resources".replaceAll("\\\\", "/")
+}
+
+ext.hostname = { ->
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    return System.getenv("COMPUTERNAME")
+  }
+  return System.getenv("HOSTNAME")
+}
+
+ext.propertyTemplate = { dir, filename ->
+  def file = new File(dir, filename + "." + hostname())
+  if (file.exists()) {
+    return file.getName()
+  }
+  return filename
+}
+
 ext.hasGraphViz = { ->
   def app = "dot"
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -208,6 +227,23 @@ jacocoTestReport {
     }
 }
 
+task buildUnitTestProperties(type: Copy) {
+  def propertyFile = propertyTemplate(testResourcesDir(), "unit-tests.properties.template")
+  delete file(testResourcesDir() + "/unit-tests.properties")
+  from file(testResourcesDir() + "/" + propertyFile)
+  into (testResourcesDir())
+  rename { String fileName ->
+    fileName.replace(propertyFile, 'unit-tests.properties')
+  }
+  filter(ReplaceTokens, tokens: [JAVA_HOME: System.getProperty("java.home").replaceAll("\\\\", "/")])
+  filter(ReplaceTokens, tokens: [BASE_DIR: project.projectDir.getCanonicalPath().replaceAll("\\\\", "/")])
+  filter(ReplaceTokens, tokens: [BUILD_DIR: project.buildDir.getCanonicalPath().replaceAll("\\\\", "/")])
+}
+
+task deleteGeneratedFiles(type: Delete) {
+  delete file(testResourcesDir() + "/unit-tests.properties")
+}
+
 
 task deleteDerbyLog(type: Delete) {
   delete 'derby.log'
@@ -328,6 +364,7 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
   excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
 }
 javadoc.dependsOn offlinePackageList,umlJavadoc
-clean.dependsOn deleteDerbyLog
+processTestResources.dependsOn buildUnitTestProperties
+clean.dependsOn deleteGeneratedFiles,deleteDerbyLog
 check.dependsOn jacocoTestReport
 
