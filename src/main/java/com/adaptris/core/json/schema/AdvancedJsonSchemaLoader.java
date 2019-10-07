@@ -1,14 +1,13 @@
 package com.adaptris.core.json.schema;
 
+import com.adaptris.annotation.DisplayOrder;
+import com.adaptris.annotation.InputFieldDefault;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.lang3.BooleanUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONException;
 import org.json.JSONObject;
-import com.adaptris.annotation.InputFieldDefault;
-import com.adaptris.core.AdaptrisMessage;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * {@link JsonSchemaLoader} implementation that allows for more settings.
@@ -33,10 +32,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * available explicitly as a standard URL resource.
  * 
  * @author mcwarman
- * 
  *
  */
 @XStreamAlias("advanced-json-schema-loader")
+@DisplayOrder(order = {"classPathAwareClient"})
 public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
 
 
@@ -44,7 +43,7 @@ public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
   private Boolean classPathAwareClient;
 
   @Override
-  public Schema loadSchema(JSONObject rawSchema, AdaptrisMessage input) throws JSONException {
+  public Schema loadSchema(JSONObject rawSchema) {
     SchemaLoader.SchemaLoaderBuilder builder = SchemaLoader.builder()
         .schemaJson(rawSchema);
     if(classPathAwareClient()) {
@@ -54,10 +53,18 @@ public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
     return schemaLoader.load().build();
   }
 
+  /**
+   * Toggle the classpath aware functionality of the schema builder.
+   * @param classPathAwareClient control classpath aware functionality
+   */
   public void setClassPathAwareClient(Boolean classPathAwareClient) {
     this.classPathAwareClient = classPathAwareClient;
   }
 
+  /**
+   * Returns whether or not to enable the classpath aware functionality of the schema builder.
+   * @return whether or not to enable the classpath aware functionality
+   */
   public Boolean getClassPathAwareClient() {
     return classPathAwareClient;
   }

@@ -66,7 +66,7 @@ public class JsonSchemaService extends ServiceImp {
     try {
       /* either validate a single JSON object or an array of JSON objects (or fail) */
       JSONObject rawSchema = new JSONObject(schemaUrl.extract(message));
-      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(getJsonSchemaLoader().loadSchema(rawSchema, message));
+      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(getJsonSchemaLoader().loadSchema(rawSchema));
       jsonSchemaValidator.validate(asJSON(message.getContent()));
     }
     catch (final ValidationException e) {
