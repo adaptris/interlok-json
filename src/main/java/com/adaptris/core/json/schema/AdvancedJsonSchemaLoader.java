@@ -2,12 +2,15 @@ package com.adaptris.core.json.schema;
 
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
+import com.adaptris.core.util.Args;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.lang3.BooleanUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * {@link JsonSchemaLoader} implementation that allows for more settings.
@@ -42,12 +45,23 @@ public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
   @InputFieldDefault(value = "false")
   private Boolean classPathAwareClient;
 
+  private String resolutionScope;
+
   @Override
   public Schema loadSchema(JSONObject rawSchema) {
     SchemaLoader.SchemaLoaderBuilder builder = SchemaLoader.builder()
         .schemaJson(rawSchema);
     if(classPathAwareClient()) {
       builder.schemaClient(SchemaClient.classPathAwareClient());
+    }
+    if(!isEmpty(getResolutionScope())){
+      String rs;
+      if(getResolutionScope().startsWith("file")) {
+        rs = getResolutionScope().replace("\\", "/");
+      } else {
+        rs = getResolutionScope();
+      }
+      builder.resolutionScope(rs);
     }
     SchemaLoader schemaLoader = builder.build();
     return schemaLoader.load().build();
@@ -75,6 +89,27 @@ public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
 
   AdvancedJsonSchemaLoader withClassPathAwareClient(Boolean classPathAwareClient) {
     setClassPathAwareClient(classPathAwareClient);
+    return this;
+  }
+
+  /**
+   * Sets the initial resolution scope of the schema.
+   * @param resolutionScope the initial (absolute) URI, used as the resolution scope.
+   */
+  public void setResolutionScope(String resolutionScope) {
+    this.resolutionScope = Args.notEmpty(resolutionScope, "resolutionScope");
+  }
+
+  /**
+   * The initial resolution scope of the schema.
+   * @return The (absolute) URI, used as the resolution scope.
+   */
+  public String getResolutionScope() {
+    return resolutionScope;
+  }
+
+  AdvancedJsonSchemaLoader withResolutionScope(String resolutionScope) {
+    setResolutionScope(resolutionScope);
     return this;
   }
 }
