@@ -1,23 +1,20 @@
 package com.adaptris.core.json.schema;
 
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.util.Args;
-import com.adaptris.interlok.InterlokException;
-import com.adaptris.interlok.config.DataInputParameter;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.apache.commons.lang3.BooleanUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import javax.validation.constraints.NotNull;
+import com.adaptris.annotation.InputFieldDefault;
+import com.adaptris.core.AdaptrisMessage;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("advanced-json-schema-loader")
 public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
 
 
-  @NotNull
+  @InputFieldDefault(value = "false")
   private Boolean classPathAwareClient;
 
   @Override
@@ -32,7 +29,7 @@ public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
   }
 
   public void setClassPathAwareClient(Boolean classPathAwareClient) {
-    this.classPathAwareClient = Args.notNull(classPathAwareClient, "classPathAwareClient");
+    this.classPathAwareClient = classPathAwareClient;
   }
 
   public Boolean getClassPathAwareClient() {
@@ -40,7 +37,7 @@ public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
   }
 
   private boolean classPathAwareClient() {
-    return getClassPathAwareClient() != null ? getClassPathAwareClient() : false;
+    return BooleanUtils.toBooleanDefaultIfNull(getClassPathAwareClient(), false);
   }
 
   AdvancedJsonSchemaLoader withClassPathAwareClient(Boolean classPathAwareClient) {

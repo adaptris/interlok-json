@@ -2,7 +2,6 @@ package com.adaptris.core.json.schema;
 
 import java.io.IOException;
 import java.util.EnumSet;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ConfiguredDestination;
@@ -190,6 +189,15 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     schemaUrl.setDestination(new ConfiguredDestination(CLASSPATH_SCHEMA_URL));
     JsonSchemaService service = new JsonSchemaService(schemaUrl);
     service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader().withClassPathAwareClient(true));
+    execute(service, message);
+
+  }
+
+
+  public void testAdvancedJsonSchemaLoader_NonClasspath() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
+    JsonSchemaService service = createService();
+    service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader());
     execute(service, message);
 
   }
