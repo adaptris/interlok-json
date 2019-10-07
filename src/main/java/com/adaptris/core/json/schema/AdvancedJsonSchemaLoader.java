@@ -10,6 +10,32 @@ import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/**
+ * {@link JsonSchemaLoader} implementation that allows for more settings.
+ * 
+ * <p>
+ * If you have a schema defined such that supporting files for your schema are only available on the
+ * classpath, rather than as a {@code file://} or {@code http://} URL. :
+ * 
+ * <pre>
+ * {@code
+    {
+      "type": "array",
+      "items": {
+          "$ref": "classpath://com/adaptris/core/json/schema/test_schema.json"
+      }
+     }
+ * }
+ * </pre>
+ * 
+ * then you need to enable the classpath aware functionality of the schema builder; this is disabled
+ * by default with the expectation that generally either all schemas as self-contained, or they are
+ * available explicitly as a standard URL resource.
+ * 
+ * @author mcwarman
+ * 
+ *
+ */
 @XStreamAlias("advanced-json-schema-loader")
 public class AdvancedJsonSchemaLoader implements JsonSchemaLoader {
 
