@@ -20,9 +20,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Render a list of {@link RemoteBlob} as a JSON Array.
  * 
- * @config remote-blob-list-as-json-array
+ * @config remote-blob-list-as-json
  */
-@XStreamAlias("remote-blob-list-as-json-array")
+@XStreamAlias("remote-blob-list-as-json")
 @ComponentProfile(summary = "Render a list of RemoteBlob objects as a JSON Array", since = "3.9.2", tag = "cloud,aws,jclouds,blob")
 public class JsonBlobListRenderer implements BlobListRenderer {
 
