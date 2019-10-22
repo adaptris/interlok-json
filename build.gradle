@@ -27,10 +27,30 @@ ext {
   componentName='Interlok/JSON'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.27'
-  jacksonVersion = "2.9.9"
-  jacksonDatabindVersion = "2.9.9.3"
+  slf4jVersion = '1.7.28'
+  jacksonVersion = "2.10.0"
+  jacksonDatabindVersion = "2.10.0"
   log4j2Version = "2.12.1"
+  mockitoVersion = '3.1.0'
+}
+
+ext.testResourcesDir = { ->
+  return "${project.projectDir}/src/test/resources".replaceAll("\\\\", "/")
+}
+
+ext.hostname = { ->
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    return System.getenv("COMPUTERNAME")
+  }
+  return System.getenv("HOSTNAME")
+}
+
+ext.propertyTemplate = { dir, filename ->
+  def file = new File(dir, filename + "." + hostname())
+  if (file.exists()) {
+    return file.getName()
+  }
+  return filename
 }
 
 ext.hasGraphViz = { ->
@@ -61,6 +81,7 @@ repositories {
   maven { url "$defaultNexusRepo" }
   maven { url "$nexusBaseUrl/content/groups/public" }
   maven { url "$nexusBaseUrl/content/groups/interlok" }
+  maven { url 'https://jitpack.io' }
 }
 
 
@@ -106,8 +127,8 @@ dependencies {
   compile ("commons-beanutils:commons-beanutils:1.9.4")
   compile ("xerces:xercesImpl:2.12.0")
 
-  compile ("org.everit.json:org.everit.json.schema:1.5.1")
-  compile ("com.google.guava:guava:28.0-jre")
+  compile ("com.github.everit-org.json-schema:org.everit.json.schema:1.12.0")
+  compile ("com.google.guava:guava:28.1-jre")
   compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.9")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
@@ -123,7 +144,8 @@ dependencies {
   testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  testCompile ("org.mockito:mockito-all:1.10.19")
+  testCompile ("org.mockito:mockito-core:$mockitoVersion")
+  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 
@@ -203,6 +225,23 @@ jacocoTestReport {
         xml.enabled true
         html.enabled true
     }
+}
+
+task buildUnitTestProperties(type: Copy) {
+  def propertyFile = propertyTemplate(testResourcesDir(), "unit-tests.properties.template")
+  delete file(testResourcesDir() + "/unit-tests.properties")
+  from file(testResourcesDir() + "/" + propertyFile)
+  into (testResourcesDir())
+  rename { String fileName ->
+    fileName.replace(propertyFile, 'unit-tests.properties')
+  }
+  filter(ReplaceTokens, tokens: [JAVA_HOME: System.getProperty("java.home").replaceAll("\\\\", "/")])
+  filter(ReplaceTokens, tokens: [BASE_DIR: project.projectDir.getCanonicalPath().replaceAll("\\\\", "/")])
+  filter(ReplaceTokens, tokens: [BUILD_DIR: project.buildDir.getCanonicalPath().replaceAll("\\\\", "/")])
+}
+
+task deleteGeneratedFiles(type: Delete) {
+  delete file(testResourcesDir() + "/unit-tests.properties")
 }
 
 
@@ -325,6 +364,7 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
   excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
 }
 javadoc.dependsOn offlinePackageList,umlJavadoc
-clean.dependsOn deleteDerbyLog
+processTestResources.dependsOn buildUnitTestProperties
+clean.dependsOn deleteGeneratedFiles,deleteDerbyLog
 check.dependsOn jacocoTestReport
 

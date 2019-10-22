@@ -13,6 +13,8 @@ build.properties
 *.iws
 *.class
 
+unit-tests.properties
+
 # Project artefacts from building.
 cobertura.ser
 jacoco.exec

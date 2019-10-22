@@ -1,0 +1,10 @@
+TransformServiceExamples.baseDir=@BUILD_DIR@/examples/transform
+SplitterServiceExamples.baseDir=@BUILD_DIR@/examples/splitter
+JsonPathServiceExamples.baseDir=@BUILD_DIR@/examples/json-path
+JsonJDBCServiceExamples.baseDir=@BUILD_DIR@/examples/json-jdbc
+ConsumerCase.baseDir=@BUILD_DIR@/examples/consumers
+ServiceCase.baseDir=@BUILD_DIR@/examples/services
+ProducerCase.baseDir=@BUILD_DIR@/examples/producers
+WorkflowCase.baseDir=@BUILD_DIR@/examples/workflows
+
+json.schema.baseDir=@BASE_DIR@/src/test/resources/com/adaptris/core/json/schema/
