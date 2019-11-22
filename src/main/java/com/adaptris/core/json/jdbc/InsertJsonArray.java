@@ -1,15 +1,12 @@
 package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
-
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
-import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
 import com.adaptris.core.util.CloseableIterable;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
@@ -50,7 +47,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc", since = "3.6.5")
 @XStreamAlias("json-array-jdbc-insert")
 @DisplayOrder(order = {"table"})
-public class InsertJsonArray extends InsertJsonObject {
+public class InsertJsonArray extends InsertJsonObjects {
 
   public InsertJsonArray() {
 
@@ -63,10 +60,7 @@ public class InsertJsonArray extends InsertJsonObject {
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
-      // Use the already existing LargeJsonArraySplitter, but force it with a default-mf
-      LargeJsonArraySplitter splitter =
-          new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
-      try (CloseableIterable<AdaptrisMessage> itr = splitter.splitMessage(msg)) {
+      try (CloseableIterable<AdaptrisMessage> itr = jsonStyle().createIterator(msg)) {
         for (AdaptrisMessage m : itr) {
           rowsAffected += handleInsert(table(msg), conn, JsonUtil.mapifyJson(m, getNullConverter()));
         }
