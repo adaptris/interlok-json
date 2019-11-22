@@ -4,6 +4,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.services.jdbc.JdbcMapUpsert;
+import com.adaptris.core.services.splitter.json.JsonProvider.JsonStyle;
 
 public class UpsertJsonArrayTest extends UpsertJsonCase {
 
@@ -19,7 +20,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
 
   @Override
   protected UpsertJsonArray createService() {
-    return new UpsertJsonArray();
+    return new UpsertJsonArray().withJsonStyle(JsonStyle.JSON_ARRAY);
   }
 
   public void testService_InsertArray() throws Exception {

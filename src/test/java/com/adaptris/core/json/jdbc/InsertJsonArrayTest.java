@@ -3,6 +3,7 @@ package com.adaptris.core.json.jdbc;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
+import com.adaptris.core.services.splitter.json.JsonProvider.JsonStyle;
 
 public class InsertJsonArrayTest extends JdbcJsonInsertCase {
 
@@ -47,7 +48,7 @@ public class InsertJsonArrayTest extends JdbcJsonInsertCase {
 
   @Override
   protected InsertJsonArray createService() {
-    return new InsertJsonArray();
+    return new InsertJsonArray().withJsonStyle(JsonStyle.JSON_ARRAY);
   }
 
 }

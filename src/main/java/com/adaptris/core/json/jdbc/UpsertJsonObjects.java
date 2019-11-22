@@ -16,6 +16,11 @@ public abstract class UpsertJsonObjects extends UpsertJsonObject {
     super();
   }
 
+  public <T extends UpsertJsonObjects> T withJsonStyle(JsonStyle p) {
+    setJsonStyle(p);
+    return (T) this;
+  }
+
   /**
    * Specify how the payload is parsed to provide JSON objects.
    * 

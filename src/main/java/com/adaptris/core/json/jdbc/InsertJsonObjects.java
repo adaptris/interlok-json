@@ -16,6 +16,11 @@ public abstract class InsertJsonObjects extends InsertJsonObject {
     super();
   }
 
+  public <T extends InsertJsonObjects> T withJsonStyle(JsonStyle p) {
+    setJsonStyle(p);
+    return (T) this;
+  }
+
   /**
    * Specify how the payload is parsed to provide JSON objects.
    * 
