@@ -8,19 +8,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.lang.ArrayUtils;
-
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.JsonUtil;
-import com.adaptris.core.services.splitter.json.LargeJsonArraySplitter;
 import com.adaptris.core.util.CloseableIterable;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.JdbcUtil;
@@ -61,7 +57,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Insert a JSON array into a database", tag = "service,json,jdbc", since = "3.6.5")
 @XStreamAlias("json-array-jdbc-batch-insert")
 @DisplayOrder(order = {"table", "batchWindow"})
-public class BatchInsertJsonArray extends InsertJsonObject {
+public class BatchInsertJsonArray extends InsertJsonObjects {
 
   private static final InheritableThreadLocal<AtomicInteger> counter = new InheritableThreadLocal<AtomicInteger>() {
     @Override
@@ -77,6 +73,7 @@ public class BatchInsertJsonArray extends InsertJsonObject {
   @InputFieldDefault(value = "1024")
   private Integer batchWindow = null;
 
+
   public BatchInsertJsonArray() {
 
   }
@@ -89,11 +86,8 @@ public class BatchInsertJsonArray extends InsertJsonObject {
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
       conn = getConnection(msg);
-      // Use the already existing LargeJsonArraySplitter, but force it with a default-mf
-      LargeJsonArraySplitter splitter =
-          new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
       InsertWrapper wrapper = null;
-      try (CloseableIterable<AdaptrisMessage> itr = splitter.splitMessage(msg)) {
+      try (CloseableIterable<AdaptrisMessage> itr = jsonStyle().createIterator(msg)) {
         for (AdaptrisMessage m : itr) {
           Map<String, String> json = JsonUtil.mapifyJson(m, getNullConverter());
           if (wrapper == null) {
