@@ -5,10 +5,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.everit.json.schema.ValidationException;
-
 import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
@@ -34,6 +33,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-schema-validation-exception-into-message
  */
 @XStreamAlias("json-schema-validation-exception-into-message")
+@ComponentProfile(summary = "Store schema violations as part of the JSON payload", tag = "json,validation")
 public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImpl {
 
   @AdvancedConfig

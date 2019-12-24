@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.SQLException;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.services.jdbc.ResultSetTranslator;
@@ -53,6 +53,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config jdbc-json-all-resultset-output
  */
 @XStreamAlias("jdbc-json-all-resultset-output")
+@ComponentProfile(summary = "Output all result sets as a JSON Array", tag = "json,jdbc")
 public class JdbcJsonArrayOutput extends JdbcJsonOutput {
 
   public JdbcJsonArrayOutput() {

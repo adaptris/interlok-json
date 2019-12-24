@@ -7,17 +7,15 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
 import com.adaptris.core.util.ExceptionHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -40,10 +38,10 @@ import net.minidev.json.parser.JSONParser;
  * </p>
  *
  * @config json-object-splitter
- * @author lchan
  *
  */
 @XStreamAlias("json-object-splitter")
+@ComponentProfile(summary = "Split a JSON Object into individual JSON objects", tag = "json,splitting")
 public class JsonObjectSplitter extends MessageSplitterImp {
 
 	/**

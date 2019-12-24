@@ -21,10 +21,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.aggregator.MessageAggregator;
@@ -49,6 +48,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @since 3.6.5
  */
 @XStreamAlias("json-array-aggregator")
+@ComponentProfile(summary = "Aggregate multiple messages into a JSON Array", since = "3.6.5", tag = "json")
 public class JsonArrayAggregator extends MessageAggregatorImpl {
   private transient ObjectMapper mapper = new ObjectMapper();
   private transient Logger log = LoggerFactory.getLogger(this.getClass());

@@ -1,5 +1,6 @@
 package com.adaptris.core.transform.json;
 
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.XStreamJsonMarshaller;
@@ -21,6 +22,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config xstream-json-transformation-driver
  */
 @XStreamAlias("xstream-json-transformation-driver")
+@ComponentProfile(summary = "JSON/XML Transformation driver that uses XStream for conversion", tag = "json,xml,transformation")
 public class XStreamTransformationDriver implements TransformationDriver {
 
 	private transient XStreamMarshaller xmlMarshaller;

@@ -1,5 +1,10 @@
 package com.adaptris.core.json.aggregator;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collection;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.aggregator.MessageAggregator;
@@ -12,11 +17,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collection;
-
 /**
  * {@link MessageAggregator} implementation that merges each message to a JSON object or array.
  *
@@ -28,6 +28,7 @@ import java.util.Collection;
  * @config json-merge-aggregator
  */
 @XStreamAlias("json-merge-aggregator")
+@ComponentProfile(summary = "Merge each message into an existing JSON object.", tag = "json")
 public class JsonMergeAggregator extends MessageAggregatorImpl {
   protected transient ObjectMapper mapper = new ObjectMapper();
   protected String mergeMetadataKey;

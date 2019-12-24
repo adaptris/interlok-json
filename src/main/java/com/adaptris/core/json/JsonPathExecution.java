@@ -1,8 +1,8 @@
 package com.adaptris.core.json;
 
 import org.apache.commons.lang3.BooleanUtils;
-
 import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.common.Execution;
 import com.adaptris.interlok.config.DataInputParameter;
@@ -10,6 +10,7 @@ import com.adaptris.interlok.config.DataOutputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("json-path-execution")
+@ComponentProfile(summary = "Extract a JSON Path from the source and write it into the target", tag = "json")
 public class JsonPathExecution extends Execution
 {
 	@InputFieldDefault(value = "false")

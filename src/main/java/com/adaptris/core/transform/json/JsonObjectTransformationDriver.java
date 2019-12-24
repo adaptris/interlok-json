@@ -1,7 +1,7 @@
 package com.adaptris.core.transform.json;
 
+import com.adaptris.annotation.ComponentProfile;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -14,6 +14,8 @@ import net.sf.json.JSONObject;
  * @config json-object-transformation-driver
  */
 @XStreamAlias("json-object-transformation-driver")
+@ComponentProfile(summary = "JSON/XML Transformation driver, supports a top level JSON Object", since = "3.0.4",
+    tag = "json,xml,transformation")
 public class JsonObjectTransformationDriver extends DefaultJsonTransformationDriver {
 
 	/**

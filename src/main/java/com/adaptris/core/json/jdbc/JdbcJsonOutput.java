@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.services.jdbc.JdbcDataQueryService;
@@ -46,6 +46,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config jdbc-json-first-resultset-output
  */
 @XStreamAlias("jdbc-json-first-resultset-output")
+@ComponentProfile(summary = "Output the first resultset as JSON", tag = "json,jdbc")
 public class JdbcJsonOutput extends StyledResultTranslatorImp {
 
   protected transient ObjectMapper mapper = new ObjectMapper();

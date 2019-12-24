@@ -2,9 +2,8 @@ package com.adaptris.core.json.schema;
 
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.everit.json.schema.ValidationException;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.util.ExceptionHelper;
@@ -21,6 +20,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-schema-validation-exception-default
  */
 @XStreamAlias("json-schema-validation-exception-default")
+@ComponentProfile(summary = "Throw an exception if validation fails during schema validation", tag = "json,validation")
 public class DefaultValidationExceptionHandler extends ValidationExceptionHandlerImpl {
 
 
