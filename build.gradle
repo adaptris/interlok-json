@@ -146,7 +146,7 @@ dependencies {
   compile ("xerces:xercesImpl:2.12.0")
 
   compile ("com.github.everit-org.json-schema:org.everit.json.schema:1.12.0")
-  compile ("com.google.guava:guava:28.1-jre")
+  compile ("com.google.guava:guava:28.2-jre")
   compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.9")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
