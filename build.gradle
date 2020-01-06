@@ -28,8 +28,8 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
-  jacksonVersion = "2.10.1"
-  jacksonDatabindVersion = "2.10.1"
+  jacksonVersion = "2.10.2"
+  jacksonDatabindVersion = "2.10.2"
   log4j2Version = "2.13.0"
   mockitoVersion = '3.2.0'
 }
