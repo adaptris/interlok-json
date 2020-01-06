@@ -27,10 +27,10 @@ ext {
   componentName='Interlok/JSON'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.29'
+  slf4jVersion = '1.7.30'
   jacksonVersion = "2.10.1"
   jacksonDatabindVersion = "2.10.1"
-  log4j2Version = "2.12.1"
+  log4j2Version = "2.13.0"
   mockitoVersion = '3.2.0'
 }
 
