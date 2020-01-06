@@ -3,7 +3,7 @@ package com.adaptris.core.services.splitter.json;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -35,6 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config batched-json-array-splitter
  */
 @XStreamAlias("batched-json-array-splitter")
+@ComponentProfile(summary = "Split a JSON Array into a smaller subset of arrays", tag = "json,splitting")
 public class BatchedJsonArraySplitter extends LargeJsonArraySplitter {
   private static final int DEFAULT_BATCH_SIZE = 10;
 

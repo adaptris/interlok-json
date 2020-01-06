@@ -1,7 +1,7 @@
 package com.adaptris.core.transform.json;
 
+import com.adaptris.annotation.ComponentProfile;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -20,6 +20,8 @@ import net.sf.json.JSONObject;
  * @author gdries
  */
 @XStreamAlias("default-transformation-driver")
+@ComponentProfile(summary = "Default JSON/XML Transformation driver, supports top level JSON arrays",
+    tag = "json,xml,transformation")
 public class DefaultJsonTransformationDriver extends JsonTransformationDriverImpl {
 
 	@Override

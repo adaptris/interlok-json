@@ -3,12 +3,11 @@ package com.adaptris.core.services.splitter.json;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.ExceptionHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -30,10 +29,9 @@ import net.minidev.json.parser.JSONParser;
  * </p>
  *
  * @config json-array-splitter
- * @author lchan
- *
  */
 @XStreamAlias("json-array-splitter")
+@ComponentProfile(summary = "Split a JSON Array into individual JSON objects", tag = "json,splitting")
 public class JsonArraySplitter extends JsonObjectSplitter {
 
 	/**

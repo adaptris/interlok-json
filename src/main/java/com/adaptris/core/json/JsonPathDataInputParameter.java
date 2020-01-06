@@ -18,9 +18,8 @@ package com.adaptris.core.json;
 
 import java.util.EnumSet;
 import java.util.Map;
-
-import org.hibernate.validator.constraints.NotBlank;
-
+import javax.validation.constraints.NotBlank;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
@@ -46,6 +45,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * 
  */
 @XStreamAlias("json-path-data-input-parameter")
+@ComponentProfile(summary = "Extract data via a JSON Path", tag = "json")
 public class JsonPathDataInputParameter implements DataInputParameter<String> {
 
   private transient Configuration jsonConfig;

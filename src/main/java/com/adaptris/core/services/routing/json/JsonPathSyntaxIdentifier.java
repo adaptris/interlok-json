@@ -2,7 +2,7 @@ package com.adaptris.core.services.routing.json;
 
 import java.util.EnumSet;
 import java.util.List;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.services.routing.SyntaxIdentifier;
@@ -24,6 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias("routing-json-path-syntax-identifier")
 @DisplayOrder(order = {"destination", "patterns"})
+@ComponentProfile(summary = "Syntax Identifier which handles JSON Paths", tag = "json,routing")
 public class JsonPathSyntaxIdentifier extends SyntaxIdentifierImpl {
 
   private transient Configuration jsonConfig;

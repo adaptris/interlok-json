@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreConstants;
 import com.adaptris.core.CoreException;
@@ -25,6 +26,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config exception-as-json
  */
 @XStreamAlias("exception-as-json")
+@ComponentProfile(summary = "Serialize an exception as JSON when using ExceptionReportService", tag = "json")
 public class ExceptionAsJson implements ExceptionSerializer {
 
   private transient ObjectMapper mapper = new ObjectMapper();

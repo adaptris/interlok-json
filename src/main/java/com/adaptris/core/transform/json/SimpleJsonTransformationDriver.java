@@ -7,7 +7,7 @@ import org.json.JSONTokener;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.ServiceException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -36,6 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author gdries
  */
 @XStreamAlias("simple-transformation-driver")
+@ComponentProfile(summary = "Simple JSON/XML Transformation driver", tag = "json,xml,transformation")
 public class SimpleJsonTransformationDriver implements TransformationDriver {
 
 	private static final String ELEMENT_NAME_ARRAY = "array-item";

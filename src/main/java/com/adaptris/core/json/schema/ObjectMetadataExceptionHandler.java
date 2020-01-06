@@ -1,9 +1,9 @@
 package com.adaptris.core.json.schema;
 
 import org.everit.json.schema.ValidationException;
-
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
@@ -16,6 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-schema-validation-exception-as-object-metadata
  */
 @XStreamAlias("json-schema-validation-exception-as-object-metadata")
+@ComponentProfile(summary = "Store schema violations as object metadata", tag = "json,validation")
 public class ObjectMetadataExceptionHandler extends DefaultValidationExceptionHandler {
 
   @AutoPopulated

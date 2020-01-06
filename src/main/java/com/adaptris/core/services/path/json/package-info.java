@@ -4,7 +4,5 @@
  * to extract data from a JSON object.
  * </p>
  * 
- * <img alt="UML" src="package.svg"/>
- * 
  */
 package com.adaptris.core.services.path.json;

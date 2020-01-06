@@ -2,11 +2,10 @@ package com.adaptris.core.services.splitter.json;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.Service;
@@ -31,6 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-path-splitter
  */
 @XStreamAlias("json-path-splitter")
+@ComponentProfile(summary = "Split a JSON Array specified by a JSON path into indvidual JSON objects", tag = "json,splitting")
 public class JsonPathSplitter extends MessageSplitterImp {
 
   @NotNull

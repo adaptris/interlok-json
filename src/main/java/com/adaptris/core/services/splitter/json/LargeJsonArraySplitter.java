@@ -5,10 +5,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
-
 import org.apache.commons.io.IOUtils;
-
 import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -30,6 +29,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config large-json-array-splitter
  */
 @XStreamAlias("large-json-array-splitter")
+@ComponentProfile(summary = "Split a JSON Array into individual JSON objects", tag = "json,splitting")
 public class LargeJsonArraySplitter extends MessageSplitterImp {
   private transient static final int DEFAULT_BUFFER_SIZE = 8192;
 

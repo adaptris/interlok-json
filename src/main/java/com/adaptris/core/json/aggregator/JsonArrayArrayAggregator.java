@@ -16,18 +16,6 @@
 
 package com.adaptris.core.json.aggregator;
 
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.CoreException;
-import com.adaptris.core.services.aggregator.MessageAggregator;
-import com.adaptris.core.services.aggregator.MessageAggregatorImpl;
-import com.adaptris.core.util.ExceptionHelper;
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -35,19 +23,36 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.CoreException;
+import com.adaptris.core.services.aggregator.MessageAggregator;
+import com.adaptris.core.services.aggregator.MessageAggregatorImpl;
+import com.adaptris.core.util.ExceptionHelper;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * {@link MessageAggregator} implementation that adds each message to a JSON array.
  * 
  * <p>
- * The pre-split message is always ignored; the payloads from the collection are assumed to be JSON array or objects, and will be aggregated
- * together as a single JSON array. Messages that are not JSON array or objects will be ignored .
+ * The pre-split message is always ignored; the payloads from the collection are assumed to be JSON array or objects, and will be
+ * aggregated together as a single JSON array. Messages that are not JSON array or objects will be ignored .
  * </p>
  * 
- * @config json-array-arra-aggregator
+ * @config json-array-array-aggregator
  * @since 3.6.5
  */
 @XStreamAlias("json-array-array-aggregator")
+@ComponentProfile(summary = "Aggregate messages that are JSON Arrays.", since = "3.6.5", tag = "json")
 public class JsonArrayArrayAggregator extends MessageAggregatorImpl {
   private transient ObjectMapper mapper = new ObjectMapper();
   private transient Logger log = LoggerFactory.getLogger(this.getClass());

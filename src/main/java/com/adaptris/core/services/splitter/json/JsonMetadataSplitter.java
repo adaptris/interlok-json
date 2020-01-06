@@ -2,7 +2,6 @@ package com.adaptris.core.services.splitter.json;
 
 import java.io.IOException;
 import java.util.Iterator;
-
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.json.JsonToMetadata;
@@ -11,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Split a JSON array and immediately create
+ * Split a JSON array and immediately create metadata from the split payload.
  * 
  * <p>
  * This is simply a convenience splitter implementation that does a combination of {@link LargeJsonArraySplitter} with
@@ -22,7 +21,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config json-metadata-splitter
  */
 @XStreamAlias("json-metadata-splitter")
-@ComponentProfile(since = "3.8.2")
+@ComponentProfile(summary = "Split a JSON Array into individual JSON objects, immediately turning it into metadata",
+    since = "3.8.2", tag = "json,splitting")
 public class JsonMetadataSplitter extends LargeJsonArraySplitter {
 
   @Override

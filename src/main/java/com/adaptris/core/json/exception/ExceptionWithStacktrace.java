@@ -1,7 +1,7 @@
 package com.adaptris.core.json.exception;
 
 import java.util.Map;
-
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.services.exception.ExceptionReportService;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -17,11 +17,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @config exception-as-json-with-stacktrace
  */
 @XStreamAlias("exception-as-json-with-stacktrace")
+@ComponentProfile(summary = "Serialize an exception as JSON, along with the stack trace, when using ExceptionReportService",
+    tag = "json")
 public class ExceptionWithStacktrace extends ExceptionAsJson {
 
   public ExceptionWithStacktrace() {
   }
 
+  @Override
   protected Map<String, Object> createReport(Exception exc, AdaptrisMessage msg) {
     Map<String, Object> result = super.createReport(exc, msg);
     result.put("stacktrace", exc.getStackTrace());
