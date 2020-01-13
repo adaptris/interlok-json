@@ -1,12 +1,14 @@
 package com.adaptris.core.transform.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Test;
 import org.w3c.dom.Document;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -16,9 +18,6 @@ import com.adaptris.util.text.xml.XPath;
 
 public class JsonXmlTransformServiceTest extends TransformServiceExample {
 
-  public JsonXmlTransformServiceTest(final String name) {
-    super(name);
-  }
 
   // Input/output for Default Xml -> JSON transformation
   static final String DEFAULT_XML_INPUT = "<xml><version>0.5</version>\n" + "" + "<entry>\n" + "<name>Production System</name>\n"
@@ -59,6 +58,12 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
           + "\"name\": \"Victoria\", " + "\"modeName\": \"tube\", " + "\"created\": \"2015-07-23T14:35:19.787\", "
           + "\"modified\": \"2015-07-23T14:35:19.787\", " + "\"lineStatuses\": [], " + "\"routeSections\": [] }]";
 
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  
+  @Test
   public void testTransformToXml() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
     final JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -68,6 +73,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     execute(svc, AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT));
   }
 
+  @Test
   public void testTransformToXml_StripIllegalXmlElement() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(BAD_JSON_INPUT);
     final JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -76,6 +82,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     System.err.println(msg.getContent());
   }
 
+  @Test
   public void testTransformToXml_ArrayNotObject() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT);
     final JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -92,6 +99,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     execute(svc, msg);
   }
 
+  @Test
   public void testTransformToXml_ObjectNotArray() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
     final JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -107,6 +115,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     execute(svc, msg);
   }
 
+  @Test
   public void testTransformToJson() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(DEFAULT_XML_INPUT);
 
@@ -116,6 +125,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     assertEquals(JSON_OUTPUT, msg.getContent());
   }
 
+  @Test
   public void testTransformJsonToSimpleXml() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
     final JsonXmlTransformService svc = new JsonXmlTransformService();
@@ -125,6 +135,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     doXmlAssertions(msg);
   }
 
+  @Test
   public void testTransformSimpleXmlToJson() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SIMPLE_XML_INPUT);
 

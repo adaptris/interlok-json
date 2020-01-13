@@ -1,5 +1,9 @@
 package com.adaptris.core.services.path.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -46,6 +50,10 @@ public class JsonPathServiceTest extends ServiceCase {
     }
   }
 
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
   AdaptrisMessage createMessage() throws Exception {
     return DefaultMessageFactory.getDefaultInstance().newMessage(sampleJsonContent());
   }
@@ -74,7 +82,7 @@ public class JsonPathServiceTest extends ServiceCase {
     String color = context.read("$.color");
     assertEquals("red", color);
     Double price = context.read("$.price");
-    assertEquals(19.95, price);
+    assertEquals(19.95, price, 0.1);
   }
 
   @Test
@@ -175,8 +183,8 @@ public class JsonPathServiceTest extends ServiceCase {
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
   }
 
-  @Test
   @SuppressWarnings("deprecation")
+  @Test
   public void testPathNotFound_Suppress_OnService() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
 

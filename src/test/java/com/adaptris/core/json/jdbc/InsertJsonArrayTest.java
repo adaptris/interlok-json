@@ -1,5 +1,9 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -8,10 +12,11 @@ import com.adaptris.core.services.splitter.json.JsonProvider.JsonStyle;
 public class InsertJsonArrayTest extends JdbcJsonInsertCase {
 
 
-  public InsertJsonArrayTest(String arg0) {
-    super(arg0);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
+  @Test
   public void testService() throws Exception {
     createDatabase();
     InsertJsonArray service = configureForTests(createService()).withRowsAffectedMetadataKey("rowsAffected");
@@ -22,6 +27,7 @@ public class InsertJsonArrayTest extends JdbcJsonInsertCase {
     doAssert(3);
   }
 
+  @Test
   public void testService_NotArray() throws Exception {
     createDatabase();
     InsertJsonArray service = configureForTests(createService());
@@ -34,6 +40,7 @@ public class InsertJsonArrayTest extends JdbcJsonInsertCase {
     }
   }
 
+  @Test
   public void testService_BrokenColumn() throws Exception {
     createDatabase();
     InsertJsonArray service = configureForTests(createService());

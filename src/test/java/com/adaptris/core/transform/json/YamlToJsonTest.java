@@ -1,5 +1,7 @@
 package com.adaptris.core.transform.json;
 
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.transform.TransformServiceExample;
@@ -9,18 +11,14 @@ public class YamlToJsonTest extends TransformServiceExample {
   private static final String SAMPLE_YAML = "schemes:" + System.lineSeparator() + "- http";
   private static final String EXPECTED_JSON = "{\"schemes\":[\"http\"]}";
   
-  public YamlToJsonTest(String name) {
-    super(name);
-  }
 
-  public void setUp() throws Exception {
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
   
-  public void tearDown() throws Exception {
-    
-  }
   
-  
+  @Test
   public void testService() throws Exception {
     YamlToJsonService service = new YamlToJsonService();
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SAMPLE_YAML);

@@ -1,11 +1,13 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
+import org.junit.Test;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.jdbc.JdbcConnection;
@@ -33,8 +35,7 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
   protected static final String TABLE_NAME = "json_people";
 
 
-  public JdbcJsonInsertCase(String arg0) {
-    super(arg0);
+  public JdbcJsonInsertCase() {
     if (PROPERTIES.getProperty(JdbcOutputExampleTest.BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(JdbcOutputExampleTest.BASE_DIR_KEY));
     }
@@ -42,6 +43,7 @@ public abstract class JdbcJsonInsertCase extends ServiceCase {
 
 
 
+  @Test
   public void testService_Init() throws Exception {
     JdbcMapInsert service = createService();
     try {

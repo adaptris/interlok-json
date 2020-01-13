@@ -1,5 +1,10 @@
 package com.adaptris.core.services.splitter.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -8,10 +13,13 @@ import com.adaptris.core.util.CloseableIterable;
 
 public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
 
-  public BatchedJsonArraySplitterTest(String name) {
-    super(name);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
+  @Test
   public void testSetBatchSize() {
     assertNull(createSplitterForTests().getBatchSize());
     assertEquals(10, createSplitterForTests().batchSize());
@@ -20,6 +28,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     assertEquals(10, createSplitterForTests().withBatchSize(-1).batchSize());
   }
 
+  @Test
   public void testWithBufferSize() {
     assertNull(createSplitterForTests().getBufferSize());
     assertEquals(8192, createSplitterForTests().bufferSize());
@@ -27,12 +36,14 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     assertEquals(10, createSplitterForTests().withBufferSize(10).bufferSize());
   }
 
+  @Test
   public void testWithMessageFactory() {
     LargeJsonArraySplitter s = createSplitter().withMessageFactory(new DefaultMessageFactory());
     assertEquals(DefaultMessageFactory.class, s.getMessageFactory().getClass());
     assertNull(createSplitter().getMessageFactory());
   }
 
+  @Test
   public void testSplitArray() throws Exception {
     BatchedJsonArraySplitter s = createSplitterForTests().withBatchSize(2);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
@@ -46,6 +57,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitArray_EmptyArray() throws Exception {
     BatchedJsonArraySplitter s = createSplitterForTests().withBatchSize(2);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("[]");
@@ -58,6 +70,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitArray_BatchSizeExact() throws Exception {
     BatchedJsonArraySplitter s = createSplitterForTests().withBatchSize(4);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
@@ -70,6 +83,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitArray_BatchSizeExceeds() throws Exception {
     BatchedJsonArraySplitter s = createSplitterForTests();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
@@ -82,6 +96,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitNotJson() throws Exception {
     BatchedJsonArraySplitter s = createSplitterForTests();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello World");

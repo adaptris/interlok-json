@@ -1,8 +1,12 @@
 package com.adaptris.core.json.schema;
 
-import java.io.File;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.EnumSet;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ConfiguredDestination;
@@ -26,17 +30,6 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
  */
 public class JsonSchemaServiceTest extends TransformServiceExample {
 
-  /**
-   * Default constructor.
-   */
-  public JsonSchemaServiceTest() {
-    super("JSON schema validation service.");
-  }
-
-  public JsonSchemaServiceTest(final String name) {
-    super(name);
-  }
-
   private static final String SCHEMA_URL = "file:///com/adaptris/core/json/schema/test_schema.json";
   private static final String CLASSPATH_SCHEMA_URL = "file:///com/adaptris/core/json/schema/test_array_schema.json";
   private static final String RELATIVE_SCHEMA_URL = "file:///com/adaptris/core/json/schema/test_array_schema_relative.json";
@@ -48,6 +41,12 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   private static final String JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }]";
   private static final String INVALID_JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }]";
 
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  
+  @Test
   public void testInit() throws Exception {
     JsonSchemaService service = new JsonSchemaService();
     try {
@@ -61,6 +60,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testJsonSchemaLoader(){
     JsonSchemaService jsonSchemaService = new JsonSchemaService();
     assertTrue(jsonSchemaService.getJsonSchemaLoader() instanceof DefaultJsonSchemaLoader);
@@ -68,11 +68,13 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     assertTrue(jsonSchemaService.getJsonSchemaLoader() instanceof AdvancedJsonSchemaLoader);
   }
 
+  @Test
   public void testSuccess() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
     execute(createService(), message);
   }
 
+  @Test
   public void testFailure() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
@@ -84,6 +86,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testArray() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     try {
@@ -96,6 +99,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   }
 
 
+  @Test
   public void testFailure_ObjectMetadata() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
@@ -109,6 +113,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     assertTrue(message.getObjectHeaders().containsKey(ObjectMetadataExceptionHandler.class.getSimpleName()));
   }
 
+  @Test
   public void testFailure_ObjectMetadata_NoException() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
@@ -122,6 +127,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testFailure_Ignore() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
@@ -134,6 +140,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testFailure_ModifyPayload() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
@@ -147,6 +154,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testFailure_ModifyPayload_ThrowException() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON);
     try {
@@ -160,6 +168,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   }
 
   @SuppressWarnings("deprecation")
+  @Test
   public void testFailure_ModifyPayload_IOException() throws Exception {
     AdaptrisMessage message = new BrokenAdaptrisMessage();
     message.setStringPayload(INVALID_JSON);
@@ -173,6 +182,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testFailure_ModifyPayload_Array() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_ARRAY);
     try {
@@ -187,6 +197,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     }
   }
 
+  @Test
   public void testAdvancedJsonSchemaLoaderClasspath() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
@@ -197,6 +208,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   }
 
 
+  @Test
   public void testAdvancedJsonSchemaLoader_NonClasspath() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
     JsonSchemaService service = createService();
@@ -205,6 +217,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
 
   }
 
+  @Test
   public void testAdvancedJsonSchemaLoader_ResolutionScopeAndClasspath() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
@@ -216,6 +229,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     execute(service, message);
   }
 
+  @Test
   public void testAdvancedJsonSchemaLoader_ResolutionScopeAndFs() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
@@ -226,6 +240,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     execute(service, message);
   }
 
+  @Test
   public void testAdvancedJsonSchemaLoader_Failed() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();

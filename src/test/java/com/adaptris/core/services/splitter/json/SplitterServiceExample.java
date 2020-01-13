@@ -2,7 +2,6 @@ package com.adaptris.core.services.splitter.json;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.adaptris.core.NullConnection;
 import com.adaptris.core.NullMessageProducer;
 import com.adaptris.core.Service;
@@ -19,8 +18,7 @@ public abstract class SplitterServiceExample extends ServiceCase {
 
   private static final String BASE_DIR_KEY = "SplitterServiceExamples.baseDir";
 
-  public SplitterServiceExample(String name) {
-    super(name);
+  public SplitterServiceExample() {
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }

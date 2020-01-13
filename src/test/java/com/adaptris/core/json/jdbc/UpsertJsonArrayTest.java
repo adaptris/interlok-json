@@ -1,5 +1,9 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -8,8 +12,10 @@ import com.adaptris.core.services.splitter.json.JsonProvider.JsonStyle;
 
 public class UpsertJsonArrayTest extends UpsertJsonCase {
 
-  public UpsertJsonArrayTest(String arg0) {
-    super(arg0);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
   @Override
@@ -23,6 +29,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
     return new UpsertJsonArray().withJsonStyle(JsonStyle.JSON_ARRAY);
   }
 
+  @Test
   public void testService_InsertArray() throws Exception {
     createDatabase();
     UpsertJsonArray service =
@@ -34,6 +41,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
     doAssert(3);
   }
 
+  @Test
   public void testService_UpdateArray() throws Exception {
     createDatabase();
     populateDatabase();
@@ -44,6 +52,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
     checkDob(CAROL, DOB);
   }
 
+  @Test
   public void testService_BrokenColumn() throws Exception {
     createDatabase();
     JdbcMapUpsert service = (JdbcMapUpsert) configureForTests(createService().withId(ID_ELEMENT_VALUE));
@@ -56,6 +65,7 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
     }
   }
 
+  @Test
   public void testService_NotJsonArray() throws Exception {
     createDatabase();
     UpsertJsonArray service = configureForTests(createService());

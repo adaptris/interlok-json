@@ -1,21 +1,24 @@
 package com.adaptris.core.services.splitter.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.List;
-
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.transform.json.JsonXmlJsonTest;
-
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 public class JsonObjectSplitterTest extends SplitterServiceExample {
 
-  public JsonObjectSplitterTest(String name) {
-    super(name);
-  }
 
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
   public static final String JSON_ARRAY =
       "[\n{\"colour\": \"red\",\"value\": \"#f00\"},\n"
       + "{\"colour\": \"green\",\"value\": \"#0f0\"},\n"
@@ -23,12 +26,14 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
       + "\n{\"colour\": \"black\",\"value\": \"#000\"}\n"
       + "]";
 
+  @Test
   public void testSplitArray() throws Exception {
     JsonObjectSplitter s = new JsonObjectSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     assertEquals(4, s.splitMessage(src).size());
   }
 
+  @Test
   public void testSplitObject() throws Exception {
     JsonObjectSplitter s = new JsonObjectSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
@@ -43,6 +48,7 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
     assertTrue(jsonObj.containsKey("version"));
   }
 
+  @Test
   public void testSplitEmptyObject() throws Exception {
     JsonObjectSplitter s = new JsonObjectSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("{}");
@@ -53,6 +59,7 @@ public class JsonObjectSplitterTest extends SplitterServiceExample {
     assertTrue(jsonObj.isEmpty());
   }
 
+  @Test
   public void testSplitNotJson() throws Exception {
     JsonObjectSplitter s = new JsonObjectSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello World");

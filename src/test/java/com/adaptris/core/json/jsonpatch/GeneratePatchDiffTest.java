@@ -15,8 +15,12 @@
  *******************************************************************************/
 package com.adaptris.core.json.jsonpatch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -32,6 +36,14 @@ public class GeneratePatchDiffTest extends ServiceCase {
   private static final String DIFF_TARGET = " {\"b\": [1,2,0]}";
   private static final String PATCH_TRANSFORM =
       "[{\"op\":\"move\",\"from\":\"/a\",\"path\":\"/b/2\"}]";
+
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  
+  @Test
   public void testFlags() throws Exception {
     GeneratePatchDiffService service =
         new GeneratePatchDiffService();
@@ -47,6 +59,7 @@ public class GeneratePatchDiffTest extends ServiceCase {
     assertTrue(service.flags().contains(DiffFlags.OMIT_MOVE_OPERATION));
   }
 
+  @Test
   public void testService() throws Exception {
     MetadataInputStreamWrapper diffSource = new MetadataInputStreamWrapper("diffSource");
     MetadataInputStreamWrapper diffTarget = new MetadataInputStreamWrapper("diffTarget");
@@ -62,6 +75,7 @@ public class GeneratePatchDiffTest extends ServiceCase {
     JSONAssert.assertEquals(PATCH_TRANSFORM, msg.getContent(), false);
   }
 
+  @Test
   public void testService_BrokenSource() throws Exception {
     MetadataInputStreamWrapper diffSource = new MetadataInputStreamWrapper("diffSource");
     BrokenWrapper diffTarget = new BrokenWrapper();

@@ -1,8 +1,11 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -10,10 +13,13 @@ import com.adaptris.core.ServiceException;
 public class BatchJsonArrayInsertTest extends JdbcJsonInsertCase {
 
 
-  public BatchJsonArrayInsertTest(String arg0) {
-    super(arg0);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
+  @Test
   public void testAccumulate() throws Exception {
     int[] rc = {1, 2, Statement.EXECUTE_FAILED};
     try {
@@ -25,6 +31,7 @@ public class BatchJsonArrayInsertTest extends JdbcJsonInsertCase {
     assertEquals(3, BatchInsertJsonArray.accumulate(rc2));
   }
 
+  @Test
   public void testService() throws Exception {
     createDatabase();
     BatchInsertJsonArray service = configureForTests(createService()).withRowsAffectedMetadataKey("rowsAffected");
@@ -35,6 +42,7 @@ public class BatchJsonArrayInsertTest extends JdbcJsonInsertCase {
     doAssert(3);
   }
 
+  @Test
   public void testService_NotArray() throws Exception {
     createDatabase();
     BatchInsertJsonArray service = configureForTests(createService());
@@ -47,6 +55,7 @@ public class BatchJsonArrayInsertTest extends JdbcJsonInsertCase {
     }
   }
 
+  @Test
   public void testService_InvalidColumns() throws Exception {
     createDatabase();
     BatchInsertJsonArray service = configureForTests(createService());
@@ -59,6 +68,7 @@ public class BatchJsonArrayInsertTest extends JdbcJsonInsertCase {
     }
   }
 
+  @Test
   public void testService_LowBatchWindow() throws Exception {
     createDatabase();
     BatchInsertJsonArray service = configureForTests(createService());

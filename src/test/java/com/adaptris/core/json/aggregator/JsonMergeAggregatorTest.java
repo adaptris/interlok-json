@@ -1,16 +1,33 @@
 package com.adaptris.core.json.aggregator;
 
-import com.adaptris.core.*;
-import com.adaptris.core.services.LogMessageService;
-import com.adaptris.core.services.splitter.SplitJoinService;
-import com.adaptris.core.services.splitter.json.JsonArraySplitter;
-import com.jayway.jsonpath.*;
-import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.CoreException;
+import com.adaptris.core.NullService;
+import com.adaptris.core.Service;
+import com.adaptris.core.ServiceCase;
+import com.adaptris.core.ServiceCollection;
+import com.adaptris.core.ServiceList;
+import com.adaptris.core.services.LogMessageService;
+import com.adaptris.core.services.splitter.SplitJoinService;
+import com.adaptris.core.services.splitter.json.JsonArraySplitter;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.ReadContext;
+import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 public class JsonMergeAggregatorTest extends ServiceCase {
   protected static final String PARENT_CONTENT   = "{ \"document_type\":\"master\", \"id\":\"101011\", \"creation_date\":\"2017-01-03\" }";
@@ -18,15 +35,17 @@ public class JsonMergeAggregatorTest extends ServiceCase {
   protected static final String OBJECT_CONTENT_2 = "{ \"firstname\":\"bob\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }";
   protected static final String OBJECT_CONTENT_3 = "{ \"firstname\":\"carol\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }";
 
-  public JsonMergeAggregatorTest() { super("Json Merge Aggregator Test"); }
-
   private Configuration jsonConfig;
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+
+  @Before
+  public void setUp() throws Exception {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
-            .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+        .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
   }
 
   @Override
@@ -40,6 +59,7 @@ public class JsonMergeAggregatorTest extends ServiceCase {
     return service;
   }
 
+  @Test
   public void testAggregate() throws Exception {
     String mergeMetadataKey = "mergeKey";
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage(PARENT_CONTENT);
@@ -60,6 +80,7 @@ public class JsonMergeAggregatorTest extends ServiceCase {
     assertEquals("carol", context.read("$.mergeAttr3.firstname"));
   }
 
+  @Test
   public void testInvalidParentJson() throws Exception {
     boolean exceptionThrown = false;
     String mergeMetadataKey = "mergeKey";
@@ -81,6 +102,7 @@ public class JsonMergeAggregatorTest extends ServiceCase {
     }
   }
 
+  @Test
   public void testSimpleParentJson() throws Exception {
     boolean exceptionThrown = false;
     String mergeMetadataKey = "mergeKey";
@@ -102,6 +124,7 @@ public class JsonMergeAggregatorTest extends ServiceCase {
     assertEquals("43", original.getContent());
   }
 
+  @Test
   public void testInvalidChildJson() throws Exception {
     boolean exceptionThrown = false;
     String mergeMetadataKey = "mergeKey";
@@ -132,6 +155,7 @@ public class JsonMergeAggregatorTest extends ServiceCase {
     }
   }
 
+  @Test
   public void testMergeIntoParentArray() throws Exception {
     boolean exceptionThrown = false;
     String mergeMetadataKey = "mergeKey";
