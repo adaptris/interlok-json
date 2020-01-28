@@ -4,13 +4,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import com.adaptris.core.ServiceException;
 
-public class JsonArrayTransformationDriverTest extends DefaultTransformDriverTest {
-
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
+public class JsonArrayTransformationDriverTest extends JsonlibTransformDriverTest {
 
   @Override
   @Test

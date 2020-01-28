@@ -12,7 +12,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
-public class SafeJsonTransformationDriverTest extends DefaultTransformDriverTest {
+public class SafeJsonTransformationDriverTest extends JsonlibTransformDriverTest {
 
   private static final String FORMATTED_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"+
       "<o>\r\n" + 
@@ -28,11 +28,6 @@ public class SafeJsonTransformationDriverTest extends DefaultTransformDriverTest
       "    </animals>\r\n" + 
       "</o>";
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Override
   @Test
   public void testXmlToJson() throws Exception {
@@ -53,7 +48,7 @@ public class SafeJsonTransformationDriverTest extends DefaultTransformDriverTest
 
   @Test
   public void testFormattedXML_ToJson_NotSafe() throws Exception {
-    DefaultJsonTransformationDriver driver = new DefaultJsonTransformationDriver();
+    JsonlibTransformationDriver driver = new JsonlibTransformationDriver();
     String s = driver.transform(FORMATTED_XML, TransformationDirection.XML_TO_JSON);
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();

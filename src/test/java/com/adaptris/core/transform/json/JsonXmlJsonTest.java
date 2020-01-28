@@ -2,14 +2,10 @@ package com.adaptris.core.transform.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.EnumSet;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -70,11 +66,13 @@ public class JsonXmlJsonTest {
     JsonXmlTransformService toXml = new JsonXmlTransformService(TransformationDirection.JSON_TO_XML);
     JsonXmlTransformService toJson = new JsonXmlTransformService(TransformationDirection.XML_TO_JSON);
     ServiceCase.execute(toXml, msg);
+    System.err.println(msg.getContent());
     ServiceCase.execute(toJson, msg);
+    System.err.println(msg.getContent());
     ReadContext context = JsonPath.parse(msg.getInputStream(), jsonConfig);
     assertNotNull(context.read("$.object.secondary.values"));
-    assertNull(context.read("$.object.primary.value"));
-    assertNull(context.read("$.object.watermark"));
+    assertEquals("", context.read("$.object.primary.value"));
+    assertEquals("", context.read("$.object.watermark"));
     JsonTransformService transform = new JsonTransformService(
         new ConstantDataInputParameter("[{\"operation\": \"com.adaptris.core.transform.json.jolt.NullToEmptyString\"}]"));
     ServiceCase.execute(transform, msg);
