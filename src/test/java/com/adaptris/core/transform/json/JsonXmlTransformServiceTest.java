@@ -66,8 +66,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   @Test
   public void testTransformToXml() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
-    final JsonXmlTransformService svc = new JsonXmlTransformService();
-    svc.setDirection(TransformationDirection.JSON_TO_XML);
+    final JsonXmlTransformService svc = new JsonXmlTransformService().withDriver(new JsonlibTransformationDriver()).withDirection(TransformationDirection.JSON_TO_XML);
     execute(svc, msg);
     assertEquals(DEFAULT_XML_OUTPUT, msg.getContent());
     execute(svc, AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT));
@@ -76,8 +75,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   @Test
   public void testTransformToXml_StripIllegalXmlElement() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(BAD_JSON_INPUT);
-    final JsonXmlTransformService svc = new JsonXmlTransformService();
-    svc.setDirection(TransformationDirection.JSON_TO_XML);
+    final JsonXmlTransformService svc = new JsonXmlTransformService().withDriver(new JsonlibTransformationDriver()).withDirection(TransformationDirection.JSON_TO_XML);
     execute(svc, msg);
     System.err.println(msg.getContent());
   }
@@ -85,9 +83,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   @Test
   public void testTransformToXml_ArrayNotObject() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(ARRAY_JSON_INPUT);
-    final JsonXmlTransformService svc = new JsonXmlTransformService();
-    svc.setDriver(new JsonObjectTransformationDriver());
-    svc.setDirection(TransformationDirection.JSON_TO_XML);
+    final JsonXmlTransformService svc = new JsonXmlTransformService().withDriver(new JsonObjectTransformationDriver()).withDirection(TransformationDirection.JSON_TO_XML);
     try {
       // Shouldn't parse because JsonArray input isn't valid.
       execute(svc, msg);
@@ -102,9 +98,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   @Test
   public void testTransformToXml_ObjectNotArray() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
-    final JsonXmlTransformService svc = new JsonXmlTransformService();
-    svc.setDriver(new JsonArrayTransformationDriver());
-    svc.setDirection(TransformationDirection.JSON_TO_XML);
+    final JsonXmlTransformService svc = new JsonXmlTransformService().withDriver(new JsonArrayTransformationDriver()).withDirection(TransformationDirection.JSON_TO_XML);
     try {
       execute(svc, msg);
       fail();
@@ -119,7 +113,7 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   public void testTransformToJson() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(DEFAULT_XML_INPUT);
 
-    final JsonXmlTransformService svc = new JsonXmlTransformService();
+    final JsonXmlTransformService svc = new JsonXmlTransformService().withDriver(new JsonlibTransformationDriver());
     svc.setDirection(TransformationDirection.XML_TO_JSON);
     execute(svc, msg);
     assertEquals(JSON_OUTPUT, msg.getContent());

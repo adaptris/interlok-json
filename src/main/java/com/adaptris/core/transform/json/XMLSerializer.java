@@ -15,7 +15,6 @@ package com.adaptris.core.transform.json;
 
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,14 +29,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.util.XmlHelper;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -74,7 +70,7 @@ class XMLSerializer {
 
   private static final String[] EMPTY_ARRAY = new String[0];
   private static final String JSON_PREFIX = "json_";
-  private static final Logger log = LoggerFactory.getLogger(DefaultJsonTransformationDriver.class);
+  private static final Logger log = LoggerFactory.getLogger(JsonlibTransformationDriver.class);
 
   /** the name for an JSONArray Element */
   private String arrayName;
@@ -960,9 +956,9 @@ class XMLSerializer {
           Object item = array.get(j);
           element = newElement(name);
           if (item instanceof JSONObject) {
-            element = processJSONValue((JSONObject) item, root, element, expandableProperties);
+            element = processJSONValue(item, root, element, expandableProperties);
           } else if (item instanceof JSONArray) {
-            element = processJSONValue((JSONArray) item, root, element, expandableProperties);
+            element = processJSONValue(item, root, element, expandableProperties);
           } else {
             element = processJSONValue(item, root, element, expandableProperties);
           }
@@ -1355,6 +1351,7 @@ class XMLSerializer {
       super(out, encoding);
     }
 
+    @Override
     protected void write(Text text) throws IOException {
       String value = text.getValue();
       if (value.startsWith("<![CDATA[") && value.endsWith("]]>")) {
@@ -1368,6 +1365,7 @@ class XMLSerializer {
       }
     }
 
+    @Override
     protected void writeEmptyElementTag(Element element) throws IOException {
       if (element instanceof CustomElement && isNamespaceLenient()) {
         writeTagBeginning((CustomElement) element);
@@ -1377,6 +1375,7 @@ class XMLSerializer {
       }
     }
 
+    @Override
     protected void writeEndTag(Element element) throws IOException {
       if (element instanceof CustomElement && isNamespaceLenient()) {
         writeRaw("</");
@@ -1387,12 +1386,14 @@ class XMLSerializer {
       }
     }
 
+    @Override
     protected void writeNamespaceDeclaration(String prefix, String uri) throws IOException {
       if (!StringUtils.isBlank(uri)) {
         super.writeNamespaceDeclaration(prefix, uri);
       }
     }
 
+    @Override
     protected void writeStartTag(Element element) throws IOException {
       if (element instanceof CustomElement && isNamespaceLenient()) {
         writeTagBeginning((CustomElement) element);
