@@ -19,6 +19,7 @@ import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.json.JsonPathExecution;
+import com.adaptris.util.text.NullToEmptyStringConverter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -39,6 +40,10 @@ public class JsonPathServiceTest extends ServiceCase {
   private static final String SAYINGS_OF_THE_CENTURY = "Sayings of the Century";
   private static final String SWORD_OF_HONOUR = "Sword of Honour";
   private static final String STORE_BOOK_1_TITLE = "$.store.book[1].title";
+
+  private static final String JSON_WITH_NULL =
+      "{\r\n" + "    \"LastModifiedDate\": \"2017-11-23T15:15:31.000+0000\",\r\n" + "    \"WhatId\": null,\r\n"
+          + "    \"Description\": \"wanted more info on ebusiness and agility including analytical models\"\r\n" + "}";
 
   private static Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
       .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
@@ -169,7 +174,8 @@ public class JsonPathServiceTest extends ServiceCase {
 
     ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
 
-    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
+    JsonPathExecution execution =
+        new JsonPathExecution(constantDataDestination, targetMetadataDestination).withSuppressPathNotFound(true);
 
     AdaptrisMessage message = createMessage();
     JsonPathService jsonPathService = new JsonPathService(new StringPayloadDataInputParameter(),
@@ -177,7 +183,6 @@ public class JsonPathServiceTest extends ServiceCase {
         {
             execution
         }));
-    execution.setSuppressPathNotFound(true);
     execute(jsonPathService, message);
 
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
@@ -400,6 +405,60 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals("Herman Melville", context.read("$[0].author"));
     assertEquals("J. R. R. Tolkien", context.read("$[1].author"));
   }
+
+
+  @Test
+  public void testNullToEmptyString_JsonExecution() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
+
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.WhatId");
+
+    JsonPathExecution execution =
+        new JsonPathExecution(constantDataDestination, targetMetadataDestination)
+            .withNullConverter(new NullToEmptyStringConverter());
+
+    AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(JSON_WITH_NULL);
+    JsonPathService jsonPathService =
+        new JsonPathService(new StringPayloadDataInputParameter(), execution);
+    execute(jsonPathService, message);
+    assertEquals("", message.getMetadataValue(JSON_RESULT_KEY));
+  }
+
+  @Test
+  public void testNullToEmptyString_JsonExecution_DefaultBehaviour() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
+
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.WhatId");
+
+    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
+
+    AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(JSON_WITH_NULL);
+    JsonPathService jsonPathService = new JsonPathService(new StringPayloadDataInputParameter(), execution);
+    execute(jsonPathService, message);
+    assertEquals("null", message.getMetadataValue(JSON_RESULT_KEY));
+  }
+
+
+  @Test
+  public void testNullToEmptyString_Execution() throws Exception {
+    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
+
+    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter("$.WhatId");
+
+    Execution execution =
+        new Execution(constantDataDestination, targetMetadataDestination);
+
+    AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(JSON_WITH_NULL);
+    JsonPathService jsonPathService =
+        new JsonPathService(new StringPayloadDataInputParameter(), execution);
+    try {
+      execute(jsonPathService, message);
+      fail();
+    } catch (ServiceException expected) {
+
+    }
+  }
+
 
   @Override
   protected Object retrieveObjectForSampleConfig() {

@@ -1,6 +1,7 @@
 package com.adaptris.core.services.path.json;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -170,6 +171,10 @@ public class JsonPathService extends ServiceImp {
     super();
   }
 
+  public JsonPathService(DataInputParameter<String> source, Execution... executions) {
+    this(source, new ArrayList<>(Arrays.asList(executions)));
+  }
+
   public JsonPathService(DataInputParameter<String> source, List<Execution> executions) {
     this();
     setSource(source);
@@ -202,7 +207,7 @@ public class JsonPathService extends ServiceImp {
 
       final String jsonPath = source.extract(msg);
       Object node = context.read(jsonPath);
-      final String jsonString = unwrap(toString(node), unwrapJson());
+      final String jsonString = unwrap(toString(node, execution), unwrapJson());
       target.insert(jsonString, msg);
     } catch (PathNotFoundException e) {
       if (!suppressPathNotFound(execution)) {
@@ -211,8 +216,9 @@ public class JsonPathService extends ServiceImp {
     }
   }
 
-  protected static String toString(Object jsonObject) throws Exception {
+  protected static String toString(Object json, Execution exec) throws Exception {
     ObjectMapper mapper = new ObjectMapper();
+    Object jsonObject = convertIfNull(json, exec);
     // A JSON Object is effectively a map, so we need to write that out as JSON.
     // If it's a JSONArray, then "toString" works fine.
     if (Map.class.isAssignableFrom(jsonObject.getClass())) {
@@ -341,6 +347,13 @@ public class JsonPathService extends ServiceImp {
       return ((JsonPathExecution) exec).suppressPathNotFound();
     }
     return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);
+  }
+
+  private static Object convertIfNull(Object o, Execution exec) {
+    if (exec instanceof JsonPathExecution) {
+      return ((JsonPathExecution) exec).nullConverter().convert(o);
+    }
+    return o;
   }
 
 }
