@@ -12,8 +12,8 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.9-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.9-SNAPSHOT'
+  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.10-SNAPSHOT'
+  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.10-SNAPSHOT'
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -27,11 +27,11 @@ ext {
   componentName='Interlok/JSON'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.29'
-  jacksonVersion = "2.10.1"
-  jacksonDatabindVersion = "2.10.1"
-  log4j2Version = "2.12.1"
-  mockitoVersion = '3.2.0'
+  slf4jVersion = '1.7.30'
+  jacksonVersion = "2.10.2"
+  jacksonDatabindVersion = "2.10.2"
+  log4j2Version = "2.13.0"
+  mockitoVersion = '3.2.4'
 }
 
 ext.testResourcesDir = { ->
@@ -129,7 +129,7 @@ dependencies {
   compile ("net.sf.json-lib:json-lib:2.4:jdk15") {
     exclude group: 'xerces', module: 'xercesImpl'
   }
-  compile ("xom:xom:1.3.2") {
+  compile ("xom:xom:1.3.4") {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xerces', module: 'xercesImpl'
   }
@@ -146,7 +146,7 @@ dependencies {
   compile ("xerces:xercesImpl:2.12.0")
 
   compile ("com.github.everit-org.json-schema:org.everit.json.schema:1.12.0")
-  compile ("com.google.guava:guava:28.1-jre")
+  compile ("com.google.guava:guava:28.2-jre")
   compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.9")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
@@ -155,7 +155,7 @@ dependencies {
   offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
   offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
 
-  testCompile ('junit:junit:4.12')
+  testCompile ('junit:junit:4.13')
   testCompile ("org.skyscreamer:jsonassert:1.5.0")
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.derby:derby:10.14.2.0")

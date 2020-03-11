@@ -1,9 +1,11 @@
 package com.adaptris.core.services.routing.json;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import org.junit.Test;
 import com.adaptris.core.BranchingServiceCollection;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.services.LogMessageService;
@@ -18,37 +20,47 @@ public class JsonPathSyntaxIdentifierTest extends ServiceCase {
   private static final String JSON_PATH_VALID_1 = "$.store.book[0].title";
   private static final String JSON_PATH_VALID_2 = "$..book[?(@.price<10)]";
 
-  public JsonPathSyntaxIdentifierTest(String name) {
-    super(name);
+  public JsonPathSyntaxIdentifierTest() {
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
   }
 
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  
+  @Test
   public void testIsThisSyntax_Matches() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
     identifier.addPattern(JSON_PATH_VALID_1);
     assertTrue("JSONPath matches", identifier.isThisSyntax(sampleJsonContent()));
   }
 
+  @Test
   public void testIsThisSyntax_Matches_Expression() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
     identifier.addPattern(JSON_PATH_VALID_2);
     assertTrue("JSONPath matches", identifier.isThisSyntax(sampleJsonContent()));
   }
 
+  @Test
   public void testIsThisSyntax_NoMatches() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
     identifier.addPattern("$.store.book[25].title");
     assertFalse("JSONPath no matches", identifier.isThisSyntax(sampleJsonContent()));
   }
 
+  @Test
   public void testIsThisSyntax_FunctionNoMatch() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
     identifier.addPattern("$.store.book[?(@.price < 5)]");
     assertFalse("JSONPath no matches", identifier.isThisSyntax(sampleJsonContent()));
   }
 
+  @Test
   public void testIsThisSyntax_ImplicitAND() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
     identifier.addPattern(JSON_PATH_VALID_1);
@@ -57,6 +69,7 @@ public class JsonPathSyntaxIdentifierTest extends ServiceCase {
     assertFalse("JSONPath no matches", identifier.isThisSyntax(sampleJsonContent()));
   }
 
+  @Test
   public void testIsThisSyntax_NotJson() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();
     identifier.addPattern(JSON_PATH_VALID_1);

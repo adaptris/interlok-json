@@ -14,9 +14,12 @@
  * limitations under the License.
  *******************************************************************************/
 package com.adaptris.core.json.jsonpatch;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -33,6 +36,11 @@ public class ApplyPatchTest extends ServiceCase {
   private static final String PATCH_TRANSFORM =
       "[{\"op\":\"move\",\"from\":\"/a\",\"path\":\"/b/2\"}]";
 
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  @Test
   public void testFlags() throws Exception {
     ApplyPatchService service = new ApplyPatchService();
     assertNotNull(service.getFlags());
@@ -45,6 +53,7 @@ public class ApplyPatchTest extends ServiceCase {
     assertTrue(service.flags().contains(CompatibilityFlags.MISSING_VALUES_AS_NULLS));
   }
 
+  @Test
   public void testService() throws Exception {
     MetadataInputStreamWrapper patchSource = new MetadataInputStreamWrapper("patchSource");
     ApplyPatchService service = new ApplyPatchService().withPatchSource(patchSource)
@@ -56,6 +65,7 @@ public class ApplyPatchTest extends ServiceCase {
     JSONAssert.assertEquals(TARGET, msg.getContent(), false);
   }
 
+  @Test
   public void testService_BrokenSource() throws Exception {
     BrokenWrapper patchSource = new BrokenWrapper();
     ApplyPatchService service = new ApplyPatchService().withPatchSource(patchSource)

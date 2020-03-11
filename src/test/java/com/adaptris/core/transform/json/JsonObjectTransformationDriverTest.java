@@ -1,14 +1,14 @@
 package com.adaptris.core.transform.json;
 
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.ServiceException;
 
-public class JsonObjectTransformationDriverTest extends DefaultTransformDriverTest {
+public class JsonObjectTransformationDriverTest extends JsonlibTransformDriverTest {
 
-  public JsonObjectTransformationDriverTest(String name) {
-    super(name);
-  }
 
   @Override
+  @Test
   public void testJsonArrayToXml() throws Exception {
     JsonObjectTransformationDriver driver = createDriver();
     try {

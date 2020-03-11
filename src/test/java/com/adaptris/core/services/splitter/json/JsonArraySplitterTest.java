@@ -1,7 +1,9 @@
 package com.adaptris.core.services.splitter.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import java.util.List;
-
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -10,28 +12,34 @@ import com.adaptris.core.transform.json.JsonXmlJsonTest;
 public class JsonArraySplitterTest extends SplitterServiceExample {
 
   private static final String SIMPLE_ARRAY = "[ \"file1\", \"file2\" , \"file3\" , \"file4\"]";
-  public JsonArraySplitterTest(String name) {
-    super(name);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
+  @Test
   public void testSplitArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     assertEquals(4, s.splitMessage(src).size());
   }
 
+  @Test
   public void testSplitArray_SimpleStringArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(SIMPLE_ARRAY);
     assertEquals(4, s.splitMessage(src).size());
   }
 
+  @Test
   public void testSplitNotArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
     assertEquals(1, s.splitMessage(src).size());
   }
 
+  @Test
   public void testSplitNotJson() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello World");

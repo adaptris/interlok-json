@@ -1,5 +1,8 @@
 package com.adaptris.core.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceCase;
@@ -20,10 +23,11 @@ public class JsonToMetadataTest extends ServiceCase {
   private static String NESTED_OBJECT = "\"suggested\": " + JSON_START + NESTED_CONTENT + JSON_END;
   private static String SAMPLE_JSON = JSON_START + SAMPLE_JSON_CONTENT + "," + NESTED_OBJECT + JSON_END;
 
-  public JsonToMetadataTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
+  @Test
   public void testSetNullConverter() throws Exception {
     JsonToMetadata service = new JsonToMetadata();
     assertNull(service.getNullConverter());
@@ -33,6 +37,7 @@ public class JsonToMetadataTest extends ServiceCase {
     assertNull(service.getNullConverter());
   }
 
+  @Test
   public void testMetadataPrefix() throws Exception {
     JsonToMetadata service = new JsonToMetadata();
     assertNull(service.getMetadataPrefix());
@@ -42,6 +47,7 @@ public class JsonToMetadataTest extends ServiceCase {
     assertEquals("_", service.metadataPrefix());
   }
 
+  @Test
   public void testService() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SAMPLE_JSON);
     JsonToMetadata service = new JsonToMetadata();
@@ -53,6 +59,7 @@ public class JsonToMetadataTest extends ServiceCase {
     assertEquals(JSON_START + NESTED_CONTENT + JSON_END, msg.getMetadataValue("suggested"));
   }
 
+  @Test
   public void testService_NotJson() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello World");
     msg.clearMetadata();
@@ -61,6 +68,7 @@ public class JsonToMetadataTest extends ServiceCase {
     assertEquals(0, msg.getMessageHeaders().size());
   }
 
+  @Test
   public void testService_JsonArray() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage("[" + SAMPLE_JSON + "]");
     msg.clearMetadata();

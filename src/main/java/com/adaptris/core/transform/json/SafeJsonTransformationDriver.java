@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.util.DocumentBuilderFactoryBuilder;
 import com.adaptris.core.util.ExceptionHelper;
@@ -39,7 +40,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("json-safe-transformation-driver")
 @ComponentProfile(summary = "JSON/XML Transformation driver that strips spaces before rendering as JSON", since = "3.6.4",
     tag = "json,xml,transformation")
-public class SafeJsonTransformationDriver extends DefaultJsonTransformationDriver {
+@DisplayOrder(order= {"rootName", "arrayName", "elementName", "objectName"})
+public class SafeJsonTransformationDriver extends JsonlibTransformationDriver {
   private transient DocumentBuilder builder = null;
   private transient Transformer transformer = null;
 

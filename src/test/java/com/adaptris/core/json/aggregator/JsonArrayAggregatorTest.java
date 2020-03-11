@@ -1,14 +1,24 @@
 package com.adaptris.core.json.aggregator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-
-import com.adaptris.core.*;
-import com.adaptris.core.services.conditional.conditions.ConditionImpl;
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.CoreException;
+import com.adaptris.core.NullService;
+import com.adaptris.core.Service;
+import com.adaptris.core.ServiceCase;
+import com.adaptris.core.ServiceCollection;
+import com.adaptris.core.ServiceList;
 import com.adaptris.core.services.LogMessageService;
+import com.adaptris.core.services.conditional.conditions.ConditionImpl;
 import com.adaptris.core.services.splitter.SplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
 import com.jayway.jsonpath.Configuration;
@@ -18,8 +28,6 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
-import static com.adaptris.core.services.aggregator.ZipAggregator.DEFAULT_FILENAME_METADATA;
-
 public class JsonArrayAggregatorTest extends ServiceCase {
 
   protected static final String OBJECT_CONTENT_1 = "{ \"firstname\":\"alice\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }";
@@ -28,17 +36,18 @@ public class JsonArrayAggregatorTest extends ServiceCase {
 
   private Configuration jsonConfig;
 
-  public JsonArrayAggregatorTest(String name) {
-    super(name);
-  }
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  @Before
+  public void setUp() throws Exception {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
   }
 
+  @Test
   public void testAggregate() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
     List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
@@ -53,6 +62,7 @@ public class JsonArrayAggregatorTest extends ServiceCase {
     assertEquals("carol", context.read("$[2].firstname"));
   }
 
+  @Test
   public void testAggregate_WithFilter() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
     List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
@@ -67,6 +77,7 @@ public class JsonArrayAggregatorTest extends ServiceCase {
     assertEquals("carol", context.read("$[1].firstname"));
   }
 
+  @Test
   public void testAggregator_JsonArray() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
     List<AdaptrisMessage> msgs = create("[" + OBJECT_CONTENT_1 + "]", "[" + OBJECT_CONTENT_2 + "]", "[" + OBJECT_CONTENT_3 + "]");
@@ -76,6 +87,7 @@ public class JsonArrayAggregatorTest extends ServiceCase {
     assertEquals("[]", StringUtils.deleteWhitespace(original.getContent()));
   }
 
+  @Test
   public void testAggregator_NotJson() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
     List<AdaptrisMessage> msgs = create("not", "valid", "json");
@@ -118,6 +130,7 @@ public class JsonArrayAggregatorTest extends ServiceCase {
         return false;
       return true;
     }
+    @Override
     public void close() {
       throw new RuntimeException();
     }

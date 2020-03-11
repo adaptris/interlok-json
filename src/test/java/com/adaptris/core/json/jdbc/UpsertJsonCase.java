@@ -1,9 +1,10 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import com.adaptris.core.util.JdbcUtil;
 
 public abstract class UpsertJsonCase extends JdbcJsonInsertCase {
@@ -13,10 +14,6 @@ public abstract class UpsertJsonCase extends JdbcJsonInsertCase {
   protected static final String ID_ELEMENT_VALUE = "firstname";
   protected static final String CAROL = "carol";
   protected static final String DOB = "2017-01-03";
-
-  public UpsertJsonCase(String arg0) {
-    super(arg0);
-  }
 
 
   protected static void populateDatabase() throws Exception {

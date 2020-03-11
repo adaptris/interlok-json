@@ -3,7 +3,6 @@ package com.adaptris.core.services.jdbc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import com.adaptris.core.Service;
 import com.adaptris.core.ServiceCase;
 import com.adaptris.core.jdbc.DatabaseConnection;
@@ -34,13 +33,18 @@ public class JdbcOutputExampleTest extends ServiceCase {
 
     public abstract ResultSetTranslator build();
   }
-  public JdbcOutputExampleTest(String name) {
-    super(name);
+  public JdbcOutputExampleTest() {
     if (PROPERTIES.getProperty(BASE_DIR_KEY) != null) {
       setBaseDir(PROPERTIES.getProperty(BASE_DIR_KEY));
     }
   }
 
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
+  }
+  
   @Override
   protected Object retrieveObjectForSampleConfig() {
     return null;

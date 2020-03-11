@@ -1,5 +1,12 @@
 package com.adaptris.core.json.aggregator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import java.io.File;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.Service;
@@ -9,23 +16,20 @@ import com.adaptris.core.services.conditional.conditions.ConditionMetadata;
 import com.adaptris.core.services.conditional.operator.Equals;
 import com.adaptris.core.services.splitter.SplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-
-import java.io.File;
 
 public class JsonArrayAggregatorFilterTest extends ServiceCase {
 
   private static final String AGX_GROWERS_LIST_URL = "/growers-sync16.json";
 
 
-  public JsonArrayAggregatorFilterTest() { super("Json Array Aggregator Filter Test"); }
+  public JsonArrayAggregatorFilterTest() { }
+
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
+  
   @Override
   protected Object retrieveObjectForSampleConfig() {
     SplitJoinService service = new SplitJoinService();
@@ -44,6 +48,7 @@ public class JsonArrayAggregatorFilterTest extends ServiceCase {
     return service;
   }
 
+  @Test
   public void testListFilteringWithBooleanMetadata() throws Exception {
     // Read in json as Text
     final String fileContents = IOUtils.toString(
@@ -71,6 +76,7 @@ public class JsonArrayAggregatorFilterTest extends ServiceCase {
     assertEquals(146, initialJsonArray.length());
   }
 
+  @Test
   public void testListFilteringWithNullCondition() throws Exception {
     File file = new File(AGX_GROWERS_LIST_URL);
     final String fileContents = IOUtils.toString(
@@ -97,6 +103,7 @@ public class JsonArrayAggregatorFilterTest extends ServiceCase {
     assertEquals(146, initialJsonArray.length());
   }
 
+  @Test
   public void testRetainFilterExceptionsMessages() throws Exception {
     final JsonArrayAggregator jsonArrayAggregator = new JsonArrayAggregator();
     // Test default

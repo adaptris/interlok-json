@@ -1,6 +1,6 @@
 package com.adaptris.core.transform.json;
 
-import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import java.util.List;
 

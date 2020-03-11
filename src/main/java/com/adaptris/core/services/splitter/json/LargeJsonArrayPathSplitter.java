@@ -2,7 +2,7 @@ package com.adaptris.core.services.splitter.json;
 
 import java.io.BufferedReader;
 import javax.validation.constraints.NotBlank;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;

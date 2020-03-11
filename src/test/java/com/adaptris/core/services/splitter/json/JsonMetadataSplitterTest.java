@@ -1,5 +1,8 @@
 package com.adaptris.core.services.splitter.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -7,13 +10,16 @@ import com.adaptris.core.transform.json.JsonXmlJsonTest;
 import com.adaptris.core.util.CloseableIterable;
 
 public class JsonMetadataSplitterTest extends SplitterServiceExample {
-  public JsonMetadataSplitterTest(final String name) {
-    super(name);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
   public static final String PAYLOAD = "[\n" + "{\"colour\": \"red\"},\n" + "{\"colour\": \"green\"},\n"
       + "{\"colour\": \"blue\"},\n" + "{\"colour\": \"black\"}\n" + "]";
 
+  @Test
   public void testSplitArray() throws Exception {
     final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD);
 
@@ -35,6 +41,7 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitArrayWithMetadata() throws Exception {
     final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD);
     message.addMetadata("a", "b");
@@ -60,6 +67,7 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitEmptyArray() throws Exception {
     final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage("[]");
 
@@ -70,6 +78,7 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample {
     }
   }
 
+  @Test
   public void testSplitNotJson() {
     try {
       final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage("hello world");

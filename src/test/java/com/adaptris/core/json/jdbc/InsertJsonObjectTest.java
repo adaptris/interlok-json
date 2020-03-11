@@ -1,5 +1,10 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -8,10 +13,11 @@ import com.adaptris.util.text.NullPassThroughConverter;
 public class InsertJsonObjectTest extends JdbcJsonInsertCase {
 
 
-  public InsertJsonObjectTest(String arg0) {
-    super(arg0);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
+  @Test
   public void testSetNullConverter() throws Exception {
     InsertJsonObject service = createService();
     assertNull(service.getNullConverter());
@@ -21,6 +27,7 @@ public class InsertJsonObjectTest extends JdbcJsonInsertCase {
     assertNull(service.getNullConverter());
   }
 
+  @Test
   public void testService() throws Exception {
     createDatabase();
     InsertJsonObject service = configureForTests(createService()).withRowsAffectedMetadataKey("rowsAffected");
@@ -31,6 +38,7 @@ public class InsertJsonObjectTest extends JdbcJsonInsertCase {
     doAssert(1);
   }
 
+  @Test
   public void testService_Array() throws Exception {
     createDatabase();
     InsertJsonObject service = configureForTests(createService());

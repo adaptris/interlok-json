@@ -1,5 +1,10 @@
 package com.adaptris.core.json.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -7,8 +12,10 @@ import com.adaptris.util.text.NullPassThroughConverter;
 
 public class UpsertJsonObjectTest extends UpsertJsonCase {
 
-  public UpsertJsonObjectTest(String arg0) {
-    super(arg0);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
   @Override
@@ -22,6 +29,7 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
     return new UpsertJsonObject();
   }
 
+  @Test
   public void testSetNullConverter() throws Exception {
     UpsertJsonObject service = createService();
     assertNull(service.getNullConverter());
@@ -32,6 +40,7 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
   }
 
 
+  @Test
   public void testService_Insert() throws Exception {
     createDatabase();
     UpsertJsonObject service = configureForTests(createService());
@@ -41,6 +50,7 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
     doAssert(1);
   }
 
+  @Test
   public void testService_Update() throws Exception {
     createDatabase();
     populateDatabase();
@@ -56,6 +66,7 @@ public class UpsertJsonObjectTest extends UpsertJsonCase {
 
 
 
+  @Test
   public void testService_Array() throws Exception {
     createDatabase();
     UpsertJsonObject service = configureForTests(createService());

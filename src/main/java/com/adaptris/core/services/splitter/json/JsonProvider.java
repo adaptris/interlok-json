@@ -15,6 +15,12 @@ import com.adaptris.core.util.CloseableIterable;
 public interface JsonProvider {
 
   enum JsonStyle implements JsonObjectProvider {
+    /**
+     * A standard JSON array.
+     * <p>
+     * Under the covers it uses {@link LargeJsonArraySplitter} to iterate over the array.
+     * </p>
+     */
     JSON_ARRAY {
       @Override
       public CloseableIterable<AdaptrisMessage> createIterator(AdaptrisMessage t) throws Exception {
@@ -23,7 +29,27 @@ public interface JsonProvider {
         return splitter.splitMessage(t);
       }
     },
-
+    /**
+     * A standard JSON object.
+     * <p>
+     * Under the covers it uses {@link JsonObjectSplitter} to iterate over the object according to the same semantics as that
+     * implementation.
+     * </p>
+     */
+    JSON_OBJECT {
+      @Override
+      public CloseableIterable<AdaptrisMessage> createIterator(AdaptrisMessage t) throws Exception {
+        JsonObjectSplitter splitter = new JsonObjectSplitter();
+        splitter.setMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
+        return CloseableIterable.ensureCloseable(splitter.splitMessage(t));
+      }
+    },
+    /**
+     * <a href="http://jsonlines.org/">JSON Lines</a>
+     * <p>
+     * Under the covers it uses a {@link LineCountSplitter} to iterate over each line, ignoring blank lines.
+     * </p>
+     */    
     // JSON_LINES is basically a line count splitter, where a JSON object is prsent on each line...
     // see jsonlines.org
     JSON_LINES {

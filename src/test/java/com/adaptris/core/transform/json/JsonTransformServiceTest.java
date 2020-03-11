@@ -1,5 +1,8 @@
 package com.adaptris.core.transform.json;
 
+import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ConfiguredDestination;
 import com.adaptris.core.DefaultMessageFactory;
@@ -23,10 +26,12 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   
   private AdaptrisMessage message;
 
-  public JsonTransformServiceTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
+  
+  @Before
   public void setUp() throws Exception {
     service = new JsonTransformService();
     payloadInput = new StringPayloadDataInputParameter();
@@ -36,10 +41,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     message = DefaultMessageFactory.getDefaultInstance().newMessage();
   }
   
-  public void tearDown() throws Exception {
-    
-  }
-  
+  @Test
   public void testSimpleTransform_MetadataInputMapping() throws Exception {
     service.setSourceJson(payloadInput);
     service.setMappingSpec(metadataInput);
@@ -53,6 +55,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     assertEquals(sampleOutput, message.getContent());
   }
   
+  @Test
   public void testSimpleTransform_ConstantInputMapping() throws Exception {
     service.setSourceJson(payloadInput);
     service.setMappingSpec(constantInput);
@@ -66,6 +69,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     assertEquals(sampleOutput, message.getContent());
   }
 
+  @Test
   public void testSimpleTransformWithVarSubButNoMetadatMatches() throws Exception {
     service.setSourceJson(payloadInput);
     service.setMappingSpec(metadataInput);
@@ -82,6 +86,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
     assertEquals(sampleOutput, message.getContent());
   }
   
+  @Test
   public void testSimpleTransformWithVarSub() throws Exception {
     service.setSourceJson(payloadInput);
     service.setMappingSpec(metadataInput);

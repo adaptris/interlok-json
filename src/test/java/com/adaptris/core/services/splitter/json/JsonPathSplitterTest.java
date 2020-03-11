@@ -1,5 +1,8 @@
 package com.adaptris.core.services.splitter.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.common.ConstantDataInputParameter;
@@ -7,10 +10,13 @@ import com.adaptris.core.common.StringPayloadDataInputParameter;
 
 public class JsonPathSplitterTest extends SplitterServiceExample {
 
-  public JsonPathSplitterTest(String name) {
-    super(name);
+
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
   
+  @Test
   public void testSplitArray() throws Exception {
     JsonPathSplitter splitter = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(sampleJsonContent());
@@ -25,6 +31,7 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
     assertEquals(sampleJsonContent(), src.getContent());
   }
 
+  @Test
   public void testSplitArray_Strings() throws Exception {
     JsonPathSplitter splitter = createSplitter();
     splitter.setJsonPath(new ConstantDataInputParameter("$.files"));
