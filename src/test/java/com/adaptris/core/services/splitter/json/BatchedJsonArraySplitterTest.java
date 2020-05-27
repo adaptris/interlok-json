@@ -9,7 +9,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.DefaultMessageFactory;
-import com.adaptris.core.util.CloseableIterable;
+import com.adaptris.interlok.util.CloseableIterable;
 
 public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
 
@@ -48,7 +48,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     BatchedJsonArraySplitter s = createSplitterForTests().withBatchSize(2);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       for (AdaptrisMessage m : i) {
         count++;
         System.err.println(m.getContent());
@@ -62,7 +62,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     BatchedJsonArraySplitter s = createSplitterForTests().withBatchSize(2);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("[]");
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       for (AdaptrisMessage m : i) {
         count++;
       }
@@ -75,7 +75,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     BatchedJsonArraySplitter s = createSplitterForTests().withBatchSize(4);
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       for (AdaptrisMessage m : i) {
         count++;
       }
@@ -88,7 +88,7 @@ public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
     BatchedJsonArraySplitter s = createSplitterForTests();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       for (AdaptrisMessage m : i) {
         count++;
       }
