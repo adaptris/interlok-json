@@ -7,7 +7,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.transform.json.JsonXmlJsonTest;
-import com.adaptris.core.util.CloseableIterable;
+import com.adaptris.interlok.util.CloseableIterable;
 
 public class JsonMetadataSplitterTest extends SplitterServiceExample {
 
@@ -23,7 +23,7 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample {
   public void testSplitArray() throws Exception {
     final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(PAYLOAD);
 
-    try (final CloseableIterable<AdaptrisMessage> i = createSplitter().splitMessage(message)) {
+    try (final CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(createSplitter().splitMessage(message))) {
       int count = 0;
       for (final AdaptrisMessage m : i) {
         switch (m.getMetadataValue("colour")) {
@@ -47,7 +47,7 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample {
     message.addMetadata("a", "b");
     message.addMetadata("b", "c");
 
-    try (final CloseableIterable<AdaptrisMessage> i = createSplitter().splitMessage(message)) {
+    try (final CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(createSplitter().splitMessage(message))) {
       int count = 0;
       for (final AdaptrisMessage m : i) {
         assertEquals("b", m.getMetadataValue("a"));
@@ -71,7 +71,7 @@ public class JsonMetadataSplitterTest extends SplitterServiceExample {
   public void testSplitEmptyArray() throws Exception {
     final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage("[]");
 
-    try (final CloseableIterable<AdaptrisMessage> i = createSplitter().splitMessage(message)) {
+    try (final CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(createSplitter().splitMessage(message))) {
       for (final AdaptrisMessage m : i) {
         fail("Was not expecting any split messages; received : " + m);
       }

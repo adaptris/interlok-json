@@ -26,7 +26,7 @@ public interface JsonProvider {
       public CloseableIterable<AdaptrisMessage> createIterator(AdaptrisMessage t) throws Exception {
         LargeJsonArraySplitter splitter =
             new LargeJsonArraySplitter().withMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
-        return splitter.splitMessage(t);
+        return CloseableIterable.ensureCloseable(splitter.splitMessage(t));
       }
     },
     /**
@@ -58,7 +58,7 @@ public interface JsonProvider {
         LineCountSplitter splitter = new LineCountSplitter(1);
         splitter.setIgnoreBlankLines(true);
         splitter.setMessageFactory(AdaptrisMessageFactory.getDefaultInstance());
-        return splitter.splitMessage(t);
+        return CloseableIterable.ensureCloseable(splitter.splitMessage(t));
       }
     }
   }

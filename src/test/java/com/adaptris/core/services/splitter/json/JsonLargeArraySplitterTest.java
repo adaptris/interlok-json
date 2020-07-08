@@ -8,7 +8,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.DefaultMessageFactory;
-import com.adaptris.core.util.CloseableIterable;
+import com.adaptris.interlok.util.CloseableIterable;
 
 public class JsonLargeArraySplitterTest extends SplitterServiceExample {
 
@@ -37,7 +37,7 @@ public class JsonLargeArraySplitterTest extends SplitterServiceExample {
     LargeJsonArraySplitter s = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       for (AdaptrisMessage m : i) {
         count++;
       }
@@ -50,7 +50,7 @@ public class JsonLargeArraySplitterTest extends SplitterServiceExample {
     LargeJsonArraySplitter s = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonObjectSplitterTest.JSON_ARRAY);
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       i.iterator().remove();
       fail();
     } catch (UnsupportedOperationException expected) {
@@ -63,7 +63,7 @@ public class JsonLargeArraySplitterTest extends SplitterServiceExample {
     LargeJsonArraySplitter s = createSplitter();
     AdaptrisMessage src = AdaptrisMessageFactory.getDefaultInstance().newMessage("[]");
     int count = 0;
-    try (CloseableIterable<AdaptrisMessage> i = s.splitMessage(src)) {
+    try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(s.splitMessage(src))) {
       for (AdaptrisMessage m : i) {
         count++;
       }
