@@ -10,6 +10,7 @@ plugins {
   id 'nebula.optional-base' version '5.0.3'
   id 'com.github.spotbugs' version '4.4.4'
   id 'org.owasp.dependencycheck' version '5.3.2.1'
+  id "io.freefair.lombok" version "5.1.0"
 }
 
 ext {
@@ -22,6 +23,7 @@ ext {
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
   defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
   interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
@@ -93,6 +95,7 @@ sourceCompatibility = 1.8
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
+generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
@@ -101,7 +104,6 @@ repositories {
   maven { url "$nexusBaseUrl/content/groups/interlok" }
   maven { url 'https://jitpack.io' }
 }
-
 
 configurations {
   javadoc {}
@@ -154,6 +156,11 @@ dependencies {
   compile ("com.google.guava:guava:29.0-jre")
   compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.11")
 
+  compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+  runtime 'io.jsonwebtoken:jjwt-impl:0.11.2'
+  runtime 'org.bouncycastle:bcprov-jdk15on:1.60'
+  runtime 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
@@ -174,9 +181,7 @@ dependencies {
   testCompile ("org.mockito:mockito-inline:$mockitoVersion")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
-
 }
-
 
 jar {
   manifest {
@@ -188,7 +193,6 @@ jar {
                "Implementation-Vendor": organizationName)
   }
 }
-
 
 sourceSets {
   main {
@@ -223,8 +227,6 @@ task offlinePackageList(type: Copy) {
   include "package-list"
   into offlineJavadocPackageDir
 }
-
-
 
 javadoc {
   onlyIf {
@@ -265,13 +267,12 @@ task buildUnitTestProperties(type: Copy) {
 
 task deleteGeneratedFiles(type: Delete) {
   delete file(testResourcesDir() + "/unit-tests.properties")
+  delete delombokTargetDir
 }
-
 
 task deleteDerbyLog(type: Delete) {
   delete 'derby.log'
 }
-
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
@@ -285,7 +286,6 @@ task examplesJar(type: Jar, dependsOn: test) {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from sourceSets.main.allSource
 }
 
 task umlJavadoc(type: Javadoc) {
@@ -295,7 +295,7 @@ task umlJavadoc(type: Javadoc) {
   onlyIf {
     hasGraphViz()
   }
-  source = sourceSets.main.allJava
+  source = sourceSets.main.extensions.delombokTask
   classpath = project.sourceSets.main.compileClasspath
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
@@ -325,7 +325,6 @@ task umlJavadoc(type: Javadoc) {
     title= componentName
   }
 }
-
 
 artifacts {
   archives javadocJar
@@ -363,6 +362,19 @@ publishing {
       url mavenPublishUrl
     }
   }
+}
+
+delombok {
+  target = delombokTargetDir
+}
+
+task lgtmCompile(type: JavaCompile, dependsOn: delombok) {
+  group 'Build'
+  description 'Compile for lgtm'
+
+  source = sourceSets.main.extensions.delombokTask
+  destinationDir = sourceSets.main.java.outputDir
+  classpath = project.sourceSets.main.compileClasspath
 }
 
 spotbugsMain {
