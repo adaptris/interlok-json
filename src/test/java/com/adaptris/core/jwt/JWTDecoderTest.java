@@ -1,15 +1,12 @@
 package com.adaptris.core.jwt;
 
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import org.json.JSONObject;
 import org.junit.Test;
-
-import java.nio.charset.Charset;
 
 import static org.junit.Assert.fail;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;

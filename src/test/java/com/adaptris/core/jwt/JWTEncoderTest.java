@@ -1,7 +1,6 @@
 package com.adaptris.core.jwt;
 
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.MetadataDataInputParameter;
@@ -11,8 +10,6 @@ import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
