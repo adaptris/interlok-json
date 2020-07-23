@@ -55,84 +55,84 @@ import java.util.Map;
 @DisplayOrder(order = { "jwtString", "secret", "header", "claims" })
 public class JWTDecoder extends ServiceImp
 {
-	private static transient Logger log = LoggerFactory.getLogger(JWTDecoder.class);
+  private static transient Logger log = LoggerFactory.getLogger(JWTDecoder.class);
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataInputParameter<String> jwtString;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataInputParameter<String> jwtString;
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataInputParameter<String> secret;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataInputParameter<String> secret;
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataOutputParameter<String> header;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataOutputParameter<String> header;
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataOutputParameter<String> claims;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataOutputParameter<String> claims;
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	public void doService(AdaptrisMessage message) throws ServiceException
-	{
-		try
-		{
-			String key = secret.extract(message);
-			String jwt = jwtString.extract(message);
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public void doService(AdaptrisMessage message) throws ServiceException
+  {
+    try
+    {
+      String key = secret.extract(message);
+      String jwt = jwtString.extract(message);
 
-			Key k = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
+      Key k = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
 
-			Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(k).build().parseClaimsJws(jwt);
+      Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(k).build().parseClaimsJws(jwt);
 
-			JSONObject head = new JSONObject(jws.getHeader());
-			header.insert(head.toString(), message);
+      JSONObject head = new JSONObject(jws.getHeader());
+      header.insert(head.toString(), message);
 
-			JSONObject body = new JSONObject(jws.getBody());
-			claims.insert(body.toString(), message);
-		}
-		catch (Exception e)
-		{
-			log.error("An error occurred during JWT decoding", e);
-			throw new ServiceException(e);
-		}
-	}
+      JSONObject body = new JSONObject(jws.getBody());
+      claims.insert(body.toString(), message);
+    }
+    catch (Exception e)
+    {
+      log.error("An error occurred during JWT decoding", e);
+      throw new ServiceException(e);
+    }
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	protected void initService()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  protected void initService()
+  {
+    /* unused */
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	protected void closeService()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  protected void closeService()
+  {
+    /* unused */
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	public void prepare()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public void prepare()
+  {
+    /* unused */
+  }
 }

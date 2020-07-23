@@ -17,51 +17,51 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 public class JWTDecoderTest extends JWTCommonTest
 {
 
-	@Test
-	public void testDecode() throws Exception
-	{
-		JWTDecoder service = (JWTDecoder)retrieveObjectForSampleConfig();
-		AdaptrisMessage message = message();
+  @Test
+  public void testDecode() throws Exception
+  {
+    JWTDecoder service = (JWTDecoder)retrieveObjectForSampleConfig();
+    AdaptrisMessage message = message();
 
-		service.doService(message);
+    service.doService(message);
 
-		assertEquals(HEADER, new JSONObject(message.getMetadataValue("header")), false);
-		assertEquals(CLAIMS, new JSONObject(message.getContent()), false);
-	}
+    assertEquals(HEADER, new JSONObject(message.getMetadataValue("header")), false);
+    assertEquals(CLAIMS, new JSONObject(message.getContent()), false);
+  }
 
-	@Test
-	public void testInvalidKey()
-	{
-		try
-		{
-			JWTDecoder service = (JWTDecoder)retrieveObjectForSampleConfig();
-			service.setSecret(new ConstantDataInputParameter("invalid key"));
-			AdaptrisMessage message = message();
+  @Test
+  public void testInvalidKey()
+  {
+    try
+    {
+      JWTDecoder service = (JWTDecoder)retrieveObjectForSampleConfig();
+      service.setSecret(new ConstantDataInputParameter("invalid key"));
+      AdaptrisMessage message = message();
 
-			service.doService(message);
+      service.doService(message);
 
-			fail();
-		}
-		catch (ServiceException e)
-		{
-			// expected
-		}
-	}
+      fail();
+    }
+    catch (ServiceException e)
+    {
+      // expected
+    }
+  }
 
-	@Override
-	protected Object retrieveObjectForSampleConfig()
-	{
-		JWTDecoder decoder = new JWTDecoder();
-		decoder.setJwtString(new ConstantDataInputParameter(JWT));
-		decoder.setSecret(new ConstantDataInputParameter(KEY));
-		decoder.setHeader(new MetadataDataOutputParameter("header"));
-		decoder.setClaims(new StringPayloadDataOutputParameter());
-		return decoder;
-	}
+  @Override
+  protected Object retrieveObjectForSampleConfig()
+  {
+    JWTDecoder decoder = new JWTDecoder();
+    decoder.setJwtString(new ConstantDataInputParameter(JWT));
+    decoder.setSecret(new ConstantDataInputParameter(KEY));
+    decoder.setHeader(new MetadataDataOutputParameter("header"));
+    decoder.setClaims(new StringPayloadDataOutputParameter());
+    return decoder;
+  }
 
-	@Override
-	public boolean isAnnotatedForJunit4()
-	{
-		return true;
-	}
+  @Override
+  public boolean isAnnotatedForJunit4()
+  {
+    return true;
+  }
 }

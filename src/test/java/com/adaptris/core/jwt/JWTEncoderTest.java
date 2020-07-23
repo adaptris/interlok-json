@@ -19,74 +19,74 @@ import static org.junit.Assert.fail;
 
 public class JWTEncoderTest extends JWTCommonTest
 {
-	@Test
-	public void testEncode() throws Exception
-	{
-		JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
-		AdaptrisMessage message = message();
+  @Test
+  public void testEncode() throws Exception
+  {
+    JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
+    AdaptrisMessage message = message();
 
-		service.doService(message);
+    service.doService(message);
 
-		assertEquals(JWT, message.getContent());
-	}
+    assertEquals(JWT, message.getContent());
+  }
 
-	@Test
-	public void testRandomKey() throws Exception
-	{
-		JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
-		AdaptrisMessage message = message();
+  @Test
+  public void testRandomKey() throws Exception
+  {
+    JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
+    AdaptrisMessage message = message();
 
-		service.setGenerateKey(true);
-		service.setKeyOutput(new MetadataDataOutputParameter("key"));
+    service.setGenerateKey(true);
+    service.setKeyOutput(new MetadataDataOutputParameter("key"));
 
-		service.doService(message);
+    service.doService(message);
 
-		JWTDecoder decoder = new JWTDecoder();
-		decoder.setJwtString(new StringPayloadDataInputParameter());
-		decoder.setSecret(new MetadataDataInputParameter("key"));
-		decoder.setHeader(new MetadataDataOutputParameter("header"));
-		decoder.setClaims(new StringPayloadDataOutputParameter());
+    JWTDecoder decoder = new JWTDecoder();
+    decoder.setJwtString(new StringPayloadDataInputParameter());
+    decoder.setSecret(new MetadataDataInputParameter("key"));
+    decoder.setHeader(new MetadataDataOutputParameter("header"));
+    decoder.setClaims(new StringPayloadDataOutputParameter());
 
-		decoder.doService(message);
+    decoder.doService(message);
 
-		JSONAssert.assertEquals(HEADER, new JSONObject(message.getMetadataValue("header")), false);
-		JSONAssert.assertEquals(CLAIMS, new JSONObject(message.getContent()), false);
-	}
+    JSONAssert.assertEquals(HEADER, new JSONObject(message.getMetadataValue("header")), false);
+    JSONAssert.assertEquals(CLAIMS, new JSONObject(message.getContent()), false);
+  }
 
-	@Test
-	public void testNoKeyOutput()
-	{
-		try
-		{
-			JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
-			AdaptrisMessage message = message();
+  @Test
+  public void testNoKeyOutput()
+  {
+    try
+    {
+      JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
+      AdaptrisMessage message = message();
 
-			service.setGenerateKey(true);
+      service.setGenerateKey(true);
 
-			service.doService(message);
+      service.doService(message);
 
-			fail();
-		}
-		catch (ServiceException e)
-		{
-			// expected
-		}
-	}
+      fail();
+    }
+    catch (ServiceException e)
+    {
+      // expected
+    }
+  }
 
-	@Override
-	protected Object retrieveObjectForSampleConfig()
-	{
-		JWTEncoder encoder = new JWTEncoder();
-		encoder.setSecret(new ConstantDataInputParameter(KEY));
-		encoder.setHeader(new ConstantDataInputParameter(HEADER.toString()));
-		encoder.setClaims(new ConstantDataInputParameter(CLAIMS.toString()));
-		encoder.setJwtOutput(new StringPayloadDataOutputParameter());
-		return encoder;
-	}
+  @Override
+  protected Object retrieveObjectForSampleConfig()
+  {
+    JWTEncoder encoder = new JWTEncoder();
+    encoder.setSecret(new ConstantDataInputParameter(KEY));
+    encoder.setHeader(new ConstantDataInputParameter(HEADER.toString()));
+    encoder.setClaims(new ConstantDataInputParameter(CLAIMS.toString()));
+    encoder.setJwtOutput(new StringPayloadDataOutputParameter());
+    return encoder;
+  }
 
-	@Override
-	public boolean isAnnotatedForJunit4()
-	{
-		return true;
-	}
+  @Override
+  public boolean isAnnotatedForJunit4()
+  {
+    return true;
+  }
 }

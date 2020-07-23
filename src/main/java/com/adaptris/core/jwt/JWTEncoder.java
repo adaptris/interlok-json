@@ -59,113 +59,113 @@ import java.util.Map;
 @DisplayOrder(order = { "header", "claims", "secret", "generateKey", "keyOutput", "jwtOutput" })
 public class JWTEncoder extends ServiceImp
 {
-	private static transient Logger log = LoggerFactory.getLogger(JWTEncoder.class);
+  private static transient Logger log = LoggerFactory.getLogger(JWTEncoder.class);
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataInputParameter<String> header;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataInputParameter<String> header;
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataInputParameter<String> claims;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataInputParameter<String> claims;
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataInputParameter<String> secret;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataInputParameter<String> secret;
 
-	@Valid
-	@AdvancedConfig
-	@InputFieldDefault(value = "false")
-	@Getter
-	@Setter
-	private Boolean generateKey;
+  @Valid
+  @AdvancedConfig
+  @InputFieldDefault(value = "false")
+  @Getter
+  @Setter
+  private Boolean generateKey;
 
-	@Valid
-	@AdvancedConfig
-	@Getter
-	@Setter
-	private DataOutputParameter<String> keyOutput;
+  @Valid
+  @AdvancedConfig
+  @Getter
+  @Setter
+  private DataOutputParameter<String> keyOutput;
 
-	@NotNull
-	@Valid
-	@Getter
-	@Setter
-	private DataOutputParameter<String> jwtOutput;
+  @NotNull
+  @Valid
+  @Getter
+  @Setter
+  private DataOutputParameter<String> jwtOutput;
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	public void doService(AdaptrisMessage message) throws ServiceException
-	{
-		try
-		{
-			// might as well ensure we've got valid JSON
-			JSONObject head = new JSONObject(header.extract(message));
-			JSONObject body = new JSONObject(claims.extract(message));
-			String key = secret.extract(message);
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public void doService(AdaptrisMessage message) throws ServiceException
+  {
+    try
+    {
+      // might as well ensure we've got valid JSON
+      JSONObject head = new JSONObject(header.extract(message));
+      JSONObject body = new JSONObject(claims.extract(message));
+      String key = secret.extract(message);
 
-			Key k;
-			if (generateKey())
-			{
-				k = Keys.secretKeyFor(SignatureAlgorithm.forName(head.getString(JwsHeader.ALGORITHM)));
-				if (keyOutput == null)
-				{
-					throw new InvalidParameterException("Key Output cannot be NULL");
-				}
-				keyOutput.insert(Encoders.BASE64.encode(k.getEncoded()), message);
-			}
-			else
-			{
-				k = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
-			}
+      Key k;
+      if (generateKey())
+      {
+        k = Keys.secretKeyFor(SignatureAlgorithm.forName(head.getString(JwsHeader.ALGORITHM)));
+        if (keyOutput == null)
+        {
+          throw new InvalidParameterException("Key Output cannot be NULL");
+        }
+        keyOutput.insert(Encoders.BASE64.encode(k.getEncoded()), message);
+      }
+      else
+      {
+        k = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
+      }
 
-			String jwt = Jwts.builder().setClaims(body.toMap()).setHeader(head.toMap()).signWith(k).compact();
+      String jwt = Jwts.builder().setClaims(body.toMap()).setHeader(head.toMap()).signWith(k).compact();
 
-			jwtOutput.insert(jwt, message);
-		}
-		catch (Exception e)
-		{
-			log.error("An error occurred during JWT encoding", e);
-			throw new ServiceException(e);
-		}
-	}
+      jwtOutput.insert(jwt, message);
+    }
+    catch (Exception e)
+    {
+      log.error("An error occurred during JWT encoding", e);
+      throw new ServiceException(e);
+    }
+  }
 
-	private boolean generateKey()
-	{
-		return BooleanUtils.toBooleanDefaultIfNull(generateKey, false);
-	}
+  private boolean generateKey()
+  {
+    return BooleanUtils.toBooleanDefaultIfNull(generateKey, false);
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	protected void initService()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  protected void initService()
+  {
+    /* unused */
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	protected void closeService()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  protected void closeService()
+  {
+    /* unused */
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	public void prepare()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public void prepare()
+  {
+    /* unused */
+  }
 }
