@@ -55,10 +55,4 @@ public class JWTDecoderTest extends JWTCommonTest
     decoder.setClaims(new StringPayloadDataOutputParameter());
     return decoder;
   }
-
-  @Override
-  public boolean isAnnotatedForJunit4()
-  {
-    return true;
-  }
 }

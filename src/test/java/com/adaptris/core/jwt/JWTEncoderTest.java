@@ -24,7 +24,8 @@ public class JWTEncoderTest extends JWTCommonTest
 
     service.doService(message);
 
-    assertEquals(JWT, message.getContent());
+    String s = message.getContent();
+    assertEquals(JWT, s);
   }
 
   @Test
@@ -79,11 +80,5 @@ public class JWTEncoderTest extends JWTCommonTest
     encoder.setClaims(new ConstantDataInputParameter(CLAIMS.toString()));
     encoder.setJwtOutput(new StringPayloadDataOutputParameter());
     return encoder;
-  }
-
-  @Override
-  public boolean isAnnotatedForJunit4()
-  {
-    return true;
   }
 }
