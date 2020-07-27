@@ -29,121 +29,121 @@ import java.util.UUID;
 @DisplayOrder(order = { "id", "issuer", "subject", "audience", "issuedAt", "expiration", "notBefore", "secret", "customClaims" })
 public class JWTCreator extends ServiceImp
 {
-	@Getter
-	@Setter
-	@Valid
-	@AdvancedConfig(rare = true)
-	private String id;
+  @Getter
+  @Setter
+  @Valid
+  @AdvancedConfig(rare = true)
+  private String id;
 
-	@Getter
-	@Setter
-	@NotNull
-	@Valid
-	@InputFieldHint(expression=true)
-	private String issuer;
+  @Getter
+  @Setter
+  @NotNull
+  @Valid
+  @InputFieldHint(expression=true)
+  private String issuer;
 
-	@Getter
-	@Setter
-	@NotNull
-	@Valid
-	@InputFieldHint(expression=true)
-	private String subject;
+  @Getter
+  @Setter
+  @NotNull
+  @Valid
+  @InputFieldHint(expression=true)
+  private String subject;
 
-	@Getter
-	@Setter
-	@NotNull
-	@Valid
-	@InputFieldHint(expression=true)
-	private String audience;
+  @Getter
+  @Setter
+  @NotNull
+  @Valid
+  @InputFieldHint(expression=true)
+  private String audience;
 
-	@Getter
-	@Setter
-	@Valid
-	@AdvancedConfig(rare = true)
-	private Date issuedAt;
+  @Getter
+  @Setter
+  @Valid
+  @AdvancedConfig(rare = true)
+  private Date issuedAt;
 
-	@Getter
-	@Setter
-	@NotNull
-	@Valid
-	private Date expiration;
+  @Getter
+  @Setter
+  @NotNull
+  @Valid
+  private Date expiration;
 
-	@Getter
-	@Setter
-	@NotNull
-	@Valid
-	private Date notBefore;
+  @Getter
+  @Setter
+  @NotNull
+  @Valid
+  private Date notBefore;
 
-	@Getter
-	@Setter
-	@NotNull
-	@Valid
-	@InputFieldHint(expression=true)
-	private String secret;
+  @Getter
+  @Setter
+  @NotNull
+  @Valid
+  @InputFieldHint(expression=true)
+  private String secret;
 
-	@Getter
-	@Setter
-	@Valid
-	@AdvancedConfig
-	private KeyValuePairSet customClaims;
+  @Getter
+  @Setter
+  @Valid
+  @AdvancedConfig
+  private KeyValuePairSet customClaims;
 
-	/**
-	 * <p>
-	 * Apply the service to the message.
-	 * </p>
-	 *
-	 * @param message the <code>AdaptrisMessage</code> to process
-	 * @throws ServiceException wrapping any underlying <code>Exception</code>s
-	 */
-	@Override
-	public void doService(AdaptrisMessage message)
-	{
-		JwtBuilder builder = Jwts.builder()
-				.setSubject(message.resolve(subject))
-				.setAudience(message.resolve(audience))
-				.setNotBefore(notBefore)
-				.setIssuer(message.resolve(issuer))
-				.setExpiration(expiration)
-				.setIssuedAt(issuedAt != null ? issuedAt : new Date())
-				.setId(id != null ? id : UUID.randomUUID().toString())
+  /**
+   * <p>
+   * Apply the service to the message.
+   * </p>
+   *
+   * @param message the <code>AdaptrisMessage</code> to process
+   * @throws ServiceException wrapping any underlying <code>Exception</code>s
+   */
+  @Override
+  public void doService(AdaptrisMessage message)
+  {
+    JwtBuilder builder = Jwts.builder()
+        .setSubject(message.resolve(subject))
+        .setAudience(message.resolve(audience))
+        .setNotBefore(notBefore)
+        .setIssuer(message.resolve(issuer))
+        .setExpiration(expiration)
+        .setIssuedAt(issuedAt != null ? issuedAt : new Date())
+        .setId(id != null ? id : UUID.randomUUID().toString())
 
-				.signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(message.resolve(secret))));
+        .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(message.resolve(secret))));
 
-		if (customClaims != null)
-		{
-			for (KeyValuePair claim : customClaims)
-			{
-				builder.claim(claim.getKey(), claim.getValue());
-			}
-		}
+    if (customClaims != null)
+    {
+      for (KeyValuePair claim : customClaims)
+      {
+        builder.claim(claim.getKey(), claim.getValue());
+      }
+    }
 
-		message.setContent(builder.compact(), message.getContentEncoding());
-	}
+    message.setContent(builder.compact(), message.getContentEncoding());
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	protected void initService()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  protected void initService()
+  {
+    /* unused */
+  }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	protected void closeService()
-	{
-		/* unused */
-	}
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  protected void closeService()
+  {
+    /* unused */
+  }
 
-	/**
-	 * Prepare for initialisation.
-	 */
-	@Override
-	public void prepare()
-	{
-		/* unused */
-	}
+  /**
+   * Prepare for initialisation.
+   */
+  @Override
+  public void prepare()
+  {
+    /* unused */
+  }
 }
