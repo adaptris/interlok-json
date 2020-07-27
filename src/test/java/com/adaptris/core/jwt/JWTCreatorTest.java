@@ -1,7 +1,6 @@
 package com.adaptris.core.jwt;
 
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
@@ -12,16 +11,11 @@ import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class JWTCreatorTest extends JWTCommonTest
 {
