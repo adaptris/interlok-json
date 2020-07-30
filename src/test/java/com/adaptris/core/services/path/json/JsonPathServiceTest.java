@@ -129,24 +129,6 @@ public class JsonPathServiceTest extends ServiceCase {
     assertEquals(SWORD_OF_HONOUR, message.getMetadataValue(JSON_RESULT_KEY));
   }
 
-  @SuppressWarnings("deprecation")
-  @Test
-  public void testPathNotFound_Suppress_Execution() throws Exception {
-    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
-
-    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
-
-    Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
-
-    AdaptrisMessage message = createMessage();
-    JsonPathService jsonPathService =
-        new JsonPathService(new StringPayloadDataInputParameter(), Arrays.asList(new Execution[] {execution}));
-    jsonPathService.setSuppressPathNotFound(true);
-    execute(jsonPathService, message);
-
-    assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
-  }
-
   @Test
   public void testPathNotFound_NoSuppress_Execution() throws Exception {
     MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
@@ -188,26 +170,6 @@ public class JsonPathServiceTest extends ServiceCase {
     assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
   }
 
-  @SuppressWarnings("deprecation")
-  @Test
-  public void testPathNotFound_Suppress_OnService() throws Exception {
-    MetadataDataOutputParameter targetMetadataDestination = new MetadataDataOutputParameter(JSON_RESULT_KEY);
-
-    ConstantDataInputParameter constantDataDestination = new ConstantDataInputParameter(PATH_NOT_FOUND);
-
-    JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
-
-    AdaptrisMessage message = createMessage();
-    JsonPathService jsonPathService = new JsonPathService(new StringPayloadDataInputParameter(),
-        Arrays.asList(new JsonPathExecution[]
-        {
-            execution
-        }));
-    jsonPathService.setSuppressPathNotFound(true);
-    execute(jsonPathService, message);
-
-    assertFalse(message.headersContainsKey(JSON_RESULT_KEY));
-  }
 
   @Test
   public void testPathNotFound_NoSuppress() throws Exception {
