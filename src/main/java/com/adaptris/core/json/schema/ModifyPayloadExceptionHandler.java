@@ -61,7 +61,7 @@ public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImp
       }
       Map<String, Object> newMsg = new HashMap<>();
       newMsg.put("original", json);
-      newMsg.put("schema-violations", violations.toString());
+      newMsg.put("schema-violations", violations);
       try (Writer w = msg.getWriter()) {
         mapper.writeValue(w, newMsg);
       }
