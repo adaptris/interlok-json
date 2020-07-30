@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
     }
    }
  * </pre>
- * 
+ *
  * @config json-schema-validation-exception-into-message
  */
 @XStreamAlias("json-schema-validation-exception-into-message")
@@ -56,12 +56,12 @@ public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImp
       Object json = jsonify(msg.getContent());
       ArrayList<String> violations = new ArrayList<>();
       violations.add(exc.getMessage());
-      for (ValidationException ve : exc.getCausingExceptions()) {
-        violations.add(ve.getMessage());
+      for (String ve : exc.getAllMessages()) {
+        violations.add(ve);
       }
       Map<String, Object> newMsg = new HashMap<>();
       newMsg.put("original", json);
-      newMsg.put("schema-violations", violations);
+      newMsg.put("schema-violations", violations.toString());
       try (Writer w = msg.getWriter()) {
         mapper.writeValue(w, newMsg);
       }
@@ -80,7 +80,7 @@ public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImp
 
   /**
    * After adding the ValidationException to the payload throw an exception.
-   * 
+   *
    * @param b true to throw an exception; false otherwise (default false).
    */
   public void setThrowException(Boolean b) {
