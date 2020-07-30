@@ -10,6 +10,7 @@ plugins {
   id 'nebula.optional-base' version '5.0.3'
   id 'com.github.spotbugs' version '4.4.4'
   id 'org.owasp.dependencycheck' version '5.3.2.1'
+  id "io.freefair.lombok" version "5.1.0"
 }
 
 ext {
@@ -22,6 +23,7 @@ ext {
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
   defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
   interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
@@ -93,6 +95,7 @@ sourceCompatibility = 1.8
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
+generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
@@ -264,12 +267,7 @@ task buildUnitTestProperties(type: Copy) {
 }
 
 task deleteGeneratedFiles(type: Delete) {
-  delete file(testResourcesDir() + "/unit-tests.properties")
-}
-
-
-task deleteDerbyLog(type: Delete) {
-  delete 'derby.log'
+  delete file(testResourcesDir() + "/unit-tests.properties"), 'derby.log', delombokTargetDir
 }
 
 
@@ -285,7 +283,7 @@ task examplesJar(type: Jar, dependsOn: test) {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from sourceSets.main.allSource
+    from sourceSets.main.extensions.delombokTask
 }
 
 task umlJavadoc(type: Javadoc) {
@@ -295,7 +293,7 @@ task umlJavadoc(type: Javadoc) {
   onlyIf {
     hasGraphViz()
   }
-  source = sourceSets.main.allJava
+  source = sourceSets.main.extensions.delombokTask
   classpath = project.sourceSets.main.compileClasspath
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
@@ -326,6 +324,19 @@ task umlJavadoc(type: Javadoc) {
   }
 }
 
+
+delombok {
+  target = delombokTargetDir
+}
+
+task lgtmCompile(type: JavaCompile, dependsOn: delombok) {
+  group 'Build'
+  description 'Compile for lgtm'
+
+  source = sourceSets.main.extensions.delombokTask
+  destinationDir = sourceSets.main.java.outputDir
+  classpath = project.sourceSets.main.compileClasspath
+}
 
 artifacts {
   archives javadocJar
@@ -400,5 +411,5 @@ spotbugsTest.enabled = false
 
 javadoc.dependsOn offlinePackageList,umlJavadoc
 processTestResources.dependsOn buildUnitTestProperties
-clean.dependsOn deleteGeneratedFiles,deleteDerbyLog
+clean.dependsOn deleteGeneratedFiles
 check.dependsOn jacocoTestReport
