@@ -9,12 +9,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.BooleanUtils;
 import com.adaptris.annotation.AdapterComponent;
-import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
-import com.adaptris.annotation.Removal;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -22,7 +20,6 @@ import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.json.JsonPathExecution;
-import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
@@ -36,6 +33,10 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * This service allows you to search JSON content and the results are then set back into the message.
@@ -143,33 +144,48 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("json-path-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a JSON document", tag = "service,transform,json,metadata")
-@DisplayOrder(order = {"source", "executions", "unwrapJson", "suppressPathNotFound"})
+@DisplayOrder(order = {"source", "executions", "unwrapJson"})
+@NoArgsConstructor
 public class JsonPathService extends ServiceImp {
 
+  /**
+   * The source for executing the jsonpath against.
+   *
+   */
   @NotNull
   @AutoPopulated
+  @Getter
+  @Setter
+  @NonNull
   private DataInputParameter<String> source = new StringPayloadDataInputParameter();
 
+  /**
+   * The list of jsonpath executions to apply.
+   *
+   */
   @NotNull
   @Valid
   @AutoPopulated
   @XStreamImplicit
+  @Getter
+  @Setter
+  @NonNull
   private List<Execution> executions = new ArrayList<>();
-
-  @InputFieldDefault(value = "false")
-  @AdvancedConfig
-  @Deprecated
-  @Removal(version = "3.11.0")
-  private Boolean suppressPathNotFound;
 
   protected transient Configuration jsonConfig;
 
+  /**
+   * Get whether the JSON should be unwrapped removing any leading or trailing square brackets
+   * {@code []}.
+   * <p>
+   * The default is false if not specified.
+   * </p>
+   */
+  @Getter
+  @Setter
   @InputFieldDefault(value = "false")
   private Boolean unwrapJson;
 
-  public JsonPathService() {
-    super();
-  }
 
   public JsonPathService(DataInputParameter<String> source, Execution... executions) {
     this(source, new ArrayList<>(Arrays.asList(executions)));
@@ -258,95 +274,15 @@ public class JsonPathService extends ServiceImp {
     // nothing to do.
   }
 
-  /**
-   * Get the source.
-   *
-   * @return The source.
-   */
-  public DataInputParameter<String> getSource() {
-    return source;
-  }
-
-  /**
-   * Set the source.
-   *
-   * @param source
-   *        The source.
-   */
-  public void setSource(final DataInputParameter<String> source) {
-    this.source = Args.notNull(source, "source");
-  }
-
-  /**
-   * Get the list of execution.
-   *
-   * @return The list of executions.
-   */
-  public List<Execution> getExecutions() {
-    return executions;
-  }
-
-  /**
-   * Set the list of executions.
-   *
-   * @param executions
-   *        The list of executions.
-   */
-  public void setExecutions(final List<Execution> executions) {
-    this.executions = Args.notNull(executions, "executions");
-  }
-
-  /**
-   * Get whether the JSON should be unwrapped.
-   *
-   * @return Whether the JSON should be unwrapped.
-   */
-  public Boolean getUnwrapJson() {
-    return unwrapJson;
-  }
-
-  /**
-   * Set whether the JSON should be unwrapped.
-   *
-   * @param unwrapJson
-   *        Whether the JSON should be unwrapped; default is false.
-   */
-  public void setUnwrapJson(final Boolean unwrapJson) {
-    this.unwrapJson = unwrapJson;
-  }
-
   protected boolean unwrapJson() {
     return BooleanUtils.toBooleanDefaultIfNull(getUnwrapJson(), false);
   }
 
-  /**
-   * @return true or false.
-   * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#setSuppressPathNotFound(Boolean)}
-   *             instead.
-   */
-  @Deprecated
-  @Removal(version = "3.11.0")
-  public Boolean getSuppressPathNotFound() {
-    return suppressPathNotFound;
-  }
-
-  /**
-   * Suppress exceptions caused by {@code PathNotFoundException}.
-   *
-   * @param b to suppress exceptions arising from a json path not being found; default is null (false).
-   * @deprecated since 3.8.1; use a {@link JsonPathExecution} with {@link JsonPathExecution#getSuppressPathNotFound()} instead.
-   */
-  @Deprecated
-  @Removal(version = "3.11.0")
-  public void setSuppressPathNotFound(Boolean b) {
-    this.suppressPathNotFound = b;
-  }
-
   protected boolean suppressPathNotFound(Execution exec) {
-    if (exec instanceof JsonPathExecution && ((JsonPathExecution) exec).getSuppressPathNotFound() != null) {
+    if (exec instanceof JsonPathExecution) {
       return ((JsonPathExecution) exec).suppressPathNotFound();
     }
-    return BooleanUtils.toBooleanDefaultIfNull(getSuppressPathNotFound(), false);
+    return false;
   }
 
   private static Object convertIfNull(Object o, Execution exec) {
