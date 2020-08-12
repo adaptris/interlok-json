@@ -264,15 +264,15 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     execute(service, message);
   }
 
-  @Test(expected = ServiceException.class)
-  // Should throw a service exception even though we've said modify payload since it will be a parse
+  // Should throw a service exception even though we've said ignore since it will be a parse
   // error. If it parsed, it would become a validation exception.
+  @Test(expected = ServiceException.class)
   public void testJacksonDeserializer_Failure() throws Exception {
     AdaptrisMessage message =
         AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_STRICT);
     JsonSchemaService service = createService();
     service.setDeserializer(new JacksonJsonDeserializer());
-    service.setOnValidationException(new ModifyPayloadExceptionHandler());
+    service.setOnValidationException(new IgnoreValidationException());
     execute(service, message);
   }
 
