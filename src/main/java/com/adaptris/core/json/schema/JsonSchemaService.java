@@ -3,6 +3,7 @@ package com.adaptris.core.json.schema;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.ObjectUtils;
+import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONObject;
 import com.adaptris.annotation.AdapterComponent;
@@ -113,10 +114,8 @@ public class JsonSchemaService extends ServiceImp {
   @Override
   public void doService(final AdaptrisMessage message) throws ServiceException {
     try {
-      /* either validate a single JSON object or an array of JSON objects (or fail) */
-      JSONObject rawSchema = new JSONObject(schemaUrl.extract(message));
-      final JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator(getJsonSchemaLoader().loadSchema(rawSchema));
-      jsonSchemaValidator.validate(asJSON(message));
+      Schema schema = buildSchema(message);
+      schema.validate(asJSON(message));
     }
     catch (final ValidationException e) {
       getOnValidationException().handle(e, message);
@@ -124,6 +123,13 @@ public class JsonSchemaService extends ServiceImp {
     catch (Exception e) {
       throw ExceptionHelper.wrapServiceException(e);
     }
+  }
+
+  private Schema buildSchema(AdaptrisMessage msg) throws Exception {
+    String schemaString = getSchemaUrl().extract(msg);
+    // attempt to deserialize the string, to check if it's valid json.
+    deserializer().deserialize(schemaString);
+    return getJsonSchemaLoader().loadSchema(new JSONObject(schemaString));
   }
 
   private Object asJSON(AdaptrisMessage msg) throws Exception {
