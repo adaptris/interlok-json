@@ -31,6 +31,8 @@ public class BasicDeserializerTest extends DeserializerCase {
     assertEquals(JSONArray.class, s.deserialize(jsonArray).getClass());
   }
 
+  // Should coerce
+  @Test
   public void testInvalidArray() throws Exception {
     assertNotNull(s.deserialize(jsonArray));
     assertEquals(JSONArray.class, s.deserialize(jsonArray).getClass());
