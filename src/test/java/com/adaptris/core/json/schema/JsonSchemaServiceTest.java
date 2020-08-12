@@ -10,9 +10,9 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ConfiguredDestination;
-import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.FileDataInputParameter;
+import com.adaptris.core.json.JacksonJsonDeserializer;
 import com.adaptris.core.services.jdbc.BrokenAdaptrisMessage;
 import com.adaptris.core.transform.TransformServiceExample;
 import com.adaptris.core.util.LifecycleHelper;
@@ -40,12 +40,13 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   private static final String INVALID_JSON = "{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }";
   private static final String JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }]";
   private static final String INVALID_JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }]";
+  private static final String INVALID_JSON_STRICT = "{ \"rectangle\" : value }";
 
   @Override
   public boolean isAnnotatedForJunit4() {
     return true;
   }
-  
+
   @Test
   public void testInit() throws Exception {
     JsonSchemaService service = new JsonSchemaService();
@@ -55,7 +56,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
       LifecycleHelper.init(service);
       fail();
     }
-    catch (CoreException expected) {
+    catch (Exception expected) {
 
     }
   }
@@ -254,6 +255,27 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
     catch (ServiceException expected) {
     }
   }
+
+  @Test
+  public void testJacksonDeserializer_Success() throws Exception {
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(VALID_JSON);
+    JsonSchemaService service = createService();
+    service.setDeserializer(new JacksonJsonDeserializer());
+    execute(service, message);
+  }
+
+  @Test(expected = ServiceException.class)
+  // Should throw a service exception even though we've said modify payload since it will be a parse
+  // error. If it parsed, it would become a validation exception.
+  public void testJacksonDeserializer_Failure() throws Exception {
+    AdaptrisMessage message =
+        AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_STRICT);
+    JsonSchemaService service = createService();
+    service.setDeserializer(new JacksonJsonDeserializer());
+    service.setOnValidationException(new ModifyPayloadExceptionHandler());
+    execute(service, message);
+  }
+
 
   @Override
   protected Object retrieveObjectForSampleConfig() {
