@@ -1,11 +1,11 @@
 /*
  * Copyright 2002-2009 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -54,9 +54,10 @@ import nu.xom.Text;
 /**
  * This is a cut and paste job of {@link net.sf.json.xml.XMLSerializer} with a fix for element
  * names.
- * 
+ *
  * @author Andres Almiray <aalmiray@users.sourceforge.net>
  */
+@lombok.Generated
 class XMLSerializer {
   private static final String ILLEGAL_XML = "[^" + "\u0009\r\n" + "\u0020-\uD7FF" + "\uE000-\uFFFD" + "\ud800\udc00-\udbff\udfff"
       + "]";
@@ -137,7 +138,7 @@ class XMLSerializer {
 
   /**
    * Adds a namespace declaration to the root element.
-   * 
+   *
    * @param prefix namespace prefix
    * @param uri namespace uri
    */
@@ -149,7 +150,7 @@ class XMLSerializer {
    * Adds a namespace declaration to an element.<br>
    * If the elementName param is null or blank, the namespace declaration will be added to the root
    * element.
-   * 
+   *
    * @param prefix namespace prefix
    * @param uri namespace uri
    * @param elementName name of target element
@@ -185,7 +186,7 @@ class XMLSerializer {
    * Removes all namespace declarations from an element.<br>
    * If the elementName param is null or blank, the declarations will be removed from the root
    * element.
-   * 
+   *
    * @param elementName name of target element
    */
   public void clearNamespaces(String elementName) {
@@ -286,7 +287,7 @@ class XMLSerializer {
 
   /**
    * Creates a JSON value from a XML string.
-   * 
+   *
    * @param xml A well-formed xml document in a String
    * @return a JSONNull, JSONObject or JSONArray
    * @throws JSONException if the conversion from XML to JSON can't be made for I/O or format
@@ -324,7 +325,7 @@ class XMLSerializer {
 
   /**
    * Creates a JSON value from a File.
-   * 
+   *
    * @param file
    * @return a JSONNull, JSONObject or JSONArray
    * @throws JSONException if the conversion from XML to JSON can't be made for I/O or format
@@ -349,7 +350,7 @@ class XMLSerializer {
 
   /**
    * Creates a JSON value from a File.
-   * 
+   *
    * @param path
    * @return a JSONNull, JSONObject or JSONArray
    * @throws JSONException if the conversion from XML to JSON can't be made for I/O or format
@@ -361,7 +362,7 @@ class XMLSerializer {
 
   /**
    * Creates a JSON value from an input stream.
-   * 
+   *
    * @param stream
    * @return a JSONNull, JSONObject or JSONArray
    * @throws JSONException if the conversion from XML to JSON can't be made for I/O or format
@@ -383,7 +384,7 @@ class XMLSerializer {
 
   /**
    * Removes a namespace from the root element.
-   * 
+   *
    * @param prefix namespace prefix
    */
   public void removeNamespace(String prefix) {
@@ -393,7 +394,7 @@ class XMLSerializer {
   /**
    * Removes a namespace from the root element.<br>
    * If the elementName is null or blank, the namespace will be removed from the root element.
-   * 
+   *
    * @param prefix namespace prefix
    * @param elementName name of target element
    */
@@ -439,7 +440,7 @@ class XMLSerializer {
   /**
    * Sets the namespace declaration to the root element.<br>
    * Any previous values are discarded.
-   * 
+   *
    * @param prefix namespace prefix
    * @param uri namespace uri
    */
@@ -451,7 +452,7 @@ class XMLSerializer {
    * Adds a namespace declaration to an element.<br>
    * Any previous values are discarded. If the elementName param is null or blank, the namespace
    * declaration will be added to the root element.
-   * 
+   *
    * @param prefix namespace prefix
    * @param uri namespace uri
    * @param elementName name of target element
@@ -543,7 +544,7 @@ class XMLSerializer {
 
   /**
    * Writes a JSON value into a XML string with UTF-8 encoding.<br>
-   * 
+   *
    * @param json The JSON value to transform
    * @return a String representation of a well-formed xml document.
    * @throws JSONException if the conversion from JSON to XML can't be made for I/O reasons.
@@ -555,7 +556,7 @@ class XMLSerializer {
   /**
    * Writes a JSON value into a XML string with an specific encoding.<br>
    * If the encoding string is null it will use UTF-8.
-   * 
+   *
    * @param json The JSON value to transform
    * @param encoding The xml encoding to use
    * @return a String representation of a well-formed xml document.
@@ -1309,6 +1310,7 @@ class XMLSerializer {
     return name;
   }
 
+  @lombok.Generated
   private static class CustomElement extends Element {
     private static String getName(String name) {
       int colon = name.indexOf(':');
@@ -1342,6 +1344,7 @@ class XMLSerializer {
     }
   }
 
+  @lombok.Generated
   private class XomSerializer extends Serializer {
     public XomSerializer(OutputStream out) {
       super(out);
