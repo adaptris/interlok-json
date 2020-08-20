@@ -11,11 +11,6 @@ import com.adaptris.interlok.util.CloseableIterable;
 
 public class JsonMetadataSplitterTest extends SplitterServiceExample {
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
   public static final String PAYLOAD = "[\n" + "{\"colour\": \"red\"},\n" + "{\"colour\": \"green\"},\n"
       + "{\"colour\": \"blue\"},\n" + "{\"colour\": \"black\"}\n" + "]";
 

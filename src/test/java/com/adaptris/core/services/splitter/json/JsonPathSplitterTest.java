@@ -10,12 +10,6 @@ import com.adaptris.core.common.StringPayloadDataInputParameter;
 
 public class JsonPathSplitterTest extends SplitterServiceExample {
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-  
   @Test
   public void testSplitArray() throws Exception {
     JsonPathSplitter splitter = createSplitter();
@@ -54,7 +48,7 @@ public class JsonPathSplitterTest extends SplitterServiceExample {
     splitter.setMessageSplitter(new JsonArraySplitter());
     return splitter;
   }
-  
+
   private String sampleJsonContent() {
     return "{"
     + "\"store\": {"

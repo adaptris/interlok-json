@@ -14,11 +14,6 @@ public class UpsertJsonArrayTest extends UpsertJsonCase {
 
 
   @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
-  @Override
   protected UpsertJsonArray retrieveObjectForSampleConfig() {
     return (UpsertJsonArray) configureForExamples(createService().withId("id").withTable("myTable"));
   }

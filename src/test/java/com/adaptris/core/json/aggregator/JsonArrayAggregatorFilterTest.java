@@ -10,14 +10,14 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.Service;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.json.JsonToMetadata;
 import com.adaptris.core.services.conditional.conditions.ConditionMetadata;
 import com.adaptris.core.services.conditional.operator.Equals;
 import com.adaptris.core.services.splitter.SplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 
-public class JsonArrayAggregatorFilterTest extends ServiceCase {
+public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
 
   private static final String AGX_GROWERS_LIST_URL = "/growers-sync16.json";
 
@@ -25,11 +25,6 @@ public class JsonArrayAggregatorFilterTest extends ServiceCase {
   public JsonArrayAggregatorFilterTest() { }
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-  
   @Override
   protected Object retrieveObjectForSampleConfig() {
     SplitJoinService service = new SplitJoinService();

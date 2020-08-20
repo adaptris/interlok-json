@@ -14,8 +14,8 @@ import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.FileDataInputParameter;
 import com.adaptris.core.json.JacksonJsonDeserializer;
 import com.adaptris.core.services.jdbc.BrokenAdaptrisMessage;
-import com.adaptris.core.transform.TransformServiceExample;
 import com.adaptris.core.util.LifecycleHelper;
+import com.adaptris.interlok.junit.scaffolding.services.TransformServiceExample;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -41,11 +41,6 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   private static final String JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }]";
   private static final String INVALID_JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }]";
   private static final String INVALID_JSON_STRICT = "{ \"rectangle\" : value }";
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Test
   public void testInit() throws Exception {

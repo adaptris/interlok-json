@@ -27,11 +27,6 @@ public class LargeJsonArrayPathSplitterTest extends SplitterServiceExample {
   public static final String TWO_LAYERS_JSON_ARRAY = "{\"status\":\"ok\",\"result\":{\"colours\":[{\"colour\":\"red\",\"value\":\"#f00\"},{\"colour\":\"green\",\"value\":\"#0f0\"},{\"colour\":\"blue\",\"value\":\"#00f\"},{\"colour\":\"black\",\"value\":\"#000\"}]}}";
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
   @Test
   public void testWithPath() {
     assertNull(new LargeJsonArrayPathSplitter().getPath());

@@ -23,14 +23,14 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.MetadataInputStreamWrapper;
 import com.adaptris.core.common.PayloadInputStreamWrapper;
 import com.adaptris.core.common.PayloadOutputStreamWrapper;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.flipkart.zjsonpatch.DiffFlags;
 
-public class GeneratePatchDiffTest extends ServiceCase {
+public class GeneratePatchDiffTest extends ExampleServiceCase {
 
   private static final String DIFF_SOURCE = "{\"a\": 0,\"b\": [1,2]}";
   private static final String DIFF_TARGET = " {\"b\": [1,2,0]}";
@@ -38,11 +38,6 @@ public class GeneratePatchDiffTest extends ServiceCase {
       "[{\"op\":\"move\",\"from\":\"/a\",\"path\":\"/b/2\"}]";
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-  
   @Test
   public void testFlags() throws Exception {
     GeneratePatchDiffService service =
@@ -101,7 +96,7 @@ public class GeneratePatchDiffTest extends ServiceCase {
         .withDiffTarget(new MetadataInputStreamWrapper("metadata key containing another json object"))
         .withFlags(PatchDiffFlag.OMIT_MOVE_OPERATION, PatchDiffFlag.OMIT_COPY_OPERATION)
         .withOutput(new PayloadOutputStreamWrapper());
-    
+
     return service;
   }
 }

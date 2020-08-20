@@ -3,18 +3,13 @@ package com.adaptris.core.json;
 import java.util.Map;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.DeserializerCase.TypeKey;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 
-public class VerifyIsJsonTest extends ServiceCase {
+public class VerifyIsJsonTest extends ExampleServiceCase {
 
   private Map<TypeKey, AdaptrisMessage> messageTypes = DeserializerCase.createMessageFlavours();
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Test
   public void testService() throws Exception {

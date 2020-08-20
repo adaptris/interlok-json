@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.adaptris.core.Service;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.jdbc.DatabaseConnection;
 import com.adaptris.core.jdbc.JdbcConnection;
 import com.adaptris.core.json.jdbc.JdbcJsonArrayOutput;
 import com.adaptris.core.json.jdbc.JdbcJsonOutput;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
 
-public class JdbcOutputExampleTest extends ServiceCase {
+public class JdbcOutputExampleTest extends ExampleServiceCase {
   private static final String HYPHEN = "-";
   public static final String BASE_DIR_KEY = "JsonJDBCServiceExamples.baseDir";
 
@@ -40,11 +40,6 @@ public class JdbcOutputExampleTest extends ServiceCase {
   }
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-  
   @Override
   protected Object retrieveObjectForSampleConfig() {
     return null;

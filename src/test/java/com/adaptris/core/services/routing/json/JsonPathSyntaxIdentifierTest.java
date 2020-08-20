@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import com.adaptris.core.BranchingServiceCollection;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.services.LogMessageService;
 import com.adaptris.core.services.routing.AlwaysMatchSyntaxIdentifier;
 import com.adaptris.core.services.routing.SyntaxBranchingService;
 import com.adaptris.core.services.routing.SyntaxIdentifier;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 
-public class JsonPathSyntaxIdentifierTest extends ServiceCase {
+public class JsonPathSyntaxIdentifierTest extends ExampleServiceCase {
 
   private static final String BASE_DIR_KEY = "JsonPathServiceExamples.baseDir";
 
@@ -27,11 +27,6 @@ public class JsonPathSyntaxIdentifierTest extends ServiceCase {
   }
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-  
   @Test
   public void testIsThisSyntax_Matches() throws Exception {
     JsonPathSyntaxIdentifier identifier = new JsonPathSyntaxIdentifier();

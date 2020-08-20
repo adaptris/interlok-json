@@ -13,12 +13,6 @@ import com.adaptris.interlok.util.CloseableIterable;
 
 public class BatchedJsonArraySplitterTest extends SplitterServiceExample {
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
   @Test
   public void testSetBatchSize() {
     assertNull(createSplitterForTests().getBatchSize());

@@ -2,10 +2,8 @@ package com.adaptris.core.transform.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ConfiguredDestination;
 import com.adaptris.core.DefaultMessageFactory;
@@ -16,7 +14,7 @@ import com.adaptris.core.common.MetadataDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
-import com.adaptris.core.transform.TransformServiceExample;
+import com.adaptris.interlok.junit.scaffolding.services.TransformServiceExample;
 
 public class JsonTransformServiceTest extends TransformServiceExample {
 
@@ -30,10 +28,6 @@ public class JsonTransformServiceTest extends TransformServiceExample {
 
   private AdaptrisMessage message;
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Before
   public void setUp() throws Exception {

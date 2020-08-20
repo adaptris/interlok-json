@@ -13,11 +13,6 @@ public class JsonArraySplitterTest extends SplitterServiceExample {
 
   private static final String SIMPLE_ARRAY = "[ \"file1\", \"file2\" , \"file3\" , \"file4\"]";
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
   @Test
   public void testSplitArray() throws Exception {
     JsonArraySplitter s = new JsonArraySplitter();

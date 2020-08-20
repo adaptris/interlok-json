@@ -5,15 +5,15 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ServiceCase;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.util.text.NullPassThroughConverter;
 
-public class JsonToMetadataTest extends ServiceCase {
-  
-  private static String SAMPLE_JSON_CONTENT = 
+public class JsonToMetadataTest extends ExampleServiceCase {
+
+  private static String SAMPLE_JSON_CONTENT =
      "\"category\": \"fiction\","
     + "\"title\": \"The Lord of the Rings Trilogy\","
-    + "\"price\": 22.99," 
+    + "\"price\": 22.99,"
     + "\"volumes\" : [1,2,3]";
 
   private static String JSON_START = "{";
@@ -23,10 +23,6 @@ public class JsonToMetadataTest extends ServiceCase {
   private static String NESTED_OBJECT = "\"suggested\": " + JSON_START + NESTED_CONTENT + JSON_END;
   private static String SAMPLE_JSON = JSON_START + SAMPLE_JSON_CONTENT + "," + NESTED_OBJECT + JSON_END;
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Test
   public void testSetNullConverter() throws Exception {
     JsonToMetadata service = new JsonToMetadata();
@@ -82,7 +78,7 @@ public class JsonToMetadataTest extends ServiceCase {
     return new JsonToMetadata();
   }
 
-  
+
 
 
 }
