@@ -9,15 +9,15 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import org.junit.Test;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.jdbc.JdbcConnection;
 import com.adaptris.core.services.jdbc.JdbcMapInsert;
 import com.adaptris.core.services.jdbc.JdbcOutputExampleTest;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.core.util.LifecycleHelper;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.util.TimeInterval;
 
-public abstract class JdbcJsonInsertCase extends ServiceCase {
+public abstract class JdbcJsonInsertCase extends ExampleServiceCase {
 
 
   protected static final String ARRAY_CONTENT =

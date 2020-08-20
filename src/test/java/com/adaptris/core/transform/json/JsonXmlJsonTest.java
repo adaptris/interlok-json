@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.common.ConstantDataInputParameter;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -20,9 +20,9 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 // Tests INTERLOK-1499
 public class JsonXmlJsonTest {
 
-  private static final String SAMPLE_INPUT = "{" + 
-      "\"object\": {" + 
-      "    \"primary\": {" + 
+  private static final String SAMPLE_INPUT = "{" +
+      "\"object\": {" +
+      "    \"primary\": {" +
       "        \"value\": \"\"" +
       "    }," +
       "    \"secondary\": {" +
@@ -65,9 +65,9 @@ public class JsonXmlJsonTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SAMPLE_INPUT);
     JsonXmlTransformService toXml = new JsonXmlTransformService(TransformationDirection.JSON_TO_XML);
     JsonXmlTransformService toJson = new JsonXmlTransformService(TransformationDirection.XML_TO_JSON);
-    ServiceCase.execute(toXml, msg);
+    ExampleServiceCase.execute(toXml, msg);
     System.err.println(msg.getContent());
-    ServiceCase.execute(toJson, msg);
+    ExampleServiceCase.execute(toJson, msg);
     System.err.println(msg.getContent());
     ReadContext context = JsonPath.parse(msg.getInputStream(), jsonConfig);
     assertNotNull(context.read("$.object.secondary.values"));
@@ -75,7 +75,7 @@ public class JsonXmlJsonTest {
     assertEquals("", context.read("$.object.watermark"));
     JsonTransformService transform = new JsonTransformService(
         new ConstantDataInputParameter("[{\"operation\": \"com.adaptris.core.transform.json.jolt.NullToEmptyString\"}]"));
-    ServiceCase.execute(transform, msg);
+    ExampleServiceCase.execute(transform, msg);
     context = JsonPath.parse(msg.getInputStream(), jsonConfig);
     assertNotNull(context.read("$.object.secondary.values"));
     assertEquals("", context.read("$.object.primary.value"));

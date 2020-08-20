@@ -10,7 +10,6 @@ import java.util.EnumSet;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.Execution;
@@ -19,6 +18,7 @@ import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.json.JsonPathExecution;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.util.text.NullToEmptyStringConverter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -27,7 +27,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
-public class JsonPathServiceTest extends ServiceCase {
+public class JsonPathServiceTest extends ExampleServiceCase {
 
   private static final String PATH_TO_ARRAY = "$.some_integers";
   private static final String PATH_NOT_FOUND = "$.path.not.found";
@@ -55,10 +55,6 @@ public class JsonPathServiceTest extends ServiceCase {
     }
   }
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   AdaptrisMessage createMessage() throws Exception {
     return DefaultMessageFactory.getDefaultInstance().newMessage(sampleJsonContent());
   }

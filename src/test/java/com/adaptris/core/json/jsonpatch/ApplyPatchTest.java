@@ -22,24 +22,20 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.MetadataInputStreamWrapper;
 import com.adaptris.core.common.PayloadInputStreamWrapper;
 import com.adaptris.core.common.PayloadOutputStreamWrapper;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.flipkart.zjsonpatch.CompatibilityFlags;
 
-public class ApplyPatchTest extends ServiceCase {
+public class ApplyPatchTest extends ExampleServiceCase {
 
   private static final String SOURCE = "{\"a\": 0,\"b\": [1,2]}";
   private static final String TARGET = " {\"b\": [1,2,0]}";
   private static final String PATCH_TRANSFORM =
       "[{\"op\":\"move\",\"from\":\"/a\",\"path\":\"/b/2\"}]";
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Test
   public void testFlags() throws Exception {
     ApplyPatchService service = new ApplyPatchService();

@@ -12,12 +12,6 @@ import com.adaptris.util.text.NullPassThroughConverter;
 
 public class UpsertJsonObjectTest extends UpsertJsonCase {
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
   @Override
   protected UpsertJsonObject retrieveObjectForSampleConfig() {
     return (UpsertJsonObject) configureForExamples(createService().withId("id").withTable("myTable"));

@@ -13,10 +13,6 @@ import com.adaptris.util.text.NullPassThroughConverter;
 public class InsertJsonObjectTest extends JdbcJsonInsertCase {
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Test
   public void testSetNullConverter() throws Exception {
     InsertJsonObject service = createService();

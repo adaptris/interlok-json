@@ -5,7 +5,6 @@ import java.util.List;
 import com.adaptris.core.NullConnection;
 import com.adaptris.core.NullMessageProducer;
 import com.adaptris.core.Service;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceList;
 import com.adaptris.core.StandaloneProducer;
 import com.adaptris.core.services.WaitService;
@@ -13,8 +12,9 @@ import com.adaptris.core.services.splitter.AdvancedMessageSplitterService;
 import com.adaptris.core.services.splitter.BasicMessageSplitterService;
 import com.adaptris.core.services.splitter.MessageSplitter;
 import com.adaptris.core.services.splitter.MessageSplitterServiceImp;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 
-public abstract class SplitterServiceExample extends ServiceCase {
+public abstract class SplitterServiceExample extends ExampleServiceCase {
 
   private static final String BASE_DIR_KEY = "SplitterServiceExamples.baseDir";
 

@@ -13,12 +13,12 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.NullService;
 import com.adaptris.core.Service;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceCollection;
 import com.adaptris.core.ServiceList;
 import com.adaptris.core.services.LogMessageService;
 import com.adaptris.core.services.splitter.SplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -26,7 +26,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
-public class JsonArrayArrayAggregatorTest extends ServiceCase {
+public class JsonArrayArrayAggregatorTest extends ExampleServiceCase {
 
   protected static final String OBJECT_CONTENT_1 = "{ \"firstname\":\"alice\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }";
   protected static final String OBJECT_CONTENT_2 = "{ \"firstname\":\"bob\", \"lastname\":\"smith\", \"dob\":\"2017-01-03\" }";
@@ -34,11 +34,6 @@ public class JsonArrayArrayAggregatorTest extends ServiceCase {
 
   private Configuration jsonConfig;
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Before
   public void setUp() throws Exception {

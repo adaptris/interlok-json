@@ -10,28 +10,23 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.MetadataElement;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.metadata.RegexMetadataFilter;
 import com.adaptris.core.stubs.DefectiveMessageFactory;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
-public class MetadataToJsonServiceTest extends ServiceCase {
+public class MetadataToJsonServiceTest extends ExampleServiceCase {
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Test
   public void testDoService() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     msg.addMetadata("key1", "ABCDE");
     msg.addMetadata("key2", "1234");
-    ServiceCase.execute(new MetadataToJsonService(), msg);
+    execute(new MetadataToJsonService(), msg);
     DocumentContext ctx = JsonPath.parse(msg.getContent());
 
     assertEquals("ABCDE", ctx.read("$.key1"));
@@ -43,7 +38,7 @@ public class MetadataToJsonServiceTest extends ServiceCase {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     msg.addMetadata("key1", "ABCDE");
     msg.addMetadata("key2", "256.368480478703");
-    ServiceCase.execute(new MetadataToJsonService().withConvertNumeric(true), msg);
+    execute(new MetadataToJsonService().withConvertNumeric(true), msg);
     DocumentContext ctx = JsonPath.parse(msg.getContent());
 
     assertEquals("ABCDE", ctx.read("$.key1"));
@@ -56,7 +51,8 @@ public class MetadataToJsonServiceTest extends ServiceCase {
     msg.addMetadata("key1", "ABCDE");
     msg.addMetadata("key2", "1234");
     msg.addMetadata("skip", "1234");
-    ServiceCase.execute(new MetadataToJsonService().withMetadataFilter(new RegexMetadataFilter().withIncludePatterns("key1", "key2")), msg);
+    execute(new MetadataToJsonService()
+        .withMetadataFilter(new RegexMetadataFilter().withIncludePatterns("key1", "key2")), msg);
     DocumentContext ctx = JsonPath.parse(msg.getContent());
 
     assertEquals("ABCDE", ctx.read("$.key1"));
@@ -74,9 +70,9 @@ public class MetadataToJsonServiceTest extends ServiceCase {
     HashSet<MetadataElement> metadata =
         new HashSet<>(Arrays.asList(new MetadataElement("key1", "ABCDE"), new MetadataElement("key2", "1234")));
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage("", metadata);
-    ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
+    execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
     assertFalse(msg.getContent().endsWith(System.lineSeparator()));
-    ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(true), msg);
+    execute(new MetadataToJsonService().withAddTrailingNewline(true), msg);
     long newlineCount = msg.getContent().chars().filter(ch -> ch == '\n').count();
     assertEquals(1, newlineCount);
     assertTrue(msg.getContent().endsWith(System.lineSeparator()));
@@ -88,7 +84,7 @@ public class MetadataToJsonServiceTest extends ServiceCase {
         new HashSet<>(Arrays.asList(new MetadataElement("key1", "ABCDE"), new MetadataElement("key2", "1234")));
     AdaptrisMessage msg = new DefectiveMessageFactory(DefectiveMessageFactory.WhenToBreak.METADATA_GET).newMessage("", metadata);
     try {
-      ServiceCase.execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
+      execute(new MetadataToJsonService().withAddTrailingNewline(false), msg);
       fail();
     } catch (ServiceException expected) {
 

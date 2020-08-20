@@ -12,13 +12,6 @@ import com.adaptris.core.ServiceException;
 
 public class BatchJsonArrayInsertTest extends JdbcJsonInsertCase {
 
-
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
   @Test
   public void testAccumulate() throws Exception {
     int[] rc = {1, 2, Statement.EXECUTE_FAILED};

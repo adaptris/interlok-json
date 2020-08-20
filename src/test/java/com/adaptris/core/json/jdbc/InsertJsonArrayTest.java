@@ -11,11 +11,6 @@ import com.adaptris.core.services.splitter.json.JsonProvider.JsonStyle;
 
 public class InsertJsonArrayTest extends JdbcJsonInsertCase {
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Test
   public void testService() throws Exception {
     createDatabase();
