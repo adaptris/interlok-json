@@ -81,4 +81,14 @@ public class JsonXmlJsonTest {
     assertEquals("", context.read("$.object.primary.value"));
     assertEquals("", context.read("$.object.watermark"));
   }
+
+
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void testDefaultTransform() throws Exception {
+    AdaptrisMessage msg =
+        AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
+    new TransformationDriver() {}.transform(msg, TransformationDirection.JSON_TO_XML);
+  }
+
 }
