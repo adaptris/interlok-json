@@ -33,7 +33,7 @@ ext {
   slf4jVersion = '1.7.30'
   jacksonVersion = "2.11.2"
   jacksonDatabindVersion = "2.11.2"
-  mockitoVersion = '3.5.9'
+  mockitoVersion = '3.5.11'
 }
 
 ext.testResourcesDir = { ->
