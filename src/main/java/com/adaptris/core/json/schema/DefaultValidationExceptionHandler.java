@@ -23,7 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @ComponentProfile(summary = "Throw an exception if validation fails during schema validation", tag = "json,validation")
 public class DefaultValidationExceptionHandler extends ValidationExceptionHandlerImpl {
 
-
   @Override
   public void handle(ValidationException exc, AdaptrisMessage msg) throws ServiceException {
     throw ExceptionHelper.wrapServiceException(buildExceptionMessage(exc), exc);
@@ -33,9 +32,9 @@ public class DefaultValidationExceptionHandler extends ValidationExceptionHandle
     String prefix = exc.getMessage() + ": ";
     Map<Integer, String> map = new TreeMap<>();
     int count = 0;
-    for (ValidationException ve : exc.getCausingExceptions()) {
-      log.error(ve.getMessage());
-      map.put(++count, ve.getMessage());
+    for (String ve : exc.getAllMessages()) {
+      log.error(ve);
+      map.put(++count, ve);
     }
     return prefix + map;
   }

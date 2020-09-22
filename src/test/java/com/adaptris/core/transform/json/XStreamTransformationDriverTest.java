@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.Test;
-import com.adaptris.core.BaseCase;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.SerializableAdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.XStreamJsonMarshaller;
 import com.adaptris.core.XStreamMarshaller;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.interlok.types.SerializableMessage;
 import com.adaptris.util.GuidGenerator;
 
@@ -17,12 +17,6 @@ public class XStreamTransformationDriverTest extends BaseCase {
 
   private transient XStreamMarshaller xmlMarshaller;
   private transient XStreamJsonMarshaller jsonMarshaller;
-
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Test
   public void testToXML() throws Exception {

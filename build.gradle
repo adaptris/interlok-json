@@ -8,13 +8,14 @@ plugins {
   id 'jacoco'
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '5.0.3'
-  id 'com.github.spotbugs' version '4.2.3'
+  id 'com.github.spotbugs' version '4.5.0'
   id 'org.owasp.dependencycheck' version '5.3.2.1'
+  id "io.freefair.lombok" version "5.1.1"
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.10-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.10-SNAPSHOT'
+  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.11-SNAPSHOT'
+  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.11-SNAPSHOT'
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -22,6 +23,7 @@ ext {
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
   defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
   interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
@@ -29,9 +31,9 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
-  jacksonVersion = "2.11.0"
-  jacksonDatabindVersion = "2.11.0"
-  mockitoVersion = '3.3.3'
+  jacksonVersion = "2.11.2"
+  jacksonDatabindVersion = "2.11.2"
+  mockitoVersion = '3.5.9'
 }
 
 ext.testResourcesDir = { ->
@@ -93,6 +95,7 @@ sourceCompatibility = 1.8
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
+generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
@@ -152,7 +155,7 @@ dependencies {
 
   compile ("com.github.everit-org.json-schema:org.everit.json.schema:1.12.0")
   compile ("com.google.guava:guava:29.0-jre")
-  compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.10")
+  compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.11")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
@@ -233,6 +236,7 @@ javadoc {
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+    options.tags('apiNote:a:API Note:', 'implSpec:a:Implementation Requirements:','implNote:a:Implementation Note:')
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
@@ -264,12 +268,7 @@ task buildUnitTestProperties(type: Copy) {
 }
 
 task deleteGeneratedFiles(type: Delete) {
-  delete file(testResourcesDir() + "/unit-tests.properties")
-}
-
-
-task deleteDerbyLog(type: Delete) {
-  delete 'derby.log'
+  delete file(testResourcesDir() + "/unit-tests.properties"), 'derby.log', delombokTargetDir
 }
 
 
@@ -285,7 +284,7 @@ task examplesJar(type: Jar, dependsOn: test) {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from sourceSets.main.allSource
+    from sourceSets.main.extensions.delombokTask
 }
 
 task umlJavadoc(type: Javadoc) {
@@ -295,11 +294,12 @@ task umlJavadoc(type: Javadoc) {
   onlyIf {
     hasGraphViz()
   }
-  source = sourceSets.main.allJava
+  source = sourceSets.main.extensions.delombokTask
   classpath = project.sourceSets.main.compileClasspath
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+    options.tags('apiNote:a:API Note:', 'implSpec:a:Implementation Requirements:','implNote:a:Implementation Note:')
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.docletpath = configurations.umlDoclet.files.asType(List)
@@ -327,6 +327,19 @@ task umlJavadoc(type: Javadoc) {
 }
 
 
+delombok {
+  target = delombokTargetDir
+}
+
+task lgtmCompile(type: JavaCompile, dependsOn: delombok) {
+  group 'Build'
+  description 'Compile for lgtm'
+
+  source = sourceSets.main.extensions.delombokTask
+  destinationDir = sourceSets.main.java.outputDir
+  classpath = project.sourceSets.main.compileClasspath
+}
+
 artifacts {
   archives javadocJar
   archives examplesJar
@@ -351,6 +364,8 @@ publishing {
         properties.appendNode("tags", "json,transform,jdbc")
         properties.appendNode("license", "false")
         properties.appendNode("externalUrl", "http://www.json.org/")
+        properties.appendNode("readme", "https://github.com/adaptris/interlok-json/raw/develop/README.md")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-json")
       }
     }
   }
@@ -400,5 +415,5 @@ spotbugsTest.enabled = false
 
 javadoc.dependsOn offlinePackageList,umlJavadoc
 processTestResources.dependsOn buildUnitTestProperties
-clean.dependsOn deleteGeneratedFiles,deleteDerbyLog
+clean.dependsOn deleteGeneratedFiles
 check.dependsOn jacocoTestReport

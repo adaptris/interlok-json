@@ -12,8 +12,9 @@ import org.w3c.dom.Document;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
-import com.adaptris.core.transform.TransformServiceExample;
+import com.adaptris.core.util.DocumentBuilderFactoryBuilder;
 import com.adaptris.core.util.XmlHelper;
+import com.adaptris.interlok.junit.scaffolding.services.TransformServiceExample;
 import com.adaptris.util.text.xml.XPath;
 
 public class JsonXmlTransformServiceTest extends TransformServiceExample {
@@ -58,11 +59,6 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
           + "\"name\": \"Victoria\", " + "\"modeName\": \"tube\", " + "\"created\": \"2015-07-23T14:35:19.787\", "
           + "\"modified\": \"2015-07-23T14:35:19.787\", " + "\"lineStatuses\": [], " + "\"routeSections\": [] }]";
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-  
   @Test
   public void testTransformToXml() throws Exception {
     final AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_INPUT);
@@ -153,7 +149,8 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
   }
 
   public static void doXmlAssertions(AdaptrisMessage msg) throws Exception {
-    Document d = XmlHelper.createDocument(msg);
+    Document d = XmlHelper.createDocument(msg,
+        DocumentBuilderFactoryBuilder.newInstance().withNamespaceAware(false));
     XPath xp = new XPath();
     assertEquals("Seattle", xp.selectSingleTextItem(d, "/json/entry[1]/location"));
     assertEquals("New York", xp.selectSingleTextItem(d, "/json/entry[2]/location"));

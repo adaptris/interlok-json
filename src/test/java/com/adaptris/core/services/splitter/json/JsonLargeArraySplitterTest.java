@@ -13,10 +13,6 @@ import com.adaptris.interlok.util.CloseableIterable;
 public class JsonLargeArraySplitterTest extends SplitterServiceExample {
 
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Test
   public void testWithBufferSize() {
     assertNull(createSplitter().getBufferSize());

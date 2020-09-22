@@ -3,6 +3,7 @@ package com.adaptris.core.transform.json;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -25,7 +26,10 @@ import com.adaptris.core.util.Args;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
 import com.bazaarvoice.jolt.Chainr;
+import com.bazaarvoice.jolt.JsonUtil;
 import com.bazaarvoice.jolt.JsonUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -609,24 +613,26 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @DisplayOrder(order = {"sourceJson", "mappingSpec", "targetJson", "metadataFilter"})
 public class JsonTransformService extends ServiceImp {
 
-	@NotNull
-	@Valid
-	@AutoPopulated
-	private DataInputParameter<String> sourceJson = new StringPayloadDataInputParameter();
+  @NotNull
+  @Valid
+  @AutoPopulated
+  private DataInputParameter<String> sourceJson = new StringPayloadDataInputParameter();
 
-	@NotNull
-	@Valid
-	private DataInputParameter<String> mappingSpec;
+  @NotNull
+  @Valid
+  private DataInputParameter<String> mappingSpec;
 
-	@NotNull
-	@Valid
-	@AutoPopulated
-	private DataOutputParameter<String> targetJson = new StringPayloadDataOutputParameter();
+  @NotNull
+  @Valid
+  @AutoPopulated
+  private DataOutputParameter<String> targetJson = new StringPayloadDataOutputParameter();
 
-	@NotNull
-	@AutoPopulated
-	@Valid
-	private MetadataFilter metadataFilter = new RemoveAllMetadataFilter();
+  @NotNull
+  @AutoPopulated
+  @Valid
+  private MetadataFilter metadataFilter = new RemoveAllMetadataFilter();
+
+  private transient JsonUtil yamlJsonUtil;
 
   public JsonTransformService() {
     super();
@@ -637,124 +643,134 @@ public class JsonTransformService extends ServiceImp {
     setMappingSpec(mappingSpec);
   }
 
-	/**
-	 * {@inheritDoc}.
-	 */
-	@Override
-	public void doService(final AdaptrisMessage message) throws ServiceException {
-		try {
+  /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public void doService(final AdaptrisMessage message) throws ServiceException {
+    try {
 
-			String shiftrContent = mappingSpec.extract(message);
-			final MetadataCollection filteredMetadata = getMetadataFilter().filter(message);
-			for (final MetadataElement element : filteredMetadata) {
-				shiftrContent = shiftrContent.replace("${" + element.getKey() + "}", element.getValue());
-			}
+      String shiftrContent = mappingSpec.extract(message);
+      final MetadataCollection filteredMetadata = getMetadataFilter().filter(message);
+      for (final MetadataElement element : filteredMetadata) {
+        shiftrContent = shiftrContent.replace("${" + element.getKey() + "}", element.getValue());
+      }
 
-			final String encoding = defaultIfEmpty(message.getContentEncoding(), "UTF-8");
-			final List<Object> chainrSpecJSON = JsonUtils.jsonToList(shiftrContent, encoding);
+      JsonUtil specJsonUtil = JsonUtils.getDefaultJsonUtil();
+      if (!shiftrContent.trim().startsWith("[")) {
+        specJsonUtil = getOrInitYamlJsonUtil();
+      }
 
-			final String jsonString = sourceJson.extract(message);
-			final Object jsonObject = JsonUtils.jsonToObject(jsonString);
+      final String encoding = defaultIfEmpty(message.getContentEncoding(), "UTF-8");
+      final List<Object> chainrSpecJSON = specJsonUtil.jsonToList(shiftrContent, encoding);
 
-			final Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
+      final String jsonString = sourceJson.extract(message);
+      final Object jsonObject = JsonUtils.jsonToObject(jsonString);
 
-			final Object transformedOutput = chainr.transform(jsonObject);
-			final String outputJson = JsonUtils.toJsonString(transformedOutput);
-			targetJson.insert(outputJson, message);
+      final Chainr chainr = Chainr.fromSpec(chainrSpecJSON);
 
-		} catch (final Exception e) {
-			throw new ServiceException(e);
-		}
-	}
+      final Object transformedOutput = chainr.transform(jsonObject);
+      final String outputJson = JsonUtils.toJsonString(transformedOutput);
+      targetJson.insert(outputJson, message);
 
-	@Override
-	public void prepare() throws CoreException {
-		/* unused/empty method */
-	}
+    } catch (final Exception e) {
+      throw new ServiceException(e);
+    }
+  }
 
-	@Override
-	protected void closeService() {
-		/* unused/empty method */
-	}
+  private JsonUtil getOrInitYamlJsonUtil() {
+    yamlJsonUtil = Optional.ofNullable(yamlJsonUtil).orElseGet(() -> JsonUtils.customJsonUtil(new ObjectMapper(new YAMLFactory())));
+    return yamlJsonUtil;
+  }
 
-	@Override
-	protected void initService() throws CoreException {
-		/* unused/empty method */
-	}
+  @Override
+  public void prepare() throws CoreException {
+    /* unused/empty method */
+  }
 
-	/**
-	 * Get the target JSON.
-	 *
-	 * @return The target JSON.
-	 */
-	public DataOutputParameter<String> getTargetJson() {
-		return targetJson;
-	}
+  @Override
+  protected void closeService() {
+    /* unused/empty method */
+  }
 
-	/**
-	 * Set the target JSON.
-	 *
-	 * @param targetJson
-	 *          The target JSON.
-	 */
-	public void setTargetJson(final DataOutputParameter<String> targetJson) {
-		this.targetJson = Args.notNull(targetJson, "Target");
-	}
+  @Override
+  protected void initService() throws CoreException {
+    /* unused/empty method */
+  }
 
-	/**
-	 * Get the source JSON.
-	 *
-	 * @return The source JSON.
-	 */
-	public DataInputParameter<String> getSourceJson() {
-		return sourceJson;
-	}
+  /**
+   * Get the target JSON.
+   *
+   * @return The target JSON.
+   */
+  public DataOutputParameter<String> getTargetJson() {
+    return targetJson;
+  }
 
-	/**
-	 * Set the source JSON.
-	 *
-	 * @param sourceJson
-	 *          The source JSON.
-	 */
-	public void setSourceJson(final DataInputParameter<String> sourceJson) {
-		this.sourceJson = Args.notNull(sourceJson, "Source");
-	}
+  /**
+   * Set the target JSON.
+   *
+   * @param targetJson
+   *          The target JSON.
+   */
+  public void setTargetJson(final DataOutputParameter<String> targetJson) {
+    this.targetJson = Args.notNull(targetJson, "Target");
+  }
 
-	/**
-	 * Get the mapping spec.
-	 *
-	 * @return The mapping spec.
-	 */
-	public DataInputParameter<String> getMappingSpec() {
-		return mappingSpec;
-	}
+  /**
+   * Get the source JSON.
+   *
+   * @return The source JSON.
+   */
+  public DataInputParameter<String> getSourceJson() {
+    return sourceJson;
+  }
 
-	/**
-	 * Set the mapping spec.
-	 *
-	 * @param mappingSpec
-	 *          The mapping spec.
-	 */
-	public void setMappingSpec(final DataInputParameter<String> mappingSpec) {
-		this.mappingSpec = Args.notNull(mappingSpec, "Mapping");
-	}
+  /**
+   * Set the source JSON.
+   *
+   * @param sourceJson
+   *          The source JSON.
+   */
+  public void setSourceJson(final DataInputParameter<String> sourceJson) {
+    this.sourceJson = Args.notNull(sourceJson, "Source");
+  }
 
-	/**
-	 * Get the metadata filter.
-	 *
-	 * @return The metadata filter.
-	 */
-	public MetadataFilter getMetadataFilter() {
-		return metadataFilter;
-	}
+  /**
+   * Get the mapping spec.
+   *
+   * @return The mapping spec.
+   */
+  public DataInputParameter<String> getMappingSpec() {
+    return mappingSpec;
+  }
 
-	/**
-	 * Set the metadata filter.
-	 *
-	 * @param metadataFilter
-	 *          The metadata filter.
-	 */
-	public void setMetadataFilter(final MetadataFilter metadataFilter) {
-		this.metadataFilter = Args.notNull(metadataFilter, "Metadata Filter");
-	}
+  /**
+   * Set the mapping spec.
+   *
+   * @param mappingSpec
+   *          The mapping spec.
+   */
+  public void setMappingSpec(final DataInputParameter<String> mappingSpec) {
+    this.mappingSpec = Args.notNull(mappingSpec, "Mapping");
+  }
+
+  /**
+   * Get the metadata filter.
+   *
+   * @return The metadata filter.
+   */
+  public MetadataFilter getMetadataFilter() {
+    return metadataFilter;
+  }
+
+  /**
+   * Set the metadata filter.
+   *
+   * @param metadataFilter
+   *          The metadata filter.
+   */
+  public void setMetadataFilter(final MetadataFilter metadataFilter) {
+    this.metadataFilter = Args.notNull(metadataFilter, "Metadata Filter");
+  }
 }

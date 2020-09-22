@@ -14,11 +14,6 @@ import net.sf.json.JSONSerializer;
 
 public class JsonObjectSplitterTest extends SplitterServiceExample {
 
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   public static final String JSON_ARRAY =
       "[\n{\"colour\": \"red\",\"value\": \"#f00\"},\n"
       + "{\"colour\": \"green\",\"value\": \"#0f0\"},\n"
