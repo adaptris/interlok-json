@@ -1,6 +1,5 @@
 package com.adaptris.core.json.resolver;
 
-import com.adaptris.core.json.resolver.FromPayloadUsingJSONPath;
 import com.adaptris.interlok.types.InterlokMessage;
 import org.junit.Test;
 
@@ -32,7 +31,7 @@ public class FromPayloadUsingJSONPathTest
       "]}";
   private static final String RESULT = "Cred typewriter seitan, narwhal quinoa master cleanse mlkshk freegan.";
 
-  private com.adaptris.core.json.resolver.FromPayloadUsingJSONPath resolver = new FromPayloadUsingJSONPath();
+  private FromPayloadUsingJSONPath resolver = new FromPayloadUsingJSONPath();
   private InterlokMessage message = new InterlokMessage()
   {
     @Override public String getUniqueId() { return null; }
