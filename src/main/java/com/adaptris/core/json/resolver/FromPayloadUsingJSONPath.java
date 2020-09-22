@@ -1,4 +1,4 @@
-package com.adaptris.core.resolver;
+package com.adaptris.core.json.resolver;
 
 import com.adaptris.interlok.resolver.ResolverImp;
 import com.adaptris.interlok.resolver.UnresolvableException;
