@@ -1,7 +1,6 @@
-package com.adaptris.core.resolver;
+package com.adaptris.core.json.resolver;
 
 import com.adaptris.interlok.types.InterlokMessage;
-import com.jcraft.jsch.IO;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
