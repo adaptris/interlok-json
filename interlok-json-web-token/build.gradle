@@ -1,0 +1,106 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.tools.ant.filters.*
+
+ext {
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
+  componentName='Interlok/JSON Web Token'
+  bouncyCastleVersion='1.66'
+  jwtVersion = "0.11.2"
+  jacksonDatabindVersion = "2.11.2"
+}
+
+dependencies {
+  compile ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
+  compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
+  compile ("org.slf4j:slf4j-api:$slf4jVersion")
+  compile ("org.json:json:$jsonOrgVersion")
+
+  compile ("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
+  compile ("org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion")
+
+  compile ("io.jsonwebtoken:jjwt-api:$jwtVersion")
+  runtime ("io.jsonwebtoken:jjwt-impl:$jwtVersion")
+  runtime ("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
+  runtime ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
+
+  testCompile ('junit:junit:4.13')
+  testCompile ("org.skyscreamer:jsonassert:1.5.0")
+}
+
+jar {
+  manifest {
+    attributes("Built-By": System.getProperty('user.name'),
+               "Build-Jdk": System.getProperty('java.version'),
+               "Implementation-Title": componentName,
+               "Implementation-Version": project.version,
+               "Implementation-Vendor-Id": project.group,
+               "Implementation-Vendor": organizationName)
+  }
+}
+
+task deleteGeneratedFiles(type: Delete) {
+  delete file(testResourcesDir() + "/unit-tests.properties"), file(testResourcesDir() + "/unit-tests.properties.resolved"), 'derby.log', delombokTargetDir
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+task examplesJar(type: Jar, dependsOn: test) {
+  classifier = 'examples'
+  from new File(buildDir, '/examples')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.extensions.delombokTask
+}
+
+
+artifacts {
+  archives javadocJar
+  archives examplesJar
+  archives sourcesJar
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      artifact javadocJar { classifier "javadoc" }
+      artifact examplesJar { classifier "examples" }
+      artifact sourcesJar { classifier "sources" }
+
+      pom.withXml {
+        asNode().appendNode("name", componentName)
+        asNode().appendNode("description", "Handling JWT in Interlok")
+        // asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/cookbook-json-transform.html")
+        def properties = asNode().appendNode("properties")
+        properties.appendNode("target", "3.11.0+")
+        properties.appendNode("tags", "json,jwt")
+        properties.appendNode("license", "false")
+        properties.appendNode("readme", "https://raw.githubusercontent.com/adaptris/interlok-json/develop/interlok-json-web-token/README.md")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-json")
+        properties.appendNode("externalUrl", "https://github.com/jwtk/jjwt")
+      }
+    }
+  }
+  repositories {
+    maven {
+      credentials {
+        username repoUsername
+        password repoPassword
+      }
+      url mavenPublishUrl
+    }
+  }
+}
+
+delombok {
+  target = delombokTargetDir
+}
+
+processTestResources.dependsOn copyUnitTestProperties
+clean.dependsOn deleteGeneratedFiles

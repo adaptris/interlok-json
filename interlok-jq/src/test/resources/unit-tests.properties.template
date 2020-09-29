@@ -1,0 +1,7 @@
+junit.ConsumerCase.baseDir=@BUILD_DIR@//examples/consumers
+junit.ServiceCase.baseDir=@BUILD_DIR@//examples/services
+junit.ProducerCase.baseDir=@BUILD_DIR@//examples/producers
+junit.WorkflowCase.baseDir=@BUILD_DIR@//examples/workflows
+
+junit.jq.sample=@BASE_DIR@/src/test/resources/sample_input.json
+junit.jq.query=@BASE_DIR@/src/test/resources/sample_query.json

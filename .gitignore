@@ -32,4 +32,6 @@ out
 .gradle
 gradle.properties
 debug.log
-src/main/generated
+unit-tests.properties
+unit-tests.properties.resolved
+**/src/main/generated

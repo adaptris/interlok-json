@@ -1,1 +1,5 @@
-rootProject.name = 'interlok-json'
+rootProject.name = 'interlok-json-parent'
+include 'interlok-json'
+include 'interlok-jq'
+include 'interlok-json-web-token'
+include 'interlok-json-streaming'
