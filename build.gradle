@@ -29,6 +29,7 @@ ext {
   jacksonVersion = "2.11.2"
   jacksonDatabindVersion = "2.11.2"
   mockitoVersion = '3.5.13'
+  jsonOrgVersion = '20200518'
 }
 
 ext.hostname = { ->
@@ -213,6 +214,60 @@ subprojects {
   }
 
 
+  javadoc {
+    onlyIf {
+      !hasGraphViz()
+    }
+    configure(options) {
+      options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
+      options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+      options.tags('apiNote:a:API Note:', 'implSpec:a:Implementation Requirements:','implNote:a:Implementation Note:')
+      taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
+      options.addStringOption "tagletpath", configurations.javadoc.asPath
+      options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
+        group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
+        group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
+    }
+  }
+
+  task umlJavadoc(type: Javadoc) {
+    group 'Documentation'
+    description 'Build javadocs using plantuml + graphviz + umldoclet, if dot is available'
+
+    onlyIf {
+      hasGraphViz()
+    }
+    source = sourceSets.main.extensions.delombokTask
+    classpath = project.sourceSets.main.compileClasspath
+    configure(options) {
+      options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
+      options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+      options.tags('apiNote:a:API Note:', 'implSpec:a:Implementation Requirements:','implNote:a:Implementation Note:')
+      taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
+      options.addStringOption "tagletpath", configurations.javadoc.asPath
+      options.docletpath = configurations.umlDoclet.files.asType(List)
+      options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+      options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
+      options.addStringOption "umlImageFormat", "SVG"
+      options.addStringOption "umlExcludedReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum"
+      options.addStringOption "umlIncludePrivateClasses","false"
+      options.addStringOption "umlIncludePackagePrivateClasses","false"
+      options.addStringOption "umlIncludeProtectedClasses","false"
+      options.addStringOption "umlIncludeAbstractSuperclassMethods","false"
+      options.addStringOption "umlIncludeConstructors","false"
+      options.addStringOption "umlIncludePublicFields","false"
+      options.addStringOption "umlIncludePackagePrivateFields","false"
+      options.addStringOption "umlIncludeProtectedFields", "false"
+      options.addStringOption "umlIncludeDeprecatedClasses", "false"
+      options.addStringOption "umlIncludePrivateInnerClasses", "false"
+      options.addStringOption "umlIncludePackagePrivateInnerClasses", "false"
+      options.addStringOption "umlIncludeProtectedInnerClasses","false"
+      options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
+        group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
+        group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
+    }
+  }
+
   ext.testResourcesDir = { ->
     return "${project.projectDir}/src/test/resources".replaceAll("\\\\", "/")
   }
@@ -290,4 +345,5 @@ subprojects {
   }
 
   check.dependsOn jacocoTestReport
+  javadoc.dependsOn offlinePackageList,umlJavadoc
 }
