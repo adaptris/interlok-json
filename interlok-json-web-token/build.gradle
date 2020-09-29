@@ -81,6 +81,8 @@ publishing {
         properties.appendNode("target", "3.11.0+")
         properties.appendNode("tags", "json,jwt")
         properties.appendNode("license", "false")
+        properties.appendNode("readme", "https://raw.githubusercontent.com/adaptris/interlok-json/develop/interlok-json-web-token/README.md")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-json")
         properties.appendNode("externalUrl", "https://github.com/jwtk/jjwt")
       }
     }

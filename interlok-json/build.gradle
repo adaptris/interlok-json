@@ -92,7 +92,7 @@ publishing {
         properties.appendNode("tags", "json,transform,jdbc")
         properties.appendNode("license", "false")
         properties.appendNode("externalUrl", "http://www.json.org/")
-        properties.appendNode("readme", "https://github.com/adaptris/interlok-json/raw/develop/README.md")
+        properties.appendNode("readme", "https://raw.githubusercontent.com/adaptris/interlok-json/develop/interlok-json/README.md")
         properties.appendNode("repository", "https://github.com/adaptris/interlok-json")
       }
     }
