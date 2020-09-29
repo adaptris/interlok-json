@@ -1,2 +1,3 @@
 rootProject.name = 'interlok-json-parent'
 include 'interlok-json'
+include 'interlok-jq'

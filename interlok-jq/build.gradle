@@ -1,0 +1,91 @@
+ext {
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
+  componentName='Interlok/JSON'
+}
+
+
+dependencies {
+  compile ("com.fasterxml.jackson.core:jackson-databind:2.11.2")
+  compile ("net.thisptr:jackson-jq:0.0.12")
+  testCompile ("com.jayway.jsonpath:json-path:2.4.0")
+}
+
+
+jar {
+  manifest {
+    attributes("Built-By": System.getProperty('user.name'),
+               "Build-Jdk": System.getProperty('java.version'),
+               "Implementation-Title": componentName,
+               "Implementation-Version": project.version,
+               "Implementation-Vendor-Id": project.group,
+               "Implementation-Vendor": organizationName)
+  }
+}
+
+javadoc {
+  configure(options) {
+    options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
+    options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+    taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
+    options.addStringOption "tagletpath", configurations.javadoc.asPath
+  }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+task examplesJar(type: Jar, dependsOn: test) {
+  classifier = 'examples'
+  from new File(buildDir, '/examples')
+}
+
+artifacts {
+  archives javadocJar
+  archives examplesJar
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      artifact javadocJar { classifier "javadoc" }
+      artifact examplesJar { classifier "examples" }
+
+      pom.withXml {
+        asNode().appendNode("name", componentName)
+        asNode().appendNode("description", "Transform JSON using JQ style syntax")
+        def properties = asNode().appendNode("properties")
+        properties.appendNode("target", "3.7.0+")
+        properties.appendNode("tags", "json,jq")
+        properties.appendNode("license", "false")
+        properties.appendNode("externalUrl", "https://github.com/eiiches/jackson-jq")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-jq")
+      }
+    }
+  }
+  repositories {
+    maven {
+      credentials {
+        username repoUsername
+        password repoPassword
+      }
+      url mavenPublishUrl
+    }
+  }
+}
+
+
+delombok {
+  target = delombokTargetDir
+}
+
+task deleteGeneratedFiles(type: Delete) {
+  delete file(testResourcesDir() + "/unit-tests.properties"), file(testResourcesDir() + "/unit-tests.properties.resolved"), 'derby.log', delombokTargetDir
+}
+
+javadoc.dependsOn offlinePackageList
+processTestResources.dependsOn copyUnitTestProperties
+clean.dependsOn deleteGeneratedFiles
