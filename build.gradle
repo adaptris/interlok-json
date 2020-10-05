@@ -27,7 +27,7 @@ ext {
 
   slf4jVersion = '1.7.30'
   jacksonVersion = "2.11.2"
-  jacksonDatabindVersion = "2.11.2"
+  jacksonDatabindVersion = "2.11.3"
   mockitoVersion = '3.5.13'
   jsonOrgVersion = '20200518'
 }
