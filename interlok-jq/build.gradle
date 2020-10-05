@@ -6,7 +6,7 @@ ext {
 
 dependencies {
   compile ("com.fasterxml.jackson.core:jackson-databind:2.11.3")
-  compile ("net.thisptr:jackson-jq:0.0.12")
+  compile ("net.thisptr:jackson-jq:1.0.0-preview.20191208")
   testCompile ("com.jayway.jsonpath:json-path:2.4.0")
 }
 
