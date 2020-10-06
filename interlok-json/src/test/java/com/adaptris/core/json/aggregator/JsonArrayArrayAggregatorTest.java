@@ -11,13 +11,16 @@ import org.junit.Before;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.CoreException;
 import com.adaptris.core.NullService;
 import com.adaptris.core.Service;
 import com.adaptris.core.ServiceCollection;
 import com.adaptris.core.ServiceList;
 import com.adaptris.core.services.LogMessageService;
-import com.adaptris.core.services.splitter.SplitJoinService;
+import com.adaptris.core.services.splitter.PooledSplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
+import com.adaptris.core.stubs.DefectiveMessageFactory;
+import com.adaptris.core.stubs.DefectiveMessageFactory.WhenToBreak;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -71,6 +74,16 @@ public class JsonArrayArrayAggregatorTest extends ExampleServiceCase {
     assertEquals("carol", context.read("$[0].firstname"));
   }
 
+  @Test(expected = CoreException.class)
+  public void testAggregator_WithException() throws Exception {
+    AdaptrisMessage original = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
+    List<AdaptrisMessage> msgs =
+        create(String.format("[%s, %s]", OBJECT_CONTENT_1, OBJECT_CONTENT_2), OBJECT_CONTENT_3);
+    JsonArrayArrayAggregator aggr = new JsonArrayArrayAggregator();
+    aggr.aggregate(original, msgs);
+  }
+
+
   @Test
   public void testAggregator_NotJson() throws Exception {
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
@@ -82,8 +95,8 @@ public class JsonArrayArrayAggregatorTest extends ExampleServiceCase {
   }
 
   @Override
-  protected Object retrieveObjectForSampleConfig() {
-    SplitJoinService service = new SplitJoinService();
+  protected PooledSplitJoinService retrieveObjectForSampleConfig() {
+    PooledSplitJoinService service = new PooledSplitJoinService();
     service.setService(wrap(new LogMessageService(), new NullService()));
     service.setSplitter(new JsonArraySplitter());
     service.setAggregator(new JsonArrayArrayAggregator());

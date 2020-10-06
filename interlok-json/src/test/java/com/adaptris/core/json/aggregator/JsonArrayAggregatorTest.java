@@ -18,8 +18,11 @@ import com.adaptris.core.ServiceCollection;
 import com.adaptris.core.ServiceList;
 import com.adaptris.core.services.LogMessageService;
 import com.adaptris.core.services.conditional.conditions.ConditionImpl;
-import com.adaptris.core.services.splitter.SplitJoinService;
+import com.adaptris.core.services.conditional.conditions.ConditionNever;
+import com.adaptris.core.services.splitter.PooledSplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
+import com.adaptris.core.stubs.DefectiveMessageFactory;
+import com.adaptris.core.stubs.DefectiveMessageFactory.WhenToBreak;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -92,9 +95,28 @@ public class JsonArrayAggregatorTest extends ExampleServiceCase {
     assertEquals("[]", StringUtils.deleteWhitespace(original.getContent()));
   }
 
+  @Test
+  public void testAggregator_WithCondition() throws Exception {
+    AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage("Hello");
+    List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
+    JsonArrayAggregator aggr = new JsonArrayAggregator();
+    aggr.setFilterCondition(new ConditionNever());
+    aggr.aggregate(original, msgs);
+    assertNotSame("Hello", original.getContent());
+    assertEquals("[]", StringUtils.deleteWhitespace(original.getContent()));
+  }
+
+  @Test(expected = CoreException.class)
+  public void testAggregator_WithException() throws Exception {
+    AdaptrisMessage original = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
+    List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
+    JsonArrayAggregator aggr = new JsonArrayAggregator();
+    aggr.aggregate(original, msgs);
+  }
+
   @Override
-  protected Object retrieveObjectForSampleConfig() {
-    SplitJoinService service = new SplitJoinService();
+  protected PooledSplitJoinService retrieveObjectForSampleConfig() {
+    PooledSplitJoinService service = new PooledSplitJoinService();
     service.setService(wrap(new LogMessageService(), new NullService()));
     service.setSplitter(new JsonArraySplitter());
     service.setAggregator(new JsonArrayAggregator());
