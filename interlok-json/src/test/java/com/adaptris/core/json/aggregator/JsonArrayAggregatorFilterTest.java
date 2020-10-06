@@ -3,10 +3,11 @@ package com.adaptris.core.json.aggregator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import java.io.File;
+
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.junit.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.Service;
@@ -47,8 +48,8 @@ public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
   public void testListFilteringWithBooleanMetadata() throws Exception {
     // Read in json as Text
     final String fileContents = IOUtils.toString(
-            this.getClass().getResourceAsStream(AGX_GROWERS_LIST_URL),"UTF-8"
-    );
+        this.getClass().getResourceAsStream(AGX_GROWERS_LIST_URL),"UTF-8"
+        );
 
     // Create AdaptrisMessage and the SplitJoinService
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage(fileContents);
@@ -73,10 +74,9 @@ public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
 
   @Test
   public void testListFilteringWithNullCondition() throws Exception {
-    File file = new File(AGX_GROWERS_LIST_URL);
     final String fileContents = IOUtils.toString(
-            this.getClass().getResourceAsStream(AGX_GROWERS_LIST_URL),"UTF-8"
-    );
+        this.getClass().getResourceAsStream(AGX_GROWERS_LIST_URL),"UTF-8"
+        );
 
     // Create AdaptrisMessage and the SplitJoinService
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage(fileContents);
@@ -103,14 +103,11 @@ public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
     final JsonArrayAggregator jsonArrayAggregator = new JsonArrayAggregator();
     // Test default
     assertNull(jsonArrayAggregator.getRetainFilterExceptionsMessages());
-    assertEquals(Boolean.FALSE, jsonArrayAggregator.retainFilterExceptionsMessages());
     // Test flag with true
     jsonArrayAggregator.setRetainFilterExceptionsMessages(true);
     assertEquals(Boolean.TRUE, jsonArrayAggregator.getRetainFilterExceptionsMessages());
-    assertEquals(Boolean.TRUE, jsonArrayAggregator.retainFilterExceptionsMessages());
     // Test flag with null
     jsonArrayAggregator.setRetainFilterExceptionsMessages(null);
     assertNull(jsonArrayAggregator.getRetainFilterExceptionsMessages());
-    assertEquals(Boolean.FALSE, jsonArrayAggregator.retainFilterExceptionsMessages());
   }
 }
