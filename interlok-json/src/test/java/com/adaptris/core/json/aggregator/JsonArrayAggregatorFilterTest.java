@@ -3,18 +3,16 @@ package com.adaptris.core.json.aggregator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.junit.Test;
-
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.Service;
 import com.adaptris.core.json.JsonToMetadata;
 import com.adaptris.core.services.conditional.conditions.ConditionMetadata;
 import com.adaptris.core.services.conditional.operator.Equals;
-import com.adaptris.core.services.splitter.SplitJoinService;
+import com.adaptris.core.services.splitter.PooledSplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 
@@ -27,8 +25,8 @@ public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
 
 
   @Override
-  protected Object retrieveObjectForSampleConfig() {
-    SplitJoinService service = new SplitJoinService();
+  protected PooledSplitJoinService retrieveObjectForSampleConfig() {
+    PooledSplitJoinService service = new PooledSplitJoinService();
     service.setService(new JsonToMetadata());
     service.setSplitter(new JsonArraySplitter());
 
@@ -53,7 +51,7 @@ public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
 
     // Create AdaptrisMessage and the SplitJoinService
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage(fileContents);
-    final Service service = (Service) retrieveObjectForSampleConfig();
+    final Service service = retrieveObjectForSampleConfig();
 
     // run
     execute(service, original);
@@ -80,7 +78,7 @@ public class JsonArrayAggregatorFilterTest extends ExampleServiceCase {
 
     // Create AdaptrisMessage and the SplitJoinService
     AdaptrisMessage original = AdaptrisMessageFactory.getDefaultInstance().newMessage(fileContents);
-    final SplitJoinService service = (SplitJoinService) retrieveObjectForSampleConfig();
+    final PooledSplitJoinService service = retrieveObjectForSampleConfig();
     ((JsonArrayAggregator)service.getAggregator()).setFilterCondition(null);
 
     // run

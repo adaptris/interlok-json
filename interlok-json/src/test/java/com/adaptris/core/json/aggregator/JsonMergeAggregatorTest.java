@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
@@ -18,8 +19,11 @@ import com.adaptris.core.Service;
 import com.adaptris.core.ServiceCollection;
 import com.adaptris.core.ServiceList;
 import com.adaptris.core.services.LogMessageService;
-import com.adaptris.core.services.splitter.SplitJoinService;
+import com.adaptris.core.services.conditional.conditions.ConditionNever;
+import com.adaptris.core.services.splitter.PooledSplitJoinService;
 import com.adaptris.core.services.splitter.json.JsonArraySplitter;
+import com.adaptris.core.stubs.DefectiveMessageFactory;
+import com.adaptris.core.stubs.DefectiveMessageFactory.WhenToBreak;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -44,8 +48,8 @@ public class JsonMergeAggregatorTest extends ExampleServiceCase {
   }
 
   @Override
-  protected Object retrieveObjectForSampleConfig() {
-    SplitJoinService service = new SplitJoinService();
+  protected PooledSplitJoinService retrieveObjectForSampleConfig() {
+    PooledSplitJoinService service = new PooledSplitJoinService();
     service.setService(wrap(new LogMessageService(), new NullService()));
     service.setSplitter(new JsonArraySplitter());
     final JsonMergeAggregator aggregator = new JsonMergeAggregator();
@@ -174,6 +178,42 @@ public class JsonMergeAggregatorTest extends ExampleServiceCase {
       assertFalse(exceptionThrown);
     }
   }
+
+  @Test
+  public void testAggregator_WithCondition() throws Exception {
+    AdaptrisMessage original =
+        AdaptrisMessageFactory.getDefaultInstance().newMessage("[" + PARENT_CONTENT + "]");
+    List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
+    String mergeMetadataKey = "mergeKey";
+    int counter = 0;
+    for (AdaptrisMessage msg : msgs) {
+      msg.addMetadata(mergeMetadataKey, "mergeAttr" + ++counter);
+    }
+
+    JsonMergeAggregator aggr = new JsonMergeAggregator();
+    aggr.setMergeMetadataKey(mergeMetadataKey);
+    aggr.setFilterCondition(new ConditionNever());
+    aggr.aggregate(original, msgs);
+    assertEquals(StringUtils.deleteWhitespace("[" + PARENT_CONTENT + "]"),
+        StringUtils.deleteWhitespace(original.getContent()));
+  }
+
+  @Test(expected = CoreException.class)
+  public void testAggregator_WithException() throws Exception {
+    AdaptrisMessage original =
+        new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage("[" + PARENT_CONTENT + "]");
+    List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
+    String mergeMetadataKey = "mergeKey";
+    int counter = 0;
+    for (AdaptrisMessage msg : msgs) {
+      msg.addMetadata(mergeMetadataKey, "mergeAttr" + ++counter);
+    }
+
+    JsonMergeAggregator aggr = new JsonMergeAggregator();
+    aggr.setMergeMetadataKey(mergeMetadataKey);
+    aggr.aggregate(original, msgs);
+  }
+
 
   private List<AdaptrisMessage> create(String... contents) {
     List<AdaptrisMessage> result = new ArrayList<>();

@@ -3,19 +3,22 @@ package com.adaptris.core.json.aggregator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
+import javax.validation.constraints.NotBlank;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.aggregator.MessageAggregator;
-import com.adaptris.core.services.aggregator.MessageAggregatorImpl;
 import com.adaptris.core.util.ExceptionHelper;
+import com.adaptris.interlok.util.Args;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * {@link MessageAggregator} implementation that merges each message to a JSON object or array.
@@ -29,12 +32,22 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias("json-merge-aggregator")
 @ComponentProfile(summary = "Merge each message into an existing JSON object.", tag = "json")
-public class JsonMergeAggregator extends MessageAggregatorImpl {
+@NoArgsConstructor
+public class JsonMergeAggregator extends JsonAggregatorImpl {
   protected transient ObjectMapper mapper = new ObjectMapper();
-  protected String mergeMetadataKey;
+  /**
+   * Specify the metadata key that contains the 'key' against which the message will be merged into
+   * the original.
+   *
+   */
+  @Getter
+  @Setter
+  @NotBlank
+  private String mergeMetadataKey;
 
   @Override
-  public void joinMessage(AdaptrisMessage original, Collection<AdaptrisMessage> messages) throws CoreException {
+  public void aggregate(AdaptrisMessage original, Iterable<AdaptrisMessage> messages)
+      throws CoreException {
     JsonNode rootNode;
     try {
       rootNode = mapper.readTree(original.getContent());
@@ -43,14 +56,17 @@ public class JsonMergeAggregator extends MessageAggregatorImpl {
     }
 
     try (Writer w = new BufferedWriter(original.getWriter()); JsonGenerator generator = mapper.getFactory().createGenerator(w)) {
-      for (AdaptrisMessage msg : filter(messages)) {
-        final String mergeKeyName = msg.getMetadataValue(mergeMetadataKey);
-        try {
-          mergeChildEntryIntoParent(rootNode, mergeKeyName, msg);
-          overwriteMetadata(msg, original);
-        } catch (CoreException ce) {
-          // log error and continue with the remaining msgs
-          log.error("Failed to merge the following message: [{}] into parent payload", mergeKeyName);
+      for (AdaptrisMessage msg : messages) {
+        if (filter(msg)) {
+          try {
+            final String mergeKeyName =
+                Args.notBlank(msg.getMetadataValue(getMergeMetadataKey()), "merge-key-name");
+            mergeChildEntryIntoParent(rootNode, mergeKeyName, msg);
+            overwriteMetadata(msg, original);
+          } catch (Exception ce) {
+            log.error("Failed to merge the following message: [{}] into parent payload",
+                msg.getUniqueId());
+          }
         }
       }
       generator.writeTree(rootNode);
@@ -77,14 +93,6 @@ public class JsonMergeAggregator extends MessageAggregatorImpl {
     else {
       throw new CoreException("Unable to merge into unknown json type");
     }
-  }
-
-  public String getMergeMetadataKey() {
-    return mergeMetadataKey;
-  }
-
-  public void setMergeMetadataKey(String mergeMetadataKey) {
-    this.mergeMetadataKey = mergeMetadataKey;
   }
 
 }

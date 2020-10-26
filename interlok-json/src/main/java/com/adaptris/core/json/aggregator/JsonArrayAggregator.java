@@ -1,12 +1,12 @@
 /*
  * Copyright 2015 Adaptris Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.aggregator.MessageAggregator;
-import com.adaptris.core.services.aggregator.MessageAggregatorImpl;
 import com.adaptris.core.util.ExceptionHelper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -35,35 +31,35 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import lombok.NoArgsConstructor;
 
 /**
  * {@link MessageAggregator} implementation that adds each message to a JSON array.
- * 
+ *
  * <p>
  * The pre-split message is always ignored; the payloads from the collection are assumed to be JSON objects, and will be aggregated
  * together as a single JSON array. Messages that are not JSON objects will be ignored (JSON Arrays will also be ignored).
  * </p>
- * 
+ *
  * @config json-array-aggregator
  * @since 3.6.5
  */
 @XStreamAlias("json-array-aggregator")
 @ComponentProfile(summary = "Aggregate multiple messages into a JSON Array", since = "3.6.5", tag = "json")
-public class JsonArrayAggregator extends MessageAggregatorImpl {
+@NoArgsConstructor
+public class JsonArrayAggregator extends JsonAggregatorImpl {
   private transient ObjectMapper mapper = new ObjectMapper();
-  private transient Logger log = LoggerFactory.getLogger(this.getClass());
-
-  public JsonArrayAggregator() {
-
-  }
 
   @Override
-  public void joinMessage(AdaptrisMessage original, Collection<AdaptrisMessage> messages) throws CoreException {
+  public void aggregate(AdaptrisMessage original, Iterable<AdaptrisMessage> messages)
+      throws CoreException {
     try (Writer w = new BufferedWriter(original.getWriter()); JsonGenerator generator = mapper.getFactory().createGenerator(w)) {
       generator.writeStartArray();
-      for (AdaptrisMessage msg : filter(messages)) {
-        write(msg, generator);
-        overwriteMetadata(msg, original);
+      for (AdaptrisMessage msg : messages) {
+        if (filter(msg)) {
+          write(msg, generator);
+          overwriteMetadata(msg, original);
+        }
       }
       generator.writeEndArray();
     }
