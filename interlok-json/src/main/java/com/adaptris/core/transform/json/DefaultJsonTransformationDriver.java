@@ -2,7 +2,7 @@ package com.adaptris.core.transform.json;
 
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
-import com.adaptris.annotation.Removal;
+import com.adaptris.validation.constraints.ConfigDeprecated;
 import com.adaptris.core.util.LoggingHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import net.sf.json.JSONArray;
@@ -30,8 +30,8 @@ import net.sf.json.JSONObject;
 @XStreamAlias("default-transformation-driver")
 @ComponentProfile(summary = "JSON/XML Transformation driver, supports top level JSON arrays", tag = "json,xml,transformation")
 @Deprecated
-@Removal(version = "3.12.0",
-    message = "since 3.10.0, the name was changed to jsonlib-transformation-driver since its performance is not predictable enough for it to be the default.")
+@ConfigDeprecated(removalVersion = "3.12.0",
+    message = "since 3.10.0, the name was changed to jsonlib-transformation-driver since its performance is not predictable enough for it to be the default.", groups = Deprecated.class)
 @DisplayOrder(order= {"rootName", "arrayName", "elementName", "objectName"})
 public class DefaultJsonTransformationDriver extends JsonlibTransformationDriver {
 
