@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.everit.json.schema.ValidationException;
 import com.adaptris.annotation.AdvancedConfig;
@@ -56,8 +57,11 @@ public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImp
       Object json = jsonify(msg.getContent());
       ArrayList<String> violations = new ArrayList<>();
       violations.add(exc.getMessage());
-      for (String ve : exc.getAllMessages()) {
-        violations.add(ve);
+      List<String> allMessages = exc.getAllMessages();
+      if (allMessages.size() > 1) {
+        for (String ve : allMessages) {
+          violations.add(ve);
+        }
       }
       Map<String, Object> newMsg = new HashMap<>();
       newMsg.put("original", json);
