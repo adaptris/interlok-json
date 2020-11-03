@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.InterlokException;
@@ -17,7 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Render a list of {@link RemoteBlob} as a JSON Array.
- * 
+ *
  * @config remote-blob-list-as-json
  */
 @XStreamAlias("remote-blob-list-as-json")
@@ -32,10 +33,10 @@ public class JsonBlobListRenderer implements BlobListRenderer {
       generator.writeStartArray();
       for (RemoteBlob blob : list) {
         Map<String, Object> obj = new HashMap<>();
-        obj.put("bucket", blob.getBucket());
-        obj.put("lastModified", blob.getLastModified());
-        obj.put("name", blob.getName());
-        obj.put("size", blob.getSize());
+        mapInsert(obj, "bucket", blob.getBucket());
+        mapInsert(obj, "lastModified", blob.getLastModified());
+        mapInsert(obj, "name", blob.getName());
+        mapInsert(obj, "size", blob.getSize());
         generator.writeObject(obj);
       }
       generator.writeEndArray();
@@ -44,4 +45,7 @@ public class JsonBlobListRenderer implements BlobListRenderer {
     }
  }
 
+  private void mapInsert(final Map<String, Object> map, String key, Object obj) {
+    Optional.ofNullable(obj).ifPresent((o) -> map.put(key, o));
+  }
 }
