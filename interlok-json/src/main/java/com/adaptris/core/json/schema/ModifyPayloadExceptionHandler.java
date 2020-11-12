@@ -2,10 +2,13 @@ package com.adaptris.core.json.schema;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+
 import org.everit.json.schema.ValidationException;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
@@ -54,7 +57,7 @@ public class ModifyPayloadExceptionHandler extends ValidationExceptionHandlerImp
   public void handle(ValidationException exc, AdaptrisMessage msg) throws ServiceException {
     try {
       Object json = jsonify(msg.getContent());
-      ArrayList<String> violations = new ArrayList<>();
+      Set<String> violations = new LinkedHashSet<>();
       violations.add(exc.getMessage());
       for (String ve : exc.getAllMessages()) {
         violations.add(ve);
