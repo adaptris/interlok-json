@@ -1,11 +1,16 @@
 package com.adaptris.core.json.schema;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
+import net.minidev.json.JSONArray;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -38,6 +43,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
 
   private static final String VALID_JSON = "{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }";
   private static final String INVALID_JSON = "{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }";
+  private static final String SLIGHTLY_INVALID_JSON = "{ \"rectangle\" : { \"a\" : -5, \"b\" : 5 } }";
   private static final String JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : 5, \"b\" : 5 } }]";
   private static final String INVALID_JSON_ARRAY = "[{ \"rectangle\" : { \"a\" : -5, \"b\" : -5 } }]";
   private static final String INVALID_JSON_STRICT = "{ \"rectangle\" : value }";
@@ -288,6 +294,15 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
           .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
     ReadContext context = JsonPath.parse(msg.getInputStream(), jsonConfig);
     assertNotNull(context.read("$.original"));
-    assertNotNull(context.read("$.schema-violations"));
+
+    JSONArray violations = context.read("$.schema-violations");
+    assertNotNull(violations);
+    Set<String> messages = new HashSet<>();
+    for (Object o : violations.toArray())
+    {
+      messages.add(o.toString());
+    }
+    // make sure there are no duplicates (INTERLOK-3484)
+    assertEquals(violations.size(), messages.size());
   }
 }
