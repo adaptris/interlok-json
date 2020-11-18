@@ -21,9 +21,9 @@ import lombok.NoArgsConstructor;
 /**
  * Transform from a JSON Array to JSON lines.
  *
- * @config json-array-to-json-lines
+ * @config json-array-to-lines-transform
  */
-@XStreamAlias("json-array-to-json-lines")
+@XStreamAlias("json-array-to-lines-transform")
 @ComponentProfile(summary = "Transform from a JSON Array to JSON lines", tag = "json,transform",
     since = "3.11.1")
 @NoArgsConstructor
