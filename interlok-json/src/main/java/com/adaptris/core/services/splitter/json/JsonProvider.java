@@ -3,7 +3,7 @@ package com.adaptris.core.services.splitter.json;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.services.splitter.LineCountSplitter;
-import com.adaptris.core.util.CloseableIterable;
+import com.adaptris.interlok.util.CloseableIterable;
 
 /**
  * Allows switching between JSON arrays and JSON lines when attempting to split a payload.
@@ -49,7 +49,7 @@ public interface JsonProvider {
      * <p>
      * Under the covers it uses a {@link LineCountSplitter} to iterate over each line, ignoring blank lines.
      * </p>
-     */    
+     */
     // JSON_LINES is basically a line count splitter, where a JSON object is prsent on each line...
     // see jsonlines.org
     JSON_LINES {
