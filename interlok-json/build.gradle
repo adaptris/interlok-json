@@ -4,7 +4,8 @@ import org.apache.tools.ant.filters.*
 ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok/JSON'
-  requiredJacksonVersion='2.11.3'
+  jacksonVersion='2.11.3'
+  jsonOrgVersion = '20200518'
 }
 
 
@@ -20,9 +21,9 @@ dependencies {
   compile ("com.jayway.jsonpath:json-path:2.4.0")
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
-  compile ("com.fasterxml.jackson.core:jackson-annotations:$requiredJacksonVersion")
-  compile ("com.fasterxml.jackson.core:jackson-databind:$requiredJacksonVersion")
-  compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$requiredJacksonVersion")
+  compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+  compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
   compile ("commons-collections:commons-collections:3.2.2")
   compile ("commons-beanutils:commons-beanutils:1.9.4")
   compile ("xerces:xercesImpl:2.12.0")
