@@ -4,7 +4,10 @@ import org.apache.tools.ant.filters.*
 ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok/JSON'
+  jacksonVersion='2.11.3'
+  jsonOrgVersion = '20200518'
 }
+
 
 dependencies {
   compile ("net.sf.json-lib:json-lib:2.4:jdk15") {
@@ -19,7 +22,7 @@ dependencies {
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
   compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
+  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
   compile ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
   compile ("commons-collections:commons-collections:3.2.2")
   compile ("commons-beanutils:commons-beanutils:1.9.4")
@@ -28,7 +31,6 @@ dependencies {
   compile ("com.github.everit-org.json-schema:org.everit.json.schema:1.12.0")
   compile ("com.google.guava:guava:30.0-jre")
   compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.11")
-
   testCompile ("org.skyscreamer:jsonassert:1.5.0")
   testCompile ("org.apache.derby:derby:10.14.2.0")
 }
