@@ -30,7 +30,7 @@ import net.sf.json.JSONObject;
 @XStreamAlias("default-transformation-driver")
 @ComponentProfile(summary = "JSON/XML Transformation driver, supports top level JSON arrays", tag = "json,xml,transformation")
 @Deprecated
-@ConfigDeprecated(removalVersion = "3.12.0",
+@ConfigDeprecated(removalVersion = "4.0.0",
     message = "since 3.10.0, the name was changed to jsonlib-transformation-driver since its performance is not predictable enough for it to be the default.", groups = Deprecated.class)
 @DisplayOrder(order= {"rootName", "arrayName", "elementName", "objectName"})
 public class DefaultJsonTransformationDriver extends JsonlibTransformationDriver {
