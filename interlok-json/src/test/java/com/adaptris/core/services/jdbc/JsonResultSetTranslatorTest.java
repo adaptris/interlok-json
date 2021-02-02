@@ -47,6 +47,22 @@ public class JsonResultSetTranslatorTest {
     }
   }
 
+  protected static JdbcResult createJdbcResultSingle() throws Exception {
+    JdbcResult result = new JdbcResult();
+
+    final JdbcResultRow row_1 = new JdbcResultRow();
+    row_1.setFieldValue("firstName", "John", Types.VARCHAR);
+    row_1.setFieldValue("lastName", "Doe", Types.VARCHAR);
+
+   final JdbcResultSet mock1 = mock(JdbcResultSet.class);
+    when(mock1.getRows()).thenReturn(Arrays.asList(row_1));
+    final JdbcResultSet mock2 = mock(JdbcResultSet.class);
+    when(mock2.getRows()).thenReturn(Arrays.asList(row_1));
+    result.setHasResultSet(true);
+    result.setResultSets(Arrays.asList(mock1, mock2));
+    return result;
+  }
+
   protected static JdbcResult createJdbcResult() throws Exception {
     JdbcResult result = new JdbcResult();
 
