@@ -45,30 +45,20 @@ import java.util.Map;
 @ComponentProfile(summary = "Output the first resultset as JSON line-by-line", tag = "json,jdbc,line")
 public class JdbcJsonOutputLines extends JdbcJsonOutput {
 
-  private static final String ROOT_SEPARATOR = ",\n";
+  private static final String ROOT_SEPARATOR = "\n";
 
   @Override
   public void translate(final JdbcResult source, final AdaptrisMessage target) throws ServiceException {
     try (Writer w = new BufferedWriter(target.getWriter()); JsonGenerator generator = mapper.getFactory().createGenerator(w)) {
 
-      List<Map<String, Object>> jsonArray = new ArrayList<>();
+      generator.setPrettyPrinter(new MinimalPrettyPrinter(ROOT_SEPARATOR));
+
       for (final JdbcResultRow row : firstResultSet(source).getRows()) {
         Map<String, Object> jsonObject = new LinkedHashMap<>();
         for (final String field : row.getFieldNames()) {
           jsonObject.put(getColumnNameStyle().format(field), row.getFieldValue(field));
         }
-        jsonArray.add(jsonObject);
-      }
-
-      if (jsonArray.size() > 1) {
-        generator.setPrettyPrinter(new MinimalPrettyPrinter(ROOT_SEPARATOR));
-        w.write('[');
-      }
-      for (Map<String, Object> jsonObject : jsonArray) {
         generator.writeObject(jsonObject);
-      }
-      if (jsonArray.size() > 1) {
-        w.write(']');
       }
     }
     catch (IOException e) {

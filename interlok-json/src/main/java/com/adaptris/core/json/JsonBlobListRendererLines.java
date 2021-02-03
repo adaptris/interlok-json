@@ -31,7 +31,7 @@ import java.util.Optional;
 @ComponentProfile(summary = "Render a list of RemoteBlob objects as a JSON Array, one line per object", since = "3.9.2", tag = "cloud,aws,jclouds,blob,lines")
 public class JsonBlobListRendererLines extends JsonBlobListRenderer {
 
-  private static final String ROOT_SEPARATOR = ",\n";
+  private static final String ROOT_SEPARATOR = "\n";
 
   @Override
   public void render(Iterable<RemoteBlob> blobs, InterlokMessage msg) throws InterlokException {
@@ -39,7 +39,7 @@ public class JsonBlobListRendererLines extends JsonBlobListRenderer {
         Writer w = new BufferedWriter(msg.getWriter());
         JsonGenerator generator = new ObjectMapper().getFactory().createGenerator(w)) {
 
-      List<Map<String, Object>> jsonArray = new ArrayList<>();
+      generator.setPrettyPrinter(new MinimalPrettyPrinter(ROOT_SEPARATOR));
 
       for (RemoteBlob blob : list) {
         Map<String, Object> obj = new HashMap<>();
@@ -47,18 +47,7 @@ public class JsonBlobListRendererLines extends JsonBlobListRenderer {
         mapInsert(obj, "lastModified", blob.getLastModified());
         mapInsert(obj, "name", blob.getName());
         mapInsert(obj, "size", blob.getSize());
-        jsonArray.add(obj);
-      }
-
-      if (jsonArray.size() > 1) {
-        generator.setPrettyPrinter(new MinimalPrettyPrinter(ROOT_SEPARATOR));
-        w.write('[');
-      }
-      for (Map<String, Object> jsonObject : jsonArray) {
-        generator.writeObject(jsonObject);
-      }
-      if (jsonArray.size() > 1) {
-        w.write(']');
+        generator.writeObject(obj);
       }
 
     } catch (Exception e) {
