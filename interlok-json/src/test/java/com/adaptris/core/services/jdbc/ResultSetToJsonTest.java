@@ -4,7 +4,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.jdbc.JdbcConnection;
-import com.adaptris.core.json.jdbc.JdbcJsonLinesOutput;
+import com.adaptris.core.json.jdbc.JdbcJsonOutputLines;
 import com.adaptris.core.json.jdbc.JdbcJsonOutput;
 import com.adaptris.core.services.jdbc.StyledResultTranslatorImp.ColumnStyle;
 import com.adaptris.core.util.JdbcUtil;
@@ -52,7 +52,7 @@ public class ResultSetToJsonTest {
 
   @Test
   public void testTranslateLines() throws Exception {
-    JdbcJsonOutput jsonTranslator = new JdbcJsonLinesOutput();
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutputLines();
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     execute(jsonTranslator, createJdbcResult(), message);
 
@@ -66,7 +66,7 @@ public class ResultSetToJsonTest {
 
   @Test
   public void testTranslateLinesSingle() throws Exception {
-    JdbcJsonOutput jsonTranslator = new JdbcJsonLinesOutput();
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutputLines();
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     execute(jsonTranslator, createJdbcResultSingle(), message);
 

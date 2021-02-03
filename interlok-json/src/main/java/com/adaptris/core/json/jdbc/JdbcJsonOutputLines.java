@@ -43,7 +43,7 @@ import java.util.Map;
  */
 @XStreamAlias("jdbc-json-first-resultset-line-output")
 @ComponentProfile(summary = "Output the first resultset as JSON line-by-line", tag = "json,jdbc,line")
-public class JdbcJsonLinesOutput extends JdbcJsonOutput {
+public class JdbcJsonOutputLines extends JdbcJsonOutput {
 
   private static final String ROOT_SEPARATOR = ",\n";
 
