@@ -56,12 +56,11 @@ public class ResultSetToJsonTest {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     execute(jsonTranslator, createJdbcResult(), message);
 
-    assertEquals(3, message.getContent().split("\n").length);
+    String[] split = message.getContent().split("\n");
+    assertEquals(3, split.length);
 
-    ReadContext ctx = createContext(message);
-    assertNotNull(ctx.read("$.[0]"));
-    assertNotNull(ctx.read("$.[1]"));
-    assertEquals("Anna", ctx.read("$.[1].firstName"));
+    ReadContext ctx = createContext(split[1]);
+    assertEquals("Anna", ctx.read("$.firstName"));
   }
 
   @Test

@@ -48,10 +48,12 @@ public class JsonBlobListRendererTest {
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
             .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
     String content = msg.getContent();
-    assertEquals(10, content.split("\n").length);
-    ReadContext context = JsonPath.parse(content, jsonConfig);
-    assertEquals(Integer.valueOf(10), context.read("$.length()"));
-    assertEquals("bucket", context.read("$[0].bucket"));
+    String[] split = content.split("\n");
+    assertEquals(10, split.length);
+
+    ReadContext context = JsonPath.parse(split[4], jsonConfig);
+    assertEquals(Integer.valueOf(4), context.read("$.length()"));
+    assertEquals("bucket", context.read("$.bucket"));
   }
 
   @Test

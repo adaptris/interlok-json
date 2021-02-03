@@ -27,9 +27,15 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
  */
 public class JsonResultSetTranslatorTest {
 
+  private static Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+          .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+
+  protected static ReadContext createContext(String s) throws IOException {
+    return JsonPath.parse(s, jsonConfig);
+  }
+
   protected static ReadContext createContext(AdaptrisMessage msg) throws IOException {
-    Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
-        .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+
     return JsonPath.parse(msg.getInputStream(), jsonConfig);
   }
 
