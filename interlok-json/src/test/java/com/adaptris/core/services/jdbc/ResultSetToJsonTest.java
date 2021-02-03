@@ -106,6 +106,19 @@ public class ResultSetToJsonTest {
   }
 
   @Test
+  public void testTranslateLines_IOException() throws Exception {
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutputLines();
+    AdaptrisMessage message = new BrokenAdaptrisMessage();
+    try {
+      execute(jsonTranslator, createJdbcResult(), message);
+      fail();
+    }
+    catch (ServiceException expected) {
+
+    }
+  }
+
+  @Test
   public void testOutputWithAlias() throws Exception {
     createDatabase();
     JdbcDataQueryService service = new JdbcDataQueryService();

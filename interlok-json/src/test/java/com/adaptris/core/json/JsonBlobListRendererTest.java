@@ -78,6 +78,14 @@ public class JsonBlobListRendererTest {
     render.render(blobs, msg);
   }
 
+  @Test(expected = CoreException.class)
+  public void testRenderLines_Fail() throws Exception {
+    JsonBlobListRenderer render = new JsonBlobListRendererLines();
+    AdaptrisMessage msg = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
+    Collection<RemoteBlob> blobs = createBlobs(10);
+    render.render(blobs, msg);
+  }
+
   private static Collection<RemoteBlob> createBlobs(int count) {
     List<RemoteBlob> result = new ArrayList<>();
     for (int i = 0; i < count; i++) {
