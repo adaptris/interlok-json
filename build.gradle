@@ -10,8 +10,8 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '3.12-SNAPSHOT'
-  releaseVersion = project.findProperty('releaseVersion') ?: '3.12-SNAPSHOT'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.0-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '4.0-SNAPSHOT'
   nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -45,13 +45,14 @@ ext.propertyTemplate = { dir, filename ->
 }
 
 ext.hasGraphViz = { ->
-  def app = "dot"
-  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    app = app + ".exe"
-  }
-  return System.getenv("PATH").split(File.pathSeparator).any{
-    java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
-  }
+//  def app = "dot"
+//  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//    app = app + ".exe"
+//  }
+//  return System.getenv("PATH").split(File.pathSeparator).any{
+//    java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
+//  }
+  return false
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
@@ -103,13 +104,12 @@ subprojects {
   apply plugin: 'com.github.spotbugs'
   apply plugin: 'org.owasp.dependencycheck'
 
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
   group   = 'com.adaptris'
   version = releaseVersion
   def versionDir = "$buildDir/version"
   generateLombokConfig.enabled = false
-
 
   repositories {
     mavenCentral()
@@ -118,9 +118,6 @@ subprojects {
     maven { url "$nexusBaseUrl/content/groups/interlok" }
     maven { url 'https://jitpack.io' }
   }
-
-
-
 
   configurations {
     javadoc {}
@@ -146,7 +143,6 @@ subprojects {
   configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, "seconds"
   }
-
 
   dependencies {
     annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
@@ -174,13 +170,11 @@ subprojects {
 
   }
 
-
   sourceSets {
     main {
       output.dir(versionDir, builtBy: 'generateVersion')
     }
   }
-
 
   // Generate the META-INF/adaptris-version file
   task generateVersion {
@@ -208,9 +202,9 @@ subprojects {
       }
     }
     include "package-list"
+    include "element-list"
     into offlineJavadocPackageDir
   }
-
 
   javadoc {
     onlyIf {
@@ -222,6 +216,7 @@ subprojects {
       options.tags('apiNote:a:API Note:', 'implSpec:a:Implementation Requirements:','implNote:a:Implementation Note:')
       taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
       options.addStringOption "tagletpath", configurations.javadoc.asPath
+      options.addBooleanOption "-no-module-directories", true
       options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
         group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
         group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
@@ -243,6 +238,7 @@ subprojects {
       options.tags('apiNote:a:API Note:', 'implSpec:a:Implementation Requirements:','implNote:a:Implementation Note:')
       taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
       options.addStringOption "tagletpath", configurations.javadoc.asPath
+      options.addBooleanOption "-no-module-directories", true
       options.docletpath = configurations.umlDoclet.files.asType(List)
       options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
       options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
