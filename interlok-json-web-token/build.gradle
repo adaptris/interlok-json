@@ -21,7 +21,7 @@ dependencies {
   runtime ("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
   runtime ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
 
-  testCompile ('junit:junit:4.13.1')
+  testCompile ('junit:junit:4.13.2')
   testCompile ("org.skyscreamer:jsonassert:1.5.0")
 }
 
