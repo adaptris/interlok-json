@@ -1,6 +1,8 @@
 package com.adaptris.core.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -30,15 +32,57 @@ public class JsonBlobListRendererTest {
     render.render(blobs, msg);
     Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
-    System.err.println(msg.getContent());
-    ReadContext context = JsonPath.parse(msg.getContent(), jsonConfig);
+    String content = msg.getContent();
+    System.err.println(content);
+    ReadContext context = JsonPath.parse(content, jsonConfig);
     assertEquals(Integer.valueOf(10), context.read("$.length()"));
     assertEquals("bucket", context.read("$[0].bucket"));
+  }
+
+  @Test
+  public void testRenderLines() throws Exception {
+    JsonBlobListRenderer render = new JsonBlobListRendererLines();
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    Collection<RemoteBlob> blobs = createBlobs(10);
+    render.render(blobs, msg);
+    Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+            .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+    String content = msg.getContent();
+    String[] split = content.split("\n");
+    assertEquals(10, split.length);
+
+    ReadContext context = JsonPath.parse(split[4], jsonConfig);
+    assertEquals(Integer.valueOf(4), context.read("$.length()"));
+    assertEquals("bucket", context.read("$.bucket"));
+  }
+
+  @Test
+  public void testRenderLinesSingle() throws Exception {
+    JsonBlobListRenderer render = new JsonBlobListRendererLines();
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    Collection<RemoteBlob> blobs = createBlobs(1);
+    render.render(blobs, msg);
+    Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+            .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+    String content = msg.getContent();
+    assertEquals(1, content.split("\n").length);
+    assertFalse(content.contains("["));
+    ReadContext context = JsonPath.parse(content, jsonConfig);
+    assertEquals(Integer.valueOf(4), context.read("$.length()"));
+    assertEquals("bucket", context.read("$.bucket"));
   }
 
   @Test(expected = CoreException.class)
   public void testRender_Fail() throws Exception {
     JsonBlobListRenderer render = new JsonBlobListRenderer();
+    AdaptrisMessage msg = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
+    Collection<RemoteBlob> blobs = createBlobs(10);
+    render.render(blobs, msg);
+  }
+
+  @Test(expected = CoreException.class)
+  public void testRenderLines_Fail() throws Exception {
+    JsonBlobListRenderer render = new JsonBlobListRendererLines();
     AdaptrisMessage msg = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
     Collection<RemoteBlob> blobs = createBlobs(10);
     render.render(blobs, msg);

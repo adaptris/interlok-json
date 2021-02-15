@@ -1,25 +1,30 @@
 package com.adaptris.core.services.jdbc;
 
-import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createContext;
-import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createJdbcResult;
-import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.execute;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.jdbc.JdbcConnection;
+import com.adaptris.core.json.jdbc.JdbcJsonOutputLines;
 import com.adaptris.core.json.jdbc.JdbcJsonOutput;
 import com.adaptris.core.services.jdbc.StyledResultTranslatorImp.ColumnStyle;
 import com.adaptris.core.util.JdbcUtil;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.jdbc.JdbcResult;
 import com.jayway.jsonpath.ReadContext;
+import org.junit.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createContext;
+import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createJdbcResult;
+import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createJdbcResultSingle;
+import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.execute;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 
 public class ResultSetToJsonTest {
@@ -33,17 +38,43 @@ public class ResultSetToJsonTest {
   protected static final String SELECT = "SELECT firstname, lastname from JSON_PEOPLE";
 
 
-	@Test
+  @Test
   public void testTranslate() throws Exception {
     JdbcJsonOutput jsonTranslator = new JdbcJsonOutput();
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
-
     execute(jsonTranslator, createJdbcResult(), message);
+
     ReadContext ctx = createContext(message);
     assertNotNull(ctx.read("$.[0]"));
     assertNotNull(ctx.read("$.[1]"));
     assertEquals("Anna", ctx.read("$.[1].firstName"));
-	}
+  }
+
+  @Test
+  public void testTranslateLines() throws Exception {
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutputLines();
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    execute(jsonTranslator, createJdbcResult(), message);
+
+    String[] split = message.getContent().split("\n");
+    assertEquals(3, split.length);
+
+    ReadContext ctx = createContext(split[1]);
+    assertEquals("Anna", ctx.read("$.firstName"));
+  }
+
+  @Test
+  public void testTranslateLinesSingle() throws Exception {
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutputLines();
+    AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    execute(jsonTranslator, createJdbcResultSingle(), message);
+
+    assertEquals(1, message.getContent().split("\n").length);
+    assertFalse(message.getContent().contains("["));
+
+    ReadContext ctx = createContext(message);
+    assertEquals("John", ctx.read("$.firstName"));
+  }
 
   @Test
   public void testTranslate_NoResults() throws Exception {
@@ -63,6 +94,19 @@ public class ResultSetToJsonTest {
   @Test
   public void testTranslate_IOException() throws Exception {
     JdbcJsonOutput jsonTranslator = new JdbcJsonOutput();
+    AdaptrisMessage message = new BrokenAdaptrisMessage();
+    try {
+      execute(jsonTranslator, createJdbcResult(), message);
+      fail();
+    }
+    catch (ServiceException expected) {
+
+    }
+  }
+
+  @Test
+  public void testTranslateLines_IOException() throws Exception {
+    JdbcJsonOutput jsonTranslator = new JdbcJsonOutputLines();
     AdaptrisMessage message = new BrokenAdaptrisMessage();
     try {
       execute(jsonTranslator, createJdbcResult(), message);
