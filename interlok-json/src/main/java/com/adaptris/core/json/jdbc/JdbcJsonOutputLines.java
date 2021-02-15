@@ -26,16 +26,16 @@ import java.util.Map;
  * result set as json.
  *
  * <p>
- * Takes the first result set and writes out each row as part of a json
- * array as a new line. You should use this output implementation if
- * you are executing a SELECT via {@link JdbcDataQueryService}.
+ * Takes the first result set and writes out each row as its own JSON
+ * object. You should use this output implementation if you are
+ * executing a SELECT via {@link JdbcDataQueryService}.
  * </p>
  *
  * <pre>
  {@code
-    [ { "firstName": "John", "lastName": "Doe" },
-      { "firstName": "Anna", "lastName": "Smith" },
-      { "firstName": "Peter", "lastName": "Jones" } ]
+    { "firstName": "John", "lastName": "Doe" }
+    { "firstName": "Anna", "lastName": "Smith" }
+    { "firstName": "Peter", "lastName": "Jones" }
  }
  * </pre>
  *
