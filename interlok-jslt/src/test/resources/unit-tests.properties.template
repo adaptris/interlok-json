@@ -1,0 +1,8 @@
+junit.ConsumerCase.baseDir=@BUILD_DIR@/examples/consumers
+junit.ServiceCase.baseDir=@BUILD_DIR@/examples/services
+junit.ProducerCase.baseDir=@BUILD_DIR@/examples/producers
+junit.WorkflowCase.baseDir=@BUILD_DIR@/examples/workflows
+
+junit.jslt.input.file=@BASE_DIR@/src/test/resources/collapse.input
+junit.jslt.transform.url=file:///@BASE_DIR@/src/test/resources/collapse.jslt
+junit.jslt.transform.vars.url=file:///@BASE_DIR@/src/test/resources/collapse-with-var.jslt

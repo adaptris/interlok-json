@@ -1,0 +1,90 @@
+ext {
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
+  componentName='Interlok Transform/JSLT'
+  jacksonVersion='2.12.1'
+}
+
+
+dependencies {
+  compile ("com.schibsted.spt.data:jslt:0.1.11")
+  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+  testCompile ("com.jayway.jsonpath:json-path:2.4.0")
+}
+
+
+jar {
+  manifest {
+    attributes("Built-By": System.getProperty('user.name'),
+               "Build-Jdk": System.getProperty('java.version'),
+               "Implementation-Title": componentName,
+               "Implementation-Version": project.version,
+               "Implementation-Vendor-Id": project.group,
+               "Implementation-Vendor": organizationName)
+  }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+task examplesJar(type: Jar, dependsOn: test) {
+  classifier = 'examples'
+  from new File(buildDir, '/examples')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.extensions.delombokTask
+}
+
+artifacts {
+  archives javadocJar
+  archives examplesJar
+  archives sourcesJar
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      artifact javadocJar { classifier "javadoc" }
+      artifact examplesJar { classifier "examples" }
+
+      pom.withXml {
+        asNode().appendNode("name", componentName)
+        asNode().appendNode("description", "Support for JSON transforms via JSLT")
+        def properties = asNode().appendNode("properties")
+        properties.appendNode("target", "3.12.0+")
+        properties.appendNode("tags", "jslt,json")
+        properties.appendNode("license", "false")
+        properties.appendNode("externalUrl", "https://github.com/schibsted/jslt/")
+        properties.appendNode("readme", "https://raw.githubusercontent.com/adaptris/interlok-json/develop/interlok-jslt/README.md")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-json")
+      }
+    }
+  }
+  repositories {
+    maven {
+      credentials {
+        username repoUsername
+        password repoPassword
+      }
+      url mavenPublishUrl
+    }
+  }
+}
+
+
+delombok {
+  target = delombokTargetDir
+}
+
+task deleteGeneratedFiles(type: Delete) {
+  delete file(testResourcesDir() + "/unit-tests.properties"), file(testResourcesDir() + "/unit-tests.properties.resolved"), 'derby.log', delombokTargetDir
+}
+
+javadoc.dependsOn offlinePackageList
+processTestResources.dependsOn copyUnitTestProperties
+clean.dependsOn deleteGeneratedFiles
