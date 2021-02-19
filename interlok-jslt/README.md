@@ -5,7 +5,7 @@ Interlok JSON transformation using the JLST language so their canonical document
 Rather than having a single service that encapsulates all the possible modes of operation that JSLT supports; we have chosen to be somewhat explicit in the naming so that we can simplify configuration.
 
 - Use `com.adaptris.core.json.jslt.JsltTransformService` if you want to transform a document. This has limited support for caching the underlying `Expression` if that is desired. However, since that class is not Serializable your mileage will vary.
-- Use `com.adaptris.core.json.jslt.JsltMetadataService` if you want to extract values and store them as metadata (object or othewise).
+- Use `com.adaptris.core.json.jslt.JsltMetadataService` if you want to extract values and store them as metadata (object or otherwise).
 
  ## Transforms
 
