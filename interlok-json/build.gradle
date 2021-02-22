@@ -3,7 +3,8 @@ import org.apache.tools.ant.filters.*
 
 ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
-  componentName='Interlok/JSON'
+  componentName='Interlok Transform/JSON'
+  componentDesc="Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting"
   jacksonVersion='2.12.1'
   jsonOrgVersion = '20201115'
 }
@@ -88,7 +89,7 @@ publishing {
 
       pom.withXml {
         asNode().appendNode("name", componentName)
-        asNode().appendNode("description", "Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting")
+        asNode().appendNode("description", componentDesc)
         asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/pages/cookbook/cookbook-json-transform")
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.8.0+")
