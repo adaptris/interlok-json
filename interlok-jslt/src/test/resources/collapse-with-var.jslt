@@ -1,0 +1,9 @@
+{
+  "result" : {
+    "Open" : .menu.popup.menuitem[0].onclick,
+    "Close" : .menu.popup.menuitem[1].onclick,
+    "metadata_value_from_object" : $object_metadata_key,
+    "metadata_value_from_metadata" : $text_metadata_key,
+    "metadata_value_from_fixed" : $fixed_metadata_key
+  }
+}
