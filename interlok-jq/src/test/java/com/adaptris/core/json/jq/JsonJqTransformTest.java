@@ -8,9 +8,9 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.MetadataElement;
-import com.adaptris.core.ServiceCase;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -19,7 +19,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
-public class JsonJqTransformTest extends ServiceCase {
+public class JsonJqTransformTest extends ExampleServiceCase {
 
   private static final String SAMPLE_QUERY = "{\n" + " \"status-id\": .id,\n" + " \"status-code\": .status.agreementStatusCd,\n"
       + " \"status-description\": .status.agreementStatusDesc\n" + "}";
@@ -32,10 +32,6 @@ public class JsonJqTransformTest extends ServiceCase {
   private Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
       .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   @Test
   public void testService() throws Exception {
     JsonJqTransform service = new JsonJqTransform().withQuerySource(new ConstantDataInputParameter(SAMPLE_QUERY));
