@@ -1,21 +1,19 @@
 package com.adaptris.core.json.streaming;
 
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.CoreException;
-import com.adaptris.core.util.CloseableIterable;
-import com.adaptris.stax.lms.StaxPathSplitter;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompare;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.JSONCompareResult;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.CoreException;
+import com.adaptris.interlok.util.CloseableIterable;
 
 /**
  * @author mwarman

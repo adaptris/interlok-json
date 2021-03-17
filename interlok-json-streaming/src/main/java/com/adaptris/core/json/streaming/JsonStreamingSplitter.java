@@ -215,7 +215,7 @@ public class JsonStreamingSplitter extends MessageSplitterImp {
         if(getConfig().wrapWithArray) {
           writer.add(getConfig().xmlEventFactory.createProcessingInstruction(JsonXMLStreamConstants.MULTIPLE_PI_TARGET, event.asStartElement().getName().getLocalPart()));
         }
-        while (isNotEndElement(event, elementName) && getConfig().getXmlEventReader().hasNext()){
+        while (isNotEndElement(event, elementName, (end) -> { }) && getConfig().getXmlEventReader().hasNext()) {
           writer.add(event);
           event = getConfig().getXmlEventReader().nextEvent();
         }

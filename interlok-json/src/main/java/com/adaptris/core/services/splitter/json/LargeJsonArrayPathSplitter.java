@@ -11,7 +11,7 @@ import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.Args;
-import com.adaptris.core.util.CloseableIterable;
+import com.adaptris.interlok.util.CloseableIterable;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
