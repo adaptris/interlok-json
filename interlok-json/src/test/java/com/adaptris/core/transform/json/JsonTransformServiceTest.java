@@ -136,7 +136,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   protected Object retrieveObjectForSampleConfig() {
     service.setSourceJson(payloadInput);
     FileDataInputParameter in = new FileDataInputParameter();
-    in.setEndPoint("file:///path/to/my/mapping.json");
+    in.setUrl("file:///path/to/my/mapping.json");
     service.setMappingSpec(in);
     service.setTargetJson(payloadOutput);
 

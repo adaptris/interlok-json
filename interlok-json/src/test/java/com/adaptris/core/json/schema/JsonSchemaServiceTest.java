@@ -9,12 +9,9 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
-
-import net.minidev.json.JSONArray;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
-
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.FileDataInputParameter;
 import com.adaptris.core.json.JacksonJsonDeserializer;
@@ -27,6 +24,7 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import net.minidev.json.JSONArray;
 
 /**
  * Unit tests for {@link JsonSchemaService}.
@@ -203,7 +201,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   public void testAdvancedJsonSchemaLoaderClasspath() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setEndPoint(CLASSPATH_SCHEMA_URL);
+    schemaUrl.setUrl(CLASSPATH_SCHEMA_URL);
     JsonSchemaService service = new JsonSchemaService(schemaUrl);
     service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader().withClassPathAwareClient(true));
     execute(service, message);
@@ -223,7 +221,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   public void testAdvancedJsonSchemaLoader_ResolutionScopeAndClasspath() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setEndPoint(RELATIVE_SCHEMA_URL);
+    schemaUrl.setUrl(RELATIVE_SCHEMA_URL);
     JsonSchemaService service = new JsonSchemaService(schemaUrl);
     service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader()
         .withClassPathAwareClient(true)
@@ -235,7 +233,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   public void testAdvancedJsonSchemaLoader_ResolutionScopeAndFs() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setEndPoint(RELATIVE_SCHEMA_URL);
+    schemaUrl.setUrl(RELATIVE_SCHEMA_URL);
     JsonSchemaService service = new JsonSchemaService(schemaUrl);
     service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader()
         .withResolutionScope(String.format("file:///%s", PROPERTIES.getProperty(KEY_SCHEMA_DIR))));
@@ -246,7 +244,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
   public void testAdvancedJsonSchemaLoader_Failed() throws Exception {
     AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_ARRAY);
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setEndPoint(CLASSPATH_SCHEMA_URL);
+    schemaUrl.setUrl(CLASSPATH_SCHEMA_URL);
     JsonSchemaService service = new JsonSchemaService(schemaUrl);
     service.setJsonSchemaLoader(new AdvancedJsonSchemaLoader().withClassPathAwareClient(true));
     try {
@@ -285,7 +283,7 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
 
   private JsonSchemaService createService() {
     final FileDataInputParameter schemaUrl = new FileDataInputParameter();
-    schemaUrl.setEndPoint(SCHEMA_URL);
+    schemaUrl.setUrl(SCHEMA_URL);
     return new JsonSchemaService(schemaUrl);
   }
 
