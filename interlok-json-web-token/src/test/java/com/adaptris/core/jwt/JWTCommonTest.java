@@ -1,10 +1,13 @@
 package com.adaptris.core.jwt;
 
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.DefaultMessageFactory;
-import com.adaptris.core.ServiceCase;
-import com.adaptris.core.jwt.secrets.PGPSecret;
-import com.adaptris.core.jwt.secrets.SecretConfigurator;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Security;
+import java.util.Date;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPEncryptedData;
@@ -19,17 +22,13 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 import org.json.JSONObject;
 import org.junit.Before;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.DefaultMessageFactory;
+import com.adaptris.core.jwt.secrets.PGPSecret;
+import com.adaptris.core.jwt.secrets.SecretConfigurator;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.Security;
-import java.util.Date;
-
-public abstract class JWTCommonTest extends ServiceCase
+public abstract class JWTCommonTest extends ExampleServiceCase
 {
   protected String pgpPath = null;
   protected String wrongKey = null;
@@ -85,9 +84,4 @@ public abstract class JWTCommonTest extends ServiceCase
     return pgpSecret;
   }
 
-  @Override
-  public boolean isAnnotatedForJunit4()
-  {
-    return true;
-  }
 }

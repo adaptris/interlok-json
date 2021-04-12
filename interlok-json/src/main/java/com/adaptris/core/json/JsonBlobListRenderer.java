@@ -45,7 +45,7 @@ public class JsonBlobListRenderer implements BlobListRenderer {
     }
  }
 
-  private void mapInsert(final Map<String, Object> map, String key, Object obj) {
+  protected void mapInsert(final Map<String, Object> map, String key, Object obj) {
     Optional.ofNullable(obj).ifPresent((o) -> map.put(key, o));
   }
 }

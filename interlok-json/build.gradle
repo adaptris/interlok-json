@@ -3,9 +3,10 @@ import org.apache.tools.ant.filters.*
 
 ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
-  componentName='Interlok/JSON'
-  jacksonVersion='2.12.1'
-  jsonOrgVersion = '20201115'
+  componentName='Interlok Transform/JSON'
+  componentDesc="Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting"
+  jacksonVersion='2.12.2'
+  jsonOrgVersion = '20210307'
 }
 
 
@@ -13,7 +14,7 @@ dependencies {
   compile ("net.sf.json-lib:json-lib:2.4:jdk15") {
     exclude group: 'xerces', module: 'xercesImpl'
   }
-  compile ("xom:xom:1.3.5") {
+  compile ("xom:xom:1.3.6") {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xerces', module: 'xercesImpl'
   }
@@ -29,10 +30,11 @@ dependencies {
   compile ("xerces:xercesImpl:2.12.1")
 
   compile ("com.github.everit-org.json-schema:org.everit.json.schema:1.12.0")
-  compile ("com.google.guava:guava:30.1-jre")
+  compile ("com.google.guava:guava:30.1.1-jre")
   compile ("com.flipkart.zjsonpatch:zjsonpatch:0.4.11")
   testCompile ("org.skyscreamer:jsonassert:1.5.0")
-  testCompile ("org.apache.derby:derby:10.14.2.0")
+  testCompile ("org.apache.derby:derby:10.15.2.0")
+  testCompile ("org.apache.derby:derbytools:10.15.2.0")
 }
 
 jar {
@@ -87,7 +89,7 @@ publishing {
 
       pom.withXml {
         asNode().appendNode("name", componentName)
-        asNode().appendNode("description", "Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting")
+        asNode().appendNode("description", componentDesc)
         asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/pages/cookbook/cookbook-json-transform")
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.8.0+")

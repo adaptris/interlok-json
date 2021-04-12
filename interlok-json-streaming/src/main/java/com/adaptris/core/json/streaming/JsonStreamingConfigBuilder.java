@@ -45,7 +45,7 @@ public class JsonStreamingConfigBuilder {
   @InputFieldDefault(value = "false")
   private Boolean autoPrimitive;
   /**
-   * emit "&lt;?xml-multiple ?>" in the XML; default true if not specified.
+   * emit "&lt;?xml-multiple ?&gt;" in the XML; default true if not specified.
    */
   @Getter
   @Setter

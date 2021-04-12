@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThrows;
 import org.junit.Before;
 import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.ConfiguredDestination;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
@@ -137,7 +136,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   protected Object retrieveObjectForSampleConfig() {
     service.setSourceJson(payloadInput);
     FileDataInputParameter in = new FileDataInputParameter();
-    in.setDestination(new ConfiguredDestination("file:///path/to/my/mapping.json"));
+    in.setUrl("file:///path/to/my/mapping.json");
     service.setMappingSpec(in);
     service.setTargetJson(payloadOutput);
 

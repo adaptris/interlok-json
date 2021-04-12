@@ -3,11 +3,12 @@ import org.apache.tools.ant.filters.*
 
 ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
-  componentName='Interlok/JSON+JWT'
+  componentName='Interlok Transform/JWT'
+  componentDesc="Handling JWT in Interlok"
   bouncyCastleVersion='1.68'
   jwtVersion = "0.11.2"
   jacksonDatabindVersion = "2.12.1"
-  jsonOrgVersion = '20201115'
+  jsonOrgVersion = '20210307'
 }
 
 dependencies {
@@ -21,7 +22,7 @@ dependencies {
   runtime ("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
   runtime ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
 
-  testCompile ('junit:junit:4.13.1')
+  testCompile ('junit:junit:4.13.2')
   testCompile ("org.skyscreamer:jsonassert:1.5.0")
 }
 
@@ -73,7 +74,7 @@ publishing {
 
       pom.withXml {
         asNode().appendNode("name", componentName)
-        asNode().appendNode("description", "Handling JWT in Interlok")
+        asNode().appendNode("description", componentDesc)
         // asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/cookbook-json-transform.html")
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.11.0+")

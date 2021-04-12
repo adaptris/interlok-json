@@ -12,7 +12,7 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.services.splitter.MessageSplitterImp;
-import com.adaptris.core.util.CloseableIterable;
+import com.adaptris.interlok.util.CloseableIterable;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,11 +21,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Split an arbitrarily large JSON array.
- * 
+ *
  * <p>
  * Note: tested with an 85Mb file containing an array of >15k JSON objects
  * </p>
- * 
+ *
  * @config large-json-array-splitter
  */
 @XStreamAlias("large-json-array-splitter")
@@ -50,11 +50,11 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
    * This is used when; the default buffer size matches the default buffer size in {@link BufferedReader} and {@link BufferedWriter}
    * , changes to the buffersize will impact performance and memory usage depending on the underlying operating system/disk.
    * </p>
-   * 
+   *
    * @param b the buffer size (default is 8192).
    */
   public void setBufferSize(Integer b) {
-    this.bufferSize = b;
+    bufferSize = b;
   }
 
   int bufferSize() {
@@ -133,11 +133,11 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     private boolean iteratorInvoked = false;
 
     protected JsonSplitGenerator(GeneratorConfig cfg) {
-      this.mapper = cfg.mapper;
-      this.parser = cfg.parser;
-      this.reader = cfg.reader;
-      this.originalMsg = cfg.originalMessage;
-      this.factory = selectFactory(originalMsg);
+      mapper = cfg.mapper;
+      parser = cfg.parser;
+      reader = cfg.reader;
+      originalMsg = cfg.originalMessage;
+      factory = selectFactory(originalMsg);
       logR.trace("Using message factory: {}", factory.getClass());
     }
 

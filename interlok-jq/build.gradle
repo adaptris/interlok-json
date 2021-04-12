@@ -1,7 +1,8 @@
 ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
-  componentName='Interlok/JSON+JQ'
-  jacksonVersion='2.12.1'
+  componentName='Interlok Transform/JQ'
+  componentDesc="Transform JSON using JQ style syntax"
+  jacksonVersion='2.12.2'
 }
 
 
@@ -57,7 +58,7 @@ publishing {
 
       pom.withXml {
         asNode().appendNode("name", componentName)
-        asNode().appendNode("description", "Transform JSON using JQ style syntax")
+        asNode().appendNode("description", componentDesc)
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.7.0+")
         properties.appendNode("tags", "json,jq")

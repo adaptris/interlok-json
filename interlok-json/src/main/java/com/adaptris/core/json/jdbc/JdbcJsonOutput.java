@@ -78,7 +78,7 @@ public class JdbcJsonOutput extends StyledResultTranslatorImp {
     generator.writeEndArray();
   }
 
-  private JdbcResultSet firstResultSet(JdbcResult result) {
+  protected JdbcResultSet firstResultSet(JdbcResult result) {
     if (result.isHasResultSet()) {
       return result.getResultSet(0);
     }
