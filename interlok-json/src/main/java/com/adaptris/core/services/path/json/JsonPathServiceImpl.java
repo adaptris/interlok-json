@@ -5,9 +5,7 @@ import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.common.Execution;
-import com.adaptris.core.common.StringPayloadDataInputParameter;
 import com.adaptris.core.json.JsonPathExecution;
-import com.adaptris.interlok.config.DataInputParameter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.Getter;
@@ -19,7 +17,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
