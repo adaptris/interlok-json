@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jsfr.json.Collector;
 import org.jsfr.json.JsonSurfer;
 import org.jsfr.json.JsonSurferFastJson;
@@ -234,7 +234,7 @@ public class JsonPathStreamingService extends JsonPathServiceImpl
   }
 
   private Surfer surfer() {
-    return (Surfer)ObjectUtils.defaultIfNull(surfer, Surfer.SIMPLE);
+    return ObjectUtils.defaultIfNull(surfer, Surfer.SIMPLE);
   }
 
   public enum Surfer {
