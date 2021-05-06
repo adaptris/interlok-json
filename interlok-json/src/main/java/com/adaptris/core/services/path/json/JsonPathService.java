@@ -157,7 +157,7 @@ public class JsonPathService extends ServiceImp {
   @Getter
   @Setter
   @NonNull
-  private DataInputParameter<String> source = new StringPayloadDataInputParameter();
+  protected DataInputParameter source = new StringPayloadDataInputParameter();
 
   /**
    * The list of jsonpath executions to apply.
@@ -170,7 +170,7 @@ public class JsonPathService extends ServiceImp {
   @Getter
   @Setter
   @NonNull
-  private List<Execution> executions = new ArrayList<>();
+  protected List<Execution> executions = new ArrayList<>();
 
   protected transient Configuration jsonConfig;
 
@@ -184,8 +184,7 @@ public class JsonPathService extends ServiceImp {
   @Getter
   @Setter
   @InputFieldDefault(value = "false")
-  private Boolean unwrapJson;
-
+  protected Boolean unwrapJson;
 
   public JsonPathService(DataInputParameter<String> source, Execution... executions) {
     this(source, new ArrayList<>(Arrays.asList(executions)));
@@ -240,6 +239,9 @@ public class JsonPathService extends ServiceImp {
     if (Map.class.isAssignableFrom(jsonObject.getClass())) {
       return mapper.writeValueAsString(jsonObject);
     }
+    if (List.class.isAssignableFrom(jsonObject.getClass())) {
+      return mapper.writeValueAsString(jsonObject);
+    }
     return jsonObject.toString();
   }
 
@@ -285,7 +287,7 @@ public class JsonPathService extends ServiceImp {
     return false;
   }
 
-  private static Object convertIfNull(Object o, Execution exec) {
+  protected static Object convertIfNull(Object o, Execution exec) {
     if (exec instanceof JsonPathExecution) {
       return ((JsonPathExecution) exec).nullConverter().convert(o);
     }
