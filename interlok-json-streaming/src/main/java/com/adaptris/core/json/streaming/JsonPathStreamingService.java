@@ -1,12 +1,14 @@
 package com.adaptris.core.json.streaming;
 
 import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.Execution;
-import com.adaptris.core.services.path.json.JsonPathService;
+import com.adaptris.core.common.PayloadStreamInputParameter;
+import com.adaptris.core.services.path.json.JsonPathServiceImpl;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
@@ -34,13 +36,135 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This service allows you to search JSON content and the results are
+ * then set back into the message. The advantage of this implementation
+ * is that it doesn't need to parse the entire JSON document and so is
+ * able to handle arbitrarily large documents.
+ * <p>
+ * The searching works in much the same way as XPath, for more
+ * information on how to build a JSON path see the
+ * <a href="https://github.com/jayway/JsonPath">JSONPath</a>
+ * documentation and the
+ * <a href="https://github.com/jsurfer/JsonSurfer">JSON Surfer</>
+ * documentation.
+ * </p>
+ * For example, if you have a message with the following payload:
+ *
+ * <pre>
+ * {@code
+{
+"store": {
+"book": [ {
+"category": "reference",
+"author": "Nigel Rees",
+"title": "Sayings of the Century",
+"price": 8.95
+}, {
+"category": "fiction",
+"author": "Evelyn Waugh",
+"title": "Sword of Honour",
+"price": 12.99
+}, {
+"category": "fiction",
+"author": "Herman Melville",
+"title": "Moby Dick",
+"isbn": "0-553-21311-3",
+"price": 8.99
+}, {
+"category": "fiction",
+"author": "J. R. R. Tolkien",
+"title": "The Lord of the Rings",
+"isbn": "0-395-19395-8",
+"price": 22.99
+} ],
+"bicycle": {
+"color": "red",
+"price": 19.95
+}
+},
+"expensive": 10
+}
+ * }
+ * </pre>
+ *
+ * You could configure 2 target destinations, each one creating a new metadata item with the results of the specified search, like
+ * this;
+ *
+ * <pre>
+ * {@code
+<json-path-streaming-service>
+<json-path-execution>
+<source class="constant-data-input-parameter">
+<value>$.store.book[0].title</value>
+</source>
+<target class="metadata-data-output-parameter">
+<metadata-key>metadata-key-1</metadata-key>
+</target>
+<suppress-path-not-found>true</suppress-path-not-found>
+</json-path-execution>
+<json-path-execution>
+<source class="constant-data-input-parameter">
+<value>$.store.book[1].title</value>
+</source>
+<target class="metadata-data-output-parameter">
+<metadata-key>metadata-key-2</metadata-key>
+</target>
+</json-path-execution>
+</json-path-streaming-service>
+}
+ * </pre>
+ *
+ * The first target above searches for the first book title, the second target searches for the second book title.
+ * Each target-destination will be executed in the order they are configured and therefore with the two targets shown here, your
+ * message, after the
+ * service has run, will include two new metadata items;
+ *
+ * <ul>
+ * <li>metadata-key-1 = "Sayings of the Century"</li>
+ * <li>metadata-key-2 = "Sword of Honour"</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Any results returned by this service will normally include the json brackets wrapping the returned value. However you can
+ * configure this
+ * service to unwrap the result for you, such that a value returned as "[myValue]" will now be returned as "myValue".
+ * <br/>
+ * The default value is false, but to override simply configure the "unwrap";
+ *
+ * <pre>
+ * {@code
+<json-path-service>
+<unwrap-json>true</unwrap-json>
+...
+</json-path-service>
+ * }
+ * </pre>
+ * </p>
+ *
+ * @author aanderson
+ * @config json-path-streaming-service
+ */
 @XStreamAlias("json-path-streaming-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a large JSON document", tag = "service,transform,json,metadata,streaming,large")
 @DisplayOrder(order = {"surfer", "source", "executions", "unwrapJson"})
 @NoArgsConstructor
-public class JsonPathStreamingService extends JsonPathService {
+public class JsonPathStreamingService extends JsonPathServiceImpl
+{
+  /**
+   * The source for executing the jsonpath against.
+   */
+  @NotNull
+  @AutoPopulated
+  @Getter
+  @Setter
+  @NonNull
+  private DataInputParameter<InputStream> source = new PayloadStreamInputParameter();
 
+  /**
+   * The JSON surfer implementation to use.
+   */
   @Getter
   @Setter
   @NonNull
@@ -54,7 +178,7 @@ public class JsonPathStreamingService extends JsonPathService {
   }
 
   public JsonPathStreamingService(DataInputParameter<InputStream> source, List<Execution> executions) {
-    this();
+    super();
     setSource(source);
     setExecutions(executions);
   }
@@ -66,8 +190,7 @@ public class JsonPathStreamingService extends JsonPathService {
   public void doService(final AdaptrisMessage message) throws ServiceException {
     try {
 
-      final DataInputParameter<InputStream> src = source;
-      final InputStream rawJson = src.extract(message);
+      final InputStream rawJson = source.extract(message);
 
       final Collector collector = jsonSurfer.collector(rawJson);
       final Map<Execution, ValueBox<Collection<Object>>> valueBoxes = new LinkedHashMap<>();

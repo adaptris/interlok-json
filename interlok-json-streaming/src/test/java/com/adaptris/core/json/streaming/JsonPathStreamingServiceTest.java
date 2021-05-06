@@ -11,7 +11,6 @@ import com.adaptris.core.common.MetadataStreamInputParameter;
 import com.adaptris.core.common.PayloadStreamInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.json.JsonPathExecution;
-import com.adaptris.core.services.path.json.JsonPathService;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.util.text.NullToEmptyStringConverter;
 import com.jayway.jsonpath.Configuration;
@@ -139,7 +138,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
 
     AdaptrisMessage message = createMessage();
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new Execution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new Execution[]{ execution }));
 
     try {
       execute(jsonPathService, message);
@@ -158,7 +157,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination).withSuppressPathNotFound(true);
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(),
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(),
             Arrays.asList(new JsonPathExecution[]
                     {
                             execution
@@ -175,7 +174,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
 
     try {
       execute(jsonPathService, message);
@@ -192,7 +191,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
     jsonPathService.setUnwrapJson(true);
     execute(jsonPathService, message);
 
@@ -207,7 +206,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
     execute(jsonPathService, message);
 
     assertTrue(message.headersContainsKey(JSON_RESULT_KEY));
@@ -221,7 +220,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage("");
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
 
     try {
       execute(jsonPathService, message);
@@ -240,7 +239,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     jsonMetadataDestination.setMetadataKey(JSON_PATH);
     JsonPathExecution execution = new JsonPathExecution(jsonMetadataDestination, targetMetadataDestination);
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
     execute(jsonPathService, message);
 
     assertTrue(message.headersContainsKey(JSON_RESULT_KEY));
@@ -256,7 +255,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage();
     message.addMetadata(JSON_RESULT_KEY, sampleJsonContent());
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(sourceMetadataDestination, Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(sourceMetadataDestination, Arrays.asList(new JsonPathExecution[]{ execution }));
     jsonPathService.setSource(sourceMetadataDestination);
     jsonPathService.setExecutions(Arrays.asList(new JsonPathExecution[]{ execution }));
     execute(jsonPathService, message);
@@ -273,7 +272,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     MetadataDataInputParameter sourceJsonPathDestination = new MetadataDataInputParameter(JSON_PATH);
     JsonPathExecution execution = new JsonPathExecution(sourceJsonPathDestination, new StringPayloadDataOutputParameter());
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(sourceMetadataDestination, Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(sourceMetadataDestination, Arrays.asList(new JsonPathExecution[]{ execution }));
     jsonPathService.setExecutions(Arrays.asList(new JsonPathExecution[]{ execution }));
     jsonPathService.setSource(sourceMetadataDestination);
     execute(jsonPathService, message);
@@ -289,7 +288,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution exec2 = new JsonPathExecution(constantDataDestination, new StringPayloadDataOutputParameter());
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ exec1, exec2 }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ exec1, exec2 }));
     execute(jsonPathService, message);
 
     assertEquals(SAYINGS_OF_THE_CENTURY, message.getContent());
@@ -304,7 +303,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution exec2 = new JsonPathExecution(constantDataDestination2, new StringPayloadDataOutputParameter());
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ exec1, exec2 }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ exec1, exec2 }));
     execute(jsonPathService, message);
 
     assertEquals(SWORD_OF_HONOUR, message.getContent());
@@ -316,7 +315,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, new StringPayloadDataOutputParameter());
     AdaptrisMessage message = createMessage();
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
     execute(jsonPathService, message);
 
     Collector collector = JsonSurferFastJson.INSTANCE.collector(message.getInputStream());
@@ -334,7 +333,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination).withNullConverter(new NullToEmptyStringConverter());
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(JSON_WITH_NULL);
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), execution);
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), execution);
     execute(jsonPathService, message);
 
     assertEquals("", message.getMetadataValue(JSON_RESULT_KEY));
@@ -347,7 +346,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathExecution execution = new JsonPathExecution(constantDataDestination, targetMetadataDestination);
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(JSON_WITH_NULL);
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), execution);
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), execution);
     execute(jsonPathService, message);
 
     assertEquals("null", message.getMetadataValue(JSON_RESULT_KEY));
@@ -360,7 +359,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     Execution execution = new Execution(constantDataDestination, targetMetadataDestination);
     AdaptrisMessage message = DefaultMessageFactory.getDefaultInstance().newMessage(JSON_WITH_NULL);
 
-    JsonPathService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), execution);
+    JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), execution);
 
     try {
       execute(jsonPathService, message);
