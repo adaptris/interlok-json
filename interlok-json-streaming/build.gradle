@@ -14,7 +14,10 @@ dependencies {
 
   compile("com.github.jsurfer:jsurfer-gson:$jsonSurferVersion")
   compile("com.github.jsurfer:jsurfer-jackson:$jsonSurferVersion")
-  compile("com.github.jsurfer:jsurfer-fastjson:$jsonSurferVersion")
+  compile("com.github.jsurfer:jsurfer-fastjson:$jsonSurferVersion") {
+    exclude group: "com.alibaba", module: "fastjson"
+  }
+  compile("com.alibaba:fastjson:1.2.69")
   compile("com.github.jsurfer:jsurfer-jsonsimple:$jsonSurferVersion")
 
   testCompile("org.skyscreamer:jsonassert:1.5.0")
