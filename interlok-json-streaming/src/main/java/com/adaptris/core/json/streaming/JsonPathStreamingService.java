@@ -1,5 +1,21 @@
 package com.adaptris.core.json.streaming;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.json.JsonException;
+import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jsfr.json.Collector;
+import org.jsfr.json.JsonSurfer;
+import org.jsfr.json.JsonSurferGson;
+import org.jsfr.json.JsonSurferJackson;
+import org.jsfr.json.JsonSurferJsonSimple;
+import org.jsfr.json.ValueBox;
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
@@ -17,24 +33,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.apache.commons.lang3.ObjectUtils;
-import org.jsfr.json.Collector;
-import org.jsfr.json.JsonSurfer;
-import org.jsfr.json.JsonSurferFastJson;
-import org.jsfr.json.JsonSurferGson;
-import org.jsfr.json.JsonSurferJackson;
-import org.jsfr.json.JsonSurferJsonSimple;
-import org.jsfr.json.ValueBox;
-
-import javax.json.JsonException;
-import javax.validation.constraints.NotNull;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This service allows you to search JSON content and the results are
@@ -255,12 +253,13 @@ public class JsonPathStreamingService extends JsonPathServiceImpl
       JsonSurfer getInstance() {
         return JsonSurferJsonSimple.INSTANCE;
       }
-    },
-    FAST {
-      @Override
-      JsonSurfer getInstance() {
-        return JsonSurferFastJson.INSTANCE;
-      }
+      // fastjson has a jersey service provider.
+      // },
+      // FAST {
+      // @Override
+      // JsonSurfer getInstance() {
+      // return JsonSurferFastJson.INSTANCE;
+      // }
     };
     abstract JsonSurfer getInstance();
   }

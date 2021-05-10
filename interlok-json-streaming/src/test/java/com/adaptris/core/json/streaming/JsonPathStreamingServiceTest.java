@@ -1,5 +1,19 @@
 package com.adaptris.core.json.streaming;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import org.jsfr.json.Collector;
+import org.jsfr.json.JsonSurferGson;
+import org.jsfr.json.JsonSurferJackson;
+import org.jsfr.json.JsonSurferJsonSimple;
+import org.jsfr.json.ValueBox;
+import org.jsfr.json.exception.JsonSurfingException;
+import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -17,22 +31,6 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import org.jsfr.json.Collector;
-import org.jsfr.json.JsonSurferFastJson;
-import org.jsfr.json.JsonSurferGson;
-import org.jsfr.json.JsonSurferJsonSimple;
-import org.jsfr.json.ValueBox;
-import org.jsfr.json.exception.JsonSurfingException;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class JsonPathStreamingServiceTest extends ExampleServiceCase {
 
@@ -124,7 +122,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     AdaptrisMessage message = createMessage();
 
     JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
-    jsonPathService.setSurfer(JsonPathStreamingService.Surfer.FAST);
+    jsonPathService.setSurfer(JsonPathStreamingService.Surfer.JACKSON);
     execute(jsonPathService, message);
 
     assertTrue(message.headersContainsKey(JSON_RESULT_KEY));
@@ -318,7 +316,7 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     JsonPathStreamingService jsonPathService = new JsonPathStreamingService(new PayloadStreamInputParameter(), Arrays.asList(new JsonPathExecution[]{ execution }));
     execute(jsonPathService, message);
 
-    Collector collector = JsonSurferFastJson.INSTANCE.collector(message.getInputStream());
+    Collector collector = JsonSurferJackson.INSTANCE.collector(message.getInputStream());
     ValueBox<String> box1 = collector.collectOne("$[0].author", String.class);
     ValueBox<String> box2 = collector.collectOne("$[1].author", String.class);
     collector.exec();
