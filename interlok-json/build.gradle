@@ -19,7 +19,12 @@ dependencies {
     exclude group: 'xerces', module: 'xercesImpl'
   }
   compile ("org.json:json:$jsonOrgVersion")
-  compile ("com.jayway.jsonpath:json-path:2.4.0")
+  compile ("com.jayway.jsonpath:json-path:2.5.0")
+    constraints {
+      compile("net.minidev:json-smart:2.3.1") {
+        because "CVE-2021-27568: Affect json-smart up to (excluding) 2.3.1"
+      }
+    }
   compile ("com.bazaarvoice.jolt:jolt-core:0.1.1")
   compile ("com.bazaarvoice.jolt:json-utils:0.1.1")
   compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
