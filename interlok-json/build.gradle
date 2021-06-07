@@ -19,7 +19,7 @@ dependencies {
     exclude group: 'xerces', module: 'xercesImpl'
   }
   compile ("org.json:json:$jsonOrgVersion")
-  compile ("com.jayway.jsonpath:json-path:2.4.0")
+  compile ("com.jayway.jsonpath:json-path:2.6.0")
     constraints {
       compile("net.minidev:json-smart:2.4.7") {
         because "CVE-2021-27568: Affect json-smart up to (excluding) 2.3.1"
