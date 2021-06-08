@@ -29,7 +29,7 @@ dependencies {
   compile("com.github.jsurfer:jsurfer-jsonsimple:$jsonSurferVersion")
 
   testCompile("org.skyscreamer:jsonassert:1.5.0")
-  testCompile ("com.jayway.jsonpath:json-path:2.4.0")
+  testCompile ("com.jayway.jsonpath:json-path:2.6.0")
 
 }
 
