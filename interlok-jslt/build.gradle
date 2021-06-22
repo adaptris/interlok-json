@@ -2,14 +2,14 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok Transform/JSLT'
   componentDesc="Support for JSON transforms via JSLT"
-  jacksonVersion='2.12.2'
+  jacksonVersion='2.12.3'
 }
 
 
 dependencies {
   compile ("com.schibsted.spt.data:jslt:0.1.11")
   compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-  testCompile ("com.jayway.jsonpath:json-path:2.4.0")
+  testCompile ("com.jayway.jsonpath:json-path:2.6.0")
 }
 
 
