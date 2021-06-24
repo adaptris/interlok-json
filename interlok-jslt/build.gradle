@@ -7,9 +7,9 @@ ext {
 
 
 dependencies {
-  compile ("com.schibsted.spt.data:jslt:0.1.11")
-  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-  testCompile ("com.jayway.jsonpath:json-path:2.6.0")
+  api ("com.schibsted.spt.data:jslt:0.1.11")
+  api ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+  testImplementation ("com.jayway.jsonpath:json-path:2.6.0")
 }
 
 

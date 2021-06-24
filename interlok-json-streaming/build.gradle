@@ -8,12 +8,12 @@ ext {
 
 
 dependencies {
-  compile project(':interlok-json')
-  compile ("com.adaptris:interlok-stax:$interlokCoreVersion") { changing= true}
-  compile ("de.odysseus.staxon:staxon:1.3")
+  api project(':interlok-json')
+  api ("com.adaptris:interlok-stax:$interlokCoreVersion") { changing= true}
+  api ("de.odysseus.staxon:staxon:1.3")
 
-  compile("com.github.jsurfer:jsurfer-gson:$jsonSurferVersion")
-  compile("com.github.jsurfer:jsurfer-jackson:$jsonSurferVersion") {
+  api("com.github.jsurfer:jsurfer-gson:$jsonSurferVersion")
+  api("com.github.jsurfer:jsurfer-jackson:$jsonSurferVersion") {
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-core"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-annotations"
@@ -21,15 +21,15 @@ dependencies {
   // compile("com.github.jsurfer:jsurfer-fastjson:$jsonSurferVersion") {
   //   exclude group: "com.alibaba", module: "fastjson"
   // }
-  compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-  compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
-  compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+  api ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+  api ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+  api ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 
   // compile("com.alibaba:fastjson:1.2.76")
-  compile("com.github.jsurfer:jsurfer-jsonsimple:$jsonSurferVersion")
+  api("com.github.jsurfer:jsurfer-jsonsimple:$jsonSurferVersion")
 
-  testCompile("org.skyscreamer:jsonassert:1.5.0")
-  testCompile ("com.jayway.jsonpath:json-path:2.6.0")
+  testImplementation("org.skyscreamer:jsonassert:1.5.0")
+  testImplementation ("com.jayway.jsonpath:json-path:2.6.0")
 
 }
 

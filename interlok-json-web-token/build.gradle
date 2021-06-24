@@ -12,18 +12,17 @@ ext {
 }
 
 dependencies {
-  compile ("org.json:json:$jsonOrgVersion")
+  api ("org.json:json:$jsonOrgVersion")
 
-  compile ("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
-  compile ("org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion")
+  api ("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
+  api ("org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion")
 
-  compile ("io.jsonwebtoken:jjwt-api:$jwtVersion")
-  runtime ("io.jsonwebtoken:jjwt-impl:$jwtVersion")
-  runtime ("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
-  runtime ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
+  api ("io.jsonwebtoken:jjwt-api:$jwtVersion")
+  runtimeOnly ("io.jsonwebtoken:jjwt-impl:$jwtVersion")
+  runtimeOnly ("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
+  runtimeOnly ("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion")
 
-  testCompile ('junit:junit:4.13.2')
-  testCompile ("org.skyscreamer:jsonassert:1.5.0")
+  testImplementation ("org.skyscreamer:jsonassert:1.5.0")
 }
 
 jar {
