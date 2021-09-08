@@ -21,7 +21,7 @@ dependencies {
   api ("org.json:json:$jsonOrgVersion")
   api ("com.jayway.jsonpath:json-path:2.6.0")
   api ("com.bazaarvoice.jolt:jolt-core:0.1.1")
-  api ("com.bazaarvoice.jolt:json-utils:0.1.1")
+  api ("com.bazaarvoice.jolt:json-utils:0.1.5")
   api ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
   api ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
   api ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
