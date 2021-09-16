@@ -44,7 +44,7 @@ import lombok.Setter;
  * information on how to build a JSON path see the
  * <a href="https://github.com/jayway/JsonPath">JSONPath</a>
  * documentation and the
- * <a href="https://github.com/jsurfer/JsonSurfer">JSON Surfer</>
+ * <a href="https://github.com/jsurfer/JsonSurfer">JSON Surfer</a>
  * documentation.
  * </p>
  * For example, if you have a message with the following payload:

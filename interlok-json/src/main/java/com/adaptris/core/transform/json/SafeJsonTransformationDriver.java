@@ -22,16 +22,15 @@ import com.adaptris.core.util.ExceptionHelper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Alternative to {@link DefaultJsonTransformationDriver} that executes a transform to strip-spaces before rendering as JSON.
+ * Executes a transform to strip-spaces before rendering as JSON.
  * <p>
- * This differs from {@link DefaultJsonTransformationDriver} in that it will execute a transform to strip spaces using the standard
- * {@code xsl:strip-space elements="*"} directive before attempting to serialize the XML as JSON. In some situations the default
+ * This will execute a transform to strip spaces using the standard {@code xsl:strip-space elements="*"}
+ * directive before attempting to serialize the XML as JSON. In some situations the default
  * driver can be very sensitive to whitespace that may occur because of indenting and formatting.
  * </p>
  * <p>
  * The transform used is stored in the jar file itself - {@value #STRIP_SPACES_XSLT}; it is very simple, and may not handle
- * namespaces terribly well. If in doubt, execute a transform yourslef, and then use {@link DefaultJsonTransformationDriver} as
- * usual.
+ * namespaces terribly well.
  * </p>
  * 
  * @since 3.6.4

@@ -27,7 +27,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  *
  * <p>
- * Note: tested with an 85Mb file containing an array of >15k JSON objects
+ * Note: tested with an 85Mb file containing an array of &gt;15k JSON objects
  * </p>
  *
  * @config large-json-array-path-splitter
