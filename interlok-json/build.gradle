@@ -29,7 +29,7 @@ dependencies {
   api ("commons-beanutils:commons-beanutils:1.9.4")
   implementation ("xerces:xercesImpl:2.12.1")
 
-  api ("com.github.everit-org.json-schema:org.everit.json.schema:1.13.0")
+  api ("com.github.everit-org.json-schema:org.everit.json.schema:1.14.0")
   implementation ("com.google.guava:guava:31.0.1-jre")
   api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.11")
   testImplementation ("org.skyscreamer:jsonassert:1.5.0")
