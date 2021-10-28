@@ -7,8 +7,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.json.JsonException;
+
 import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.jsfr.json.Collector;
 import org.jsfr.json.JsonSurfer;
@@ -16,6 +17,7 @@ import org.jsfr.json.JsonSurferGson;
 import org.jsfr.json.JsonSurferJackson;
 import org.jsfr.json.JsonSurferJsonSimple;
 import org.jsfr.json.ValueBox;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
@@ -29,23 +31,19 @@ import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
 /**
- * This service allows you to search JSON content and the results are
- * then set back into the message. The advantage of this implementation
- * is that it doesn't need to parse the entire JSON document and so is
- * able to handle arbitrarily large documents.
+ * This service allows you to search JSON content and the results are then set back into the message. The advantage of this implementation
+ * is that it doesn't need to parse the entire JSON document and so is able to handle arbitrarily large documents.
  * <p>
- * The searching works in much the same way as XPath, for more
- * information on how to build a JSON path see the
- * <a href="https://github.com/jayway/JsonPath">JSONPath</a>
- * documentation and the
- * <a href="https://github.com/jsurfer/JsonSurfer">JSON Surfer</>
- * documentation.
+ * The searching works in much the same way as XPath, for more information on how to build a JSON path see the
+ * <a href="https://github.com/jayway/JsonPath">JSONPath</a> documentation and the <a href="https://github.com/jsurfer/JsonSurfer">JSON
+ * Surfer</a> documentation.
  * </p>
  * For example, if you have a message with the following payload:
  *
@@ -86,8 +84,7 @@ import lombok.Setter;
  * }
  * </pre>
  *
- * You could configure 2 target destinations, each one creating a new metadata item with the results of the specified search, like
- * this;
+ * You could configure 2 target destinations, each one creating a new metadata item with the results of the specified search, like this;
  *
  * <pre>
  * {@code
@@ -113,10 +110,9 @@ import lombok.Setter;
 }
  * </pre>
  *
- * The first target above searches for the first book title, the second target searches for the second book title.
- * Each target-destination will be executed in the order they are configured and therefore with the two targets shown here, your
- * message, after the
- * service has run, will include two new metadata items;
+ * The first target above searches for the first book title, the second target searches for the second book title. Each target-destination
+ * will be executed in the order they are configured and therefore with the two targets shown here, your message, after the service has run,
+ * will include two new metadata items;
  *
  * <ul>
  * <li>metadata-key-1 = "Sayings of the Century"</li>
@@ -124,10 +120,8 @@ import lombok.Setter;
  * </ul>
  * </p>
  * <p>
- * Any results returned by this service will normally include the json brackets wrapping the returned value. However you can
- * configure this
- * service to unwrap the result for you, such that a value returned as "[myValue]" will now be returned as "myValue".
- * <br/>
+ * Any results returned by this service will normally include the json brackets wrapping the returned value. However you can configure this
+ * service to unwrap the result for you, such that a value returned as "[myValue]" will now be returned as "myValue". <br/>
  * The default value is false, but to override simply configure the "unwrap";
  *
  * <pre>
@@ -148,8 +142,7 @@ import lombok.Setter;
 @ComponentProfile(summary = "Extract a value from a large JSON document", tag = "service,transform,json,metadata,streaming,large")
 @DisplayOrder(order = {"surfer", "source", "executions", "unwrapJson"})
 @NoArgsConstructor
-public class JsonPathStreamingService extends JsonPathServiceImpl
-{
+public class JsonPathStreamingService extends JsonPathServiceImpl {
   /**
    * The source for executing the jsonpath against.
    */
@@ -211,7 +204,7 @@ public class JsonPathStreamingService extends JsonPathServiceImpl
         if (objects.size() == 0) {
           if (!suppressPathNotFound(execution)) {
             String jsonPath = execution.getSource().extract(message);
-            throw new JsonException("Path [" + jsonPath + "] not found");
+            throw new ServiceException("JSON Path [" + jsonPath + "] not found");
           }
           continue;
         }

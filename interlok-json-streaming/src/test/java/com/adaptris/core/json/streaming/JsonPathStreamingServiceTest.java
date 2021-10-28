@@ -4,9 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
+
 import org.jsfr.json.Collector;
 import org.jsfr.json.JsonSurferGson;
 import org.jsfr.json.JsonSurferJackson;
@@ -14,6 +15,7 @@ import org.jsfr.json.JsonSurferJsonSimple;
 import org.jsfr.json.ValueBox;
 import org.jsfr.json.exception.JsonSurfingException;
 import org.junit.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -27,10 +29,6 @@ import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.json.JsonPathExecution;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.adaptris.util.text.NullToEmptyStringConverter;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 public class JsonPathStreamingServiceTest extends ExampleServiceCase {
 
@@ -48,9 +46,6 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
   private static final String JSON_WITH_NULL =
       "{\r\n" + "    \"LastModifiedDate\": \"2017-11-23T15:15:31.000+0000\",\r\n" + "    \"WhatId\": null,\r\n"
           + "    \"Description\": \"wanted more info on ebusiness and agility including analytical models\"\r\n" + "}";
-
-  private static Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
-      .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
 
   public JsonPathStreamingServiceTest() {
     super();
@@ -421,10 +416,4 @@ public class JsonPathStreamingServiceTest extends ExampleServiceCase {
     + "}";
   }
 
-  private String complexExpected() {
-    return "["
-        + "{\"author\":\"Herman Melville\",\"price\":8.99,\"isbn\":\"0-553-21311-3\",\"category\":\"fiction\",\"title\":\"Moby Dick\"},"
-        + "{\"author\":\"J. R. R. Tolkien\",\"price\":22.99,\"isbn\":\"0-395-19395-8\",\"category\":\"fiction\",\"title\":\"The Lord of the Rings\"}"
-        + "]";
-  }
 }
