@@ -1,19 +1,19 @@
 package com.adaptris.core.transform.json;
 
 import static com.adaptris.interlok.util.CloseableIterable.ensureCloseable;
+import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.util.Map;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
-import com.adaptris.core.json.JsonUtil;
 import com.adaptris.core.services.splitter.json.JsonProvider;
 import com.adaptris.core.services.splitter.json.JsonProvider.JsonObjectProvider;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.LoggingHelper;
 import com.adaptris.interlok.util.CloseableIterable;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.NoArgsConstructor;
@@ -39,11 +39,12 @@ public class JsonArrayToJsonLines extends ServiceImp {
           PrintWriter pw = new PrintWriter(msg.getWriter())) {
 
         for (AdaptrisMessage m : jsonObjects) {
-          Map<String, String> json = JsonUtil.mapifyJson(m);
-          String line = mapper.writeValueAsString(json);
-          pw.println(line);
+          try (BufferedReader buf = new BufferedReader(m.getReader())) {
+            JsonParser parser = mapper.getFactory().createParser(buf);
+            String line = mapper.writeValueAsString(mapper.readTree(parser));
+            pw.println(line);
+          }
         }
-
       }
     } catch (Exception e) {
       throw ExceptionHelper.wrapServiceException(e);
