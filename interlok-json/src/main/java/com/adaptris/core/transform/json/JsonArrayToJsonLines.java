@@ -29,9 +29,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JsonArrayToJsonLines extends ServiceImp {
 
+  private transient ObjectMapper mapper = new ObjectMapper();
+  
   @Override
   public void doService(AdaptrisMessage msg) throws ServiceException {
-    ObjectMapper mapper = new ObjectMapper();
     JsonObjectProvider jsonProvider = JsonProvider.JsonStyle.JSON_ARRAY;
     try {
       log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
