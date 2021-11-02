@@ -1,8 +1,10 @@
 package com.adaptris.core.json.streaming;
 
 import javax.xml.stream.XMLInputFactory;
+
 import com.adaptris.stax.XmlInputFactoryBuilder;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import de.odysseus.staxon.json.JsonXMLInputFactory;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +23,5 @@ public class JsonStreamingInputFactory extends JsonStreamBuilderImpl implements 
   public XMLInputFactory build() {
     return new JsonXMLInputFactory(config().build());
   }
+
 }

@@ -5,7 +5,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
+
 import org.apache.commons.io.IOUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
@@ -73,7 +75,6 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
 
 
   @Override
-  @SuppressWarnings("deprecation")
   public CloseableIterable<AdaptrisMessage> splitMessage(final AdaptrisMessage msg) throws CoreException {
     try {
       BufferedReader buf = new BufferedReader(msg.getReader(), bufferSize());
@@ -190,7 +191,6 @@ public class LargeJsonArraySplitter extends MessageSplitterImp {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void close() throws IOException {
       IOUtils.closeQuietly(parser);
       IOUtils.closeQuietly(reader);

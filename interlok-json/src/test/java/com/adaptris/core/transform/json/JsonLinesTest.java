@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
+import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -34,6 +35,9 @@ public class JsonLinesTest {
       + "{\"colour\": \"green\",\"value\": \"#0f0\"}\n"
       + "{\"colour\": \"blue\",\"value\": \"#00f\"}\n"
       + "{\"colour\": \"black\",\"value\": \"#000\"}";
+
+  private static final String NESTED_OBJECTS =
+      "[ {\"id\": \"001\", \"object\" : { \"nested\": \"nested-1\"} }, {\"id\": \"002\", \"object\" : { \"nested\": \"nested-2\"}}]";
 
   private Configuration jsonConfig;
 
@@ -92,5 +96,26 @@ public class JsonLinesTest {
     AdaptrisMessage msg =
         AdaptrisMessageFactory.getDefaultInstance().newMessage("hello world\nhello world");
     ExampleServiceCase.execute(service, msg);
+  }
+  
+  // this proves issue#260  https://github.com/adaptris/interlok-json/issues/260
+  // context.read will throw a PathNotFoundException since the path doesn't exist.
+  @Test
+  public void testComplexJsonArrayToJsonLines() throws Exception {
+    JsonArrayToJsonLines service = new JsonArrayToJsonLines();
+    try {
+      AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(NESTED_OBJECTS);
+      LifecycleHelper.initAndStart(service);
+      service.doService(msg);
+      try (Reader in = msg.getReader()) {
+        List<String> lines = IOUtils.readLines(in);
+        assertEquals(2, lines.size());
+        String json = lines.get(0);
+        ReadContext context = JsonPath.parse(json, jsonConfig);
+        assertEquals("nested-1",  context.read("$.object.nested"));
+      }
+    } finally {
+      LifecycleHelper.stopAndClose(service);
+    }
   }
 }

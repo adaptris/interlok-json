@@ -1,8 +1,11 @@
 package com.adaptris.core.json.streaming;
 
 import javax.validation.Valid;
+
 import org.apache.commons.lang3.ObjectUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
