@@ -41,9 +41,12 @@ import lombok.Setter;
  * This service allows you to search JSON content and the results are then set back into the message. The advantage of this implementation
  * is that it doesn't need to parse the entire JSON document and so is able to handle arbitrarily large documents.
  * <p>
- * The searching works in much the same way as XPath, for more information on how to build a JSON path see the
- * <a href="https://github.com/jayway/JsonPath">JSONPath</a> documentation and the <a href="https://github.com/jsurfer/JsonSurfer">JSON
- * Surfer</a> documentation.
+ * The searching works in much the same way as XPath, for more
+ * information on how to build a JSON path see the
+ * <a href="https://github.com/jayway/JsonPath">JSONPath</a>
+ * documentation and the
+ * <a href="https://github.com/jsurfer/JsonSurfer">JSON Surfer</a>
+ * documentation.
  * </p>
  * For example, if you have a message with the following payload:
  *

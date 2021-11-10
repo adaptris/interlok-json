@@ -3,7 +3,7 @@ package com.adaptris.core.transform.json;
 import com.adaptris.annotation.InputFieldHint;
 
 /**
- * Direction enum; JSON <-> XML.
+ * Direction enum; JSON &lt;-&gt; XML.
  */
 public enum TransformationDirection {
 	/**

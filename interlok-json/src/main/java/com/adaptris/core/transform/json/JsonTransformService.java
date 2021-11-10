@@ -53,7 +53,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <li>file-data-input-parameter {@link com.adaptris.core.common.FileDataInputParameter}</li>
  * <li>string-payload-data-input-parameter {@link com.adaptris.core.common.StringPayloadDataInputParameter}</li>
  * <li>metadata-data-input-parameter {@link com.adaptris.core.common.MetadataDataInputParameter}</li>
- * <li>metadata-file-input-parameter {@link com.adaptris.core.common.MetadataFileInputParameter}</li>
+ * <li>metadata-stream-input-parameter {@link com.adaptris.core.common.MetadataStreamInputParameter}</li>
  * </ul>
  * </p>
  * <p>
@@ -574,7 +574,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Walk the input data, and Shiftr spec simultaneously, and execute the Shiftr command/mapping each time there is a match.
  * </p>
  *
- * <h3.Algorithm Low Level</h3>
+ * <h3>Algorithm Low Level</h3>
  * <ul>
  * <li>Simultaneously walk of the spec and input JSon, and maintain a walked "input" path data structure.</li>
  * <li>Determine a match between input JSON key and LHS spec, by matching LHS spec keys in the following order :

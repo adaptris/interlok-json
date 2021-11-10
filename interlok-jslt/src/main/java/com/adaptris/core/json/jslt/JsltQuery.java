@@ -39,7 +39,7 @@ public interface JsltQuery {
   /**
    * Turn an {@code AdaptrisMessage} object into a {@code JsonNode}.
    * <p>
-   * It first checks to see if {@value #INPUT_NODE_METADATA_KEY} exists in object metadata and uses
+   * It first checks to see if {@link #INPUT_NODE_METADATA_KEY} exists in object metadata and uses
    * that if it does. Otherwise it delegates to {@link #jacksonify(AdaptrisMessage)}.
    *
    * @param msg the {@link AdaptrisMessage}

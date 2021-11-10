@@ -30,7 +30,7 @@ import net.minidev.json.parser.JSONParser;
  * </p>
  * <p>
  * For instance the JSON Object <code>
-{"entry":[{"location":"Seattle","name":"Production System"},{"location":"New York","name":"R&D sandbox"}],"notes":"Some Notes","version":0.5}</code>
+{"entry":[{"location":"Seattle","name":"Production System"},{"location":"New York","name":"R&mp;D sandbox"}],"notes":"Some Notes","version":0.5}</code>
  * would be split into 3 messages (the {@code entry}, {@code notes} and {@code version}). JSON arrays will be split so that each
  * element of the array becomes a separate message, so <code>
 [{colour: "red",value: "#f00"},{colour: "green",value: "#0f0"},{colour: "blue",value: "#00f"},{colour: "black",value: "#000"}]</code>
