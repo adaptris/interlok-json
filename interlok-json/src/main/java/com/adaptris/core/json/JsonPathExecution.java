@@ -1,8 +1,10 @@
 package com.adaptris.core.json;
 
 import javax.validation.Valid;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
@@ -17,6 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class JsonPathExecution extends Execution {
 
   private static NullConverter NULL_TO_NULL_CONSTANT_STRING = new NullConverter() {
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T convert(T t) {
       return (T) ObjectUtils.defaultIfNull(t, "null");
@@ -52,7 +55,7 @@ public class JsonPathExecution extends Execution {
    * @param b to suppress exceptions arising from a json path not being found; default is null (false).
    */
   public void setSuppressPathNotFound(Boolean b) {
-    this.suppressPathNotFound = b;
+    suppressPathNotFound = b;
   }
 
   public boolean suppressPathNotFound() {
@@ -68,25 +71,25 @@ public class JsonPathExecution extends Execution {
 
   /**
    * Specify the behaviour when a null is encountered during json path execution.
-   * 
+   *
    * @param nc the NullConverter to set, the default is return "null" as the value.
    */
   public void setNullConverter(NullConverter nc) {
-    this.nullConverter = nc;
+    nullConverter = nc;
   }
 
   public NullConverter nullConverter() {
     return ObjectUtils.defaultIfNull(getNullConverter(), NULL_TO_NULL_CONSTANT_STRING);
   }
 
-  public <T extends JsonPathExecution> T withNullConverter(NullConverter nc) {
+  public JsonPathExecution withNullConverter(NullConverter nc) {
     setNullConverter(nc);
-    return (T) this;
+    return this;
   }
 
-  public <T extends JsonPathExecution> T withSuppressPathNotFound(Boolean b) {
+  public JsonPathExecution withSuppressPathNotFound(Boolean b) {
     setSuppressPathNotFound(b);
-    return (T) this;
+    return this;
   }
 
 }

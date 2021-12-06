@@ -15,16 +15,6 @@
 */
 package com.adaptris.core.json.jq;
 
-import static com.adaptris.core.MetadataCollection.asMap;
-
-import java.io.Reader;
-import java.io.Writer;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
@@ -42,9 +32,21 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
+import net.thisptr.jackson.jq.BuiltinFunctionLoader;
+import net.thisptr.jackson.jq.Function;
 import net.thisptr.jackson.jq.JsonQuery;
 import net.thisptr.jackson.jq.Scope;
+import net.thisptr.jackson.jq.Version;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.adaptris.core.MetadataCollection.asMap;
 
 /**
  * Transform a JSON document using JQ style syntax.
@@ -81,9 +83,12 @@ public class JsonJqTransform extends ServiceImp {
     try (Reader reader = msg.getReader();
         Writer w = msg.getWriter();
         JsonGenerator generator = mapper.getFactory().createGenerator(w).useDefaultPrettyPrinter()) {
-      JsonQuery q = JsonQuery.compile(querySource.extract(msg));
+      JsonQuery q = JsonQuery.compile(querySource.extract(msg), Version.LATEST);
       JsonNode jsonNode = mapper.readTree(reader);
-      List<JsonNode> result = q.apply(createScope(mapper, msg), jsonNode);
+
+      final List<JsonNode> result = new ArrayList<>();
+      q.apply(createScope(mapper, msg), jsonNode, out -> result.add(out));
+
       if (result.size() == 1) {
         generator.writeObject(result.get(0));
       }
@@ -161,8 +166,12 @@ public class JsonJqTransform extends ServiceImp {
 
   private Scope createScope(ObjectMapper mapper, AdaptrisMessage msg) {
     Map<String, String> filtered = asMap(metadataFilter().filter(msg));
-    Scope scope = new Scope(null);
-    scope.loadFunctions(Thread.currentThread().getContextClassLoader());
+    Scope scope = Scope.newEmptyScope();
+    BuiltinFunctionLoader functionLoader = BuiltinFunctionLoader.getInstance();
+    Map<String, Function> functions = functionLoader.listFunctions(Thread.currentThread().getContextClassLoader(), Version.LATEST, scope);
+    for (String name : functions.keySet()) {
+      scope.addFunction(name, functions.get(name));
+    }
     scope.setValue(SCOPE_NAME, mapper.valueToTree(filtered));
     return scope;
   }

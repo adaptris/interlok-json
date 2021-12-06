@@ -2,6 +2,7 @@ package com.adaptris.core.services.routing.json;
 
 import java.util.EnumSet;
 import java.util.List;
+
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.core.ServiceException;
@@ -19,7 +20,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Implementation of {@link SyntaxIdentifier} which handles JSON paths.
- * 
+ *
  * @config routing-json-path-syntax-identifier
  */
 @XStreamAlias("routing-json-path-syntax-identifier")
@@ -28,7 +29,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class JsonPathSyntaxIdentifier extends SyntaxIdentifierImpl {
 
   private transient Configuration jsonConfig;
-  
+
   public JsonPathSyntaxIdentifier() {
     super();
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
@@ -49,7 +50,7 @@ public class JsonPathSyntaxIdentifier extends SyntaxIdentifierImpl {
         try {
           Object o = context.read(jsonPath);
           // If you're using a function to try and select, you get a list, but it might be 0
-          if (o instanceof List && ((List) o).size() == 0) {
+          if (o instanceof List && ((List<?>) o).size() == 0) {
             return false;
           }
         } catch (PathNotFoundException ex){

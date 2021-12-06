@@ -15,6 +15,7 @@ package com.adaptris.core.transform.json;
 
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,12 +29,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.adaptris.core.util.XmlHelper;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -83,7 +88,7 @@ class XMLSerializer {
   /** flag to be tolerant for incomplete namespace prefixes */
   private boolean namespaceLenient;
   /** Map of namespaces per element */
-  private Map namespacesPerElement = new TreeMap();
+  private Map<String, Map<String, String>> namespacesPerElement = new TreeMap<>();
   /** the name for an JSONObject Element */
   private String objectName;
   /** flag for trimming namespace prefix from element name */
@@ -91,7 +96,7 @@ class XMLSerializer {
   /** the name for the root Element */
   private String rootName;
   /** Map of namespaces for root element */
-  private Map rootNamespace = new TreeMap();
+  private Map<String, String> rootNamespace = new TreeMap<>();
   /** flag for skipping namespaces while reading */
   private boolean skipNamespaces;
   /** flag for skipping whitespace elements while reading */
@@ -102,10 +107,6 @@ class XMLSerializer {
   private boolean typeHintsCompatibility;
   /** flag for adding JSON types hints as attributes */
   private boolean typeHintsEnabled;
-  /**
-   * Flag for stripping illegal XML characters from the result XML; always true.
-   */
-  private boolean stripIllegalChars = true;
 
   /**
    * Creates a new XMLSerializer with default options.<br>
@@ -165,9 +166,9 @@ class XMLSerializer {
     if (StringUtils.isBlank(elementName)) {
       rootNamespace.put(prefix.trim(), uri.trim());
     } else {
-      Map nameSpaces = (Map) namespacesPerElement.get(elementName);
+      Map<String, String> nameSpaces = namespacesPerElement.get(elementName);
       if (nameSpaces == null) {
-        nameSpaces = new TreeMap();
+        nameSpaces = new TreeMap<>();
         namespacesPerElement.put(elementName, nameSpaces);
       }
       nameSpaces.put(prefix, uri);
@@ -405,7 +406,7 @@ class XMLSerializer {
     if (StringUtils.isBlank(elementName)) {
       rootNamespace.remove(prefix.trim());
     } else {
-      Map nameSpaces = (Map) namespacesPerElement.get(elementName);
+      Map<String, String> nameSpaces = namespacesPerElement.get(elementName);
       nameSpaces.remove(prefix);
     }
   }
@@ -468,9 +469,9 @@ class XMLSerializer {
       rootNamespace.clear();
       rootNamespace.put(prefix.trim(), uri.trim());
     } else {
-      Map nameSpaces = (Map) namespacesPerElement.get(elementName);
+      Map<String, String> nameSpaces = namespacesPerElement.get(elementName);
       if (nameSpaces == null) {
-        nameSpaces = new TreeMap();
+        nameSpaces = new TreeMap<>();
         namespacesPerElement.put(elementName, nameSpaces);
       }
       nameSpaces.clear();
@@ -606,13 +607,13 @@ class XMLSerializer {
     } else {
       elementName = element.getQualifiedName();
     }
-    Map nameSpaces = (Map) namespacesPerElement.get(elementName);
+    Map<String, String> nameSpaces = namespacesPerElement.get(elementName);
     if (nameSpaces != null && !nameSpaces.isEmpty()) {
       setNamespaceLenient(true);
-      for (Iterator entries = nameSpaces.entrySet().iterator(); entries.hasNext();) {
-        Map.Entry entry = (Map.Entry) entries.next();
-        String prefix = (String) entry.getKey();
-        String uri = (String) entry.getValue();
+      for (Iterator<Entry<String, String>> entries = nameSpaces.entrySet().iterator(); entries.hasNext();) {
+        Entry<String, String> entry = entries.next();
+        String prefix = entry.getKey();
+        String uri = entry.getValue();
         if (StringUtils.isBlank(prefix)) {
           element.setNamespaceURI(uri);
         } else {
@@ -748,7 +749,7 @@ class XMLSerializer {
         isArray = checkChildElements(element, isTopLevel);
       }
     } else if (element.getAttributeCount() == 2
-        && (element.getAttribute(addJsonPrefix("class")) != null && element.getAttribute(addJsonPrefix("type")) != null)) {
+        && element.getAttribute(addJsonPrefix("class")) != null && element.getAttribute(addJsonPrefix("type")) != null) {
       isArray = checkChildElements(element, isTopLevel);
     }
 
@@ -795,7 +796,7 @@ class XMLSerializer {
           && (element.getAttribute(addJsonPrefix("class")) != null || element.getAttribute(addJsonPrefix("type")) != null)) {
         return true;
       } else if (element.getAttributeCount() == 2
-          && (element.getAttribute(addJsonPrefix("class")) != null && element.getAttribute(addJsonPrefix("type")) != null)) {
+          && element.getAttribute(addJsonPrefix("class")) != null && element.getAttribute(addJsonPrefix("type")) != null) {
         return true;
       }
     }
@@ -906,10 +907,10 @@ class XMLSerializer {
     if (isRoot) {
       if (!rootNamespace.isEmpty()) {
         setNamespaceLenient(true);
-        for (Iterator entries = rootNamespace.entrySet().iterator(); entries.hasNext();) {
-          Map.Entry entry = (Map.Entry) entries.next();
-          String prefix = (String) entry.getKey();
-          String uri = (String) entry.getValue();
+        for (Iterator<Entry<String, String>> entries = rootNamespace.entrySet().iterator(); entries.hasNext();) {
+          Entry<String, String> entry = entries.next();
+          String prefix = entry.getKey();
+          String uri = entry.getValue();
           if (StringUtils.isBlank(prefix)) {
             root.setNamespaceURI(uri);
           } else {
@@ -1101,7 +1102,7 @@ class XMLSerializer {
   private void setValue(JSONArray jsonArray, Element element, String defaultType) {
     String clazz = getClass(element);
     String type = getType(element);
-    type = (type == null) ? defaultType : type;
+    type = type == null ? defaultType : type;
 
     if (hasNamespaces(element) && !skipNamespaces) {
       jsonArray.element(simplifyValue(null, processElement(element, type)));
@@ -1176,7 +1177,7 @@ class XMLSerializer {
   private void setValue(JSONObject jsonObject, Element element, String defaultType) {
     String clazz = getClass(element);
     String type = getType(element);
-    type = (type == null) ? defaultType : type;
+    type = type == null ? defaultType : type;
 
 
 
@@ -1192,9 +1193,9 @@ class XMLSerializer {
         setOrAccumulate(jsonObject, key, new JSONFunction(params, text));
         return;
       }/*
-        * else{ setOrAccumulate( jsonObject, key, simplifyValue( jsonObject, processElement(
-        * element, type ) ) ); return; }
-        */
+       * else{ setOrAccumulate( jsonObject, key, simplifyValue( jsonObject, processElement(
+       * element, type ) ) ); return; }
+       */
     }
 
     boolean classProcessed = false;
@@ -1281,7 +1282,7 @@ class XMLSerializer {
   private String writeDocument(Document doc, String encoding) {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try {
-      XomSerializer serializer = (encoding == null) ? new XomSerializer(baos) : new XomSerializer(baos, encoding);
+      XomSerializer serializer = encoding == null ? new XomSerializer(baos) : new XomSerializer(baos, encoding);
       serializer.write(doc);
       encoding = serializer.getEncoding();
     } catch (IOException ioe) {

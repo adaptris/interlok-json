@@ -21,8 +21,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * tag as the root element of the XML.
  * </p>
  * <p>
- * If your input is a relatively JSON object, then this is the transformation driver to use; {@link DefaultJsonTransformationDriver}
- * adds a layer of XML complexity that you may not need. The key differentiator is that where the output <strong>should be</strong>
+ * If your input is a relatively JSON object, then this is the transformation driver to use.
+ * The key differentiator is that where the output <strong>should be</strong>
  * a JSON array with a single element; it will not be supported by this driver implementation. You can still use it, but you will
  * have to execute a {@link JsonTransformService} afterwards to change the cardinality.
  * </p>
