@@ -3,7 +3,7 @@ ext {
   componentName='Interlok Transform/JSON Streaming'
   componentDesc="Streaming JSON in a STaX-alike manner"
   jacksonVersion='2.13.0'
-  jsonSurferVersion="1.6.2"
+  jsonSurferVersion="1.6.3"
 }
 
 
