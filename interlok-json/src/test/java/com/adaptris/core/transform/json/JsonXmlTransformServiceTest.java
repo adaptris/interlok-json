@@ -1,14 +1,5 @@
 package com.adaptris.core.transform.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import java.util.Arrays;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.Test;
-import org.w3c.dom.Document;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -16,6 +7,17 @@ import com.adaptris.core.util.DocumentBuilderFactoryBuilder;
 import com.adaptris.core.util.XmlHelper;
 import com.adaptris.interlok.junit.scaffolding.services.TransformServiceExample;
 import com.adaptris.util.text.xml.XPath;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Test;
+import org.w3c.dom.Document;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class JsonXmlTransformServiceTest extends TransformServiceExample {
 
@@ -58,6 +60,14 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
       "[ { \"$type\": \"Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities\", " + "\"id\": \"victoria\", "
           + "\"name\": \"Victoria\", " + "\"modeName\": \"tube\", " + "\"created\": \"2015-07-23T14:35:19.787\", "
           + "\"modified\": \"2015-07-23T14:35:19.787\", " + "\"lineStatuses\": [], " + "\"routeSections\": [] }]";
+
+  static final String LONGER_THAN_INT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<outputresult class=\"object\">\n"
+        + "<systemresponse class=\"object\">\n<records class=\"array\">\n<responsearrayelement class=\"object\">\n"
+        + "<record type=\"number\">1</record>\n<resultid type=\"number\">123456789112</resultid>\n"
+        + "<runid type=\"number\">12345</runid>\n</responsearrayelement>\n</records>\n</systemresponse>\n</outputresult>";
+  static final String LONGER_THAN_INT_JSON = "{\"record\":1,\"resultid\":123456789112,\"runid\":12345}";
+  static final String LONGER_THAN_INT_JSON_OUTPUT = "[[[" + LONGER_THAN_INT_JSON + "]]]";
+  static final String LONGER_THAN_INT_XML_OUTPUT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<outputresult><record type=\"number\">1</record><resultid type=\"number\">123456789112</resultid><runid type=\"number\">12345</runid></outputresult>\r\n";
 
   @Test
   public void testTransformToXml() throws Exception {
@@ -134,6 +144,36 @@ public class JsonXmlTransformServiceTest extends TransformServiceExample {
     svc.setDriver(new SimpleJsonTransformationDriver());
     execute(svc, msg);
     doJsonAssertions(msg);
+  }
+
+  @Test
+  public void testLongIntegerValuesXmlToJson() throws Exception
+  {
+    final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(LONGER_THAN_INT_XML);
+    final JsonXmlTransformService service = new JsonXmlTransformService();
+    service.setDirection(TransformationDirection.XML_TO_JSON);
+    JsonObjectTransformationDriver driver = new JsonObjectTransformationDriver();
+    driver.setRootName("outputresult");
+    driver.setArrayName("responsearray");
+    driver.setElementName("responsearrayelement");
+    service.setDriver(driver);
+    execute(service, message);
+    assertEquals(LONGER_THAN_INT_JSON_OUTPUT, message.getContent());
+  }
+
+  @Test
+  public void testLongIntegerValuesJsonToXml() throws Exception
+  {
+    final AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage(LONGER_THAN_INT_JSON);
+    final JsonXmlTransformService service = new JsonXmlTransformService();
+    service.setDirection(TransformationDirection.JSON_TO_XML);
+    JsonObjectTransformationDriver driver = new JsonObjectTransformationDriver();
+    driver.setRootName("outputresult");
+    driver.setArrayName("responsearray");
+    driver.setElementName("responsearrayelement");
+    service.setDriver(driver);
+    execute(service, message);
+    assertEquals(LONGER_THAN_INT_XML_OUTPUT, message.getContent());
   }
 
   @Override
