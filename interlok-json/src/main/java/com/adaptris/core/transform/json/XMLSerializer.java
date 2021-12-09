@@ -1212,9 +1212,9 @@ class XMLSerializer {
       if (type.compareToIgnoreCase(JSONTypes.BOOLEAN) == 0) {
         setOrAccumulate(jsonObject, key, Boolean.valueOf(element.getValue()));
       } else if (type.compareToIgnoreCase(JSONTypes.NUMBER) == 0) {
-        // try integer first
+        // try Long first
         try {
-          setOrAccumulate(jsonObject, key, Integer.valueOf(element.getValue()));
+          setOrAccumulate(jsonObject, key, Long.valueOf(element.getValue()));
         } catch (NumberFormatException e) {
           setOrAccumulate(jsonObject, key, Double.valueOf(element.getValue()));
         }
