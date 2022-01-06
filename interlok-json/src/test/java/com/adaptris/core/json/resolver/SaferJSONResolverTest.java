@@ -25,7 +25,19 @@ public class SaferJSONResolverTest
 			"  },\n" +
 			"  \"%message{key}\": \"%resolveJson{%message{" + KEY + "}}\"\n" +
 			"}";
-	private static final String JSON_RESOLVED = "{\"firstName\":\"John\",\"lastName\":\"Smith\",\"isAlive\":true,\"age\":27,\"address\":{\"streetAddress\":\"21 2nd Street\",\"city\":\"New York\",\"state\":\"NY\",\"postalCode\":\"10021-3100\"},\"greeting\":\"Hello \\\"JSON resolver test\\\"\"}";
+	private static final String JSON_RESOLVED = "{\n" +
+			"  \"firstName\" : \"John\",\n" +
+			"  \"lastName\" : \"Smith\",\n" +
+			"  \"isAlive\" : true,\n" +
+			"  \"age\" : 27,\n" +
+			"  \"address\" : {\n" +
+			"    \"streetAddress\" : \"21 2nd Street\",\n" +
+			"    \"city\" : \"New York\",\n" +
+			"    \"state\" : \"NY\",\n" +
+			"    \"postalCode\" : \"10021-3100\"\n" +
+			"  },\n" +
+			"  \"greeting\" : \"Hello \\\"JSON resolver test\\\"\"\n" +
+			"}";
 
 	@Test
 	public void testCanResolve()

@@ -76,7 +76,7 @@ public class SaferJSONResolver extends ResolverImp
 		{
 			JsonNode json = jsonDeserializer().deserialize(lookupValue);
 			checkJsonObject(target, json);
-			result = json.toString();
+			result = json.toPrettyString();
 		}
 		catch (Exception e)
 		{
