@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,9 @@ import java.util.regex.Pattern;
  * the correct escaping, particularly of quotation marks.
  * </p>
  */
+@Slf4j
 public class SaferJSONResolver extends ResolverImp
 {
-	private static final Logger log = LoggerFactory.getLogger(FileResolver.class);
-
 	private static final String RESOLVE_REGEXP = "^.*%resolveJson\\{(.+)\\}.*$";
 	private final transient Pattern resolverPattern;
 
