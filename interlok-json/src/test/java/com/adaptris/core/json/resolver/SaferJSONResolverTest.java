@@ -23,7 +23,7 @@ public class SaferJSONResolverTest
 			"    \"state\": \"NY\",\n" +
 			"    \"postalCode\": \"10021-3100\"\n" +
 			"  },\n" +
-			"  \"%message{key}\": \"%resolveJson{%message{" + KEY + "}}\"\n" +
+			"  \"%message{key}\": \"%asJSONString{%message{" + KEY + "}}\"\n" +
 			"}";
 	private static final String JSON_RESOLVED = "{\n" +
 			"  \"firstName\" : \"John\",\n" +

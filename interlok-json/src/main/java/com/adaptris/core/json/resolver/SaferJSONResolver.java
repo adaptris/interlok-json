@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class SaferJSONResolver extends ResolverImp
 {
-	private static final String RESOLVE_REGEXP = "^.*%resolveJson\\{(.+)\\}.*$";
+	private static final String RESOLVE_REGEXP = "^.*%asJSONString\\{(.+)\\}.*$";
 	private final transient Pattern resolverPattern;
 
 	@Getter
@@ -155,7 +155,7 @@ public class SaferJSONResolver extends ResolverImp
 			String replace = matcher.group(1);
 			String value = target.resolve(replace);
 			log.trace("Found value {} within target message", value);
-			String toReplace = "%resolveJson{" + replace + "}";
+			String toReplace = "%asJSONString{" + replace + "}";
 			result = result.replace(toReplace, value);
 			matcher = resolverPattern.matcher(result);
 		}
