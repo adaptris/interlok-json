@@ -3,7 +3,6 @@ package com.adaptris.core.json.resolver;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.core.json.JacksonJsonDeserializer;
 import com.adaptris.core.json.JsonDeserializer;
-import com.adaptris.interlok.resolver.FileResolver;
 import com.adaptris.interlok.resolver.ResolverImp;
 import com.adaptris.interlok.resolver.UnresolvableException;
 import com.adaptris.interlok.types.InterlokMessage;
@@ -14,8 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +24,7 @@ import java.util.regex.Pattern;
  * Resolver implementation that resolves and escapes JSON content.
  * <p>
  * This resolver resolves values based on the following:
- * %resolveJson{...}, and will place the result in a a JSON node with
+ * %asJSONString{...}, and will place the result in a a JSON node with
  * the correct escaping, particularly of quotation marks.
  * </p>
  */
@@ -102,10 +99,10 @@ public class SaferJSONResolver extends ResolverImp
 
 	/*
 	 * It's done this way because trying to use a regex like
-	 * %resolveJson{...} within a JSON document leads to madness: do
+	 * %asJSONString{...} within a JSON document leads to madness: do
 	 * you try to match the fewest characters before '}' (in which case
 	 * you cannot support embedded resolvers such as
-	 * %resolveJson{%message{...}} or do you go greedy and then start
+	 * %asJSONString{%message{...}} or do you go greedy and then start
 	 * matching any '}' that's actually part of the document? Madness I
 	 * tell you.
 	 */
