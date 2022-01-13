@@ -3,10 +3,10 @@ package com.adaptris.core.json.resolver;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.interlok.resolver.UnresolvableException;
-import net.sf.json.test.JSONAssert;
+import net.sf.json.JSONObject;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SaferJSONResolverTest
@@ -54,7 +54,7 @@ public class SaferJSONResolverTest
 		message.addMetadata("key", KEY);
 		SaferJSONResolver resolver = new SaferJSONResolver();
 		String result = resolver.resolve(JSON_SOURCE, message);
-		JSONAssert.assertEquals(JSON_RESOLVED, result);
+		JSONAssert.assertEquals(JSON_RESOLVED, result, false);
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class SaferJSONResolverTest
 		message.addMetadata("key", KEY);
 		SaferJSONResolver resolver = new SaferJSONResolver();
 		String result = resolver.resolve(null, message);
-		JSONAssert.assertEquals(JSON_RESOLVED, result);
+		JSONAssert.assertEquals(JSON_RESOLVED, result, false);
 	}
 
 	@Test(expected = UnresolvableException.class)
