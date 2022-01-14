@@ -1,13 +1,13 @@
 package com.adaptris.core.json.resolver;
 
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.interlok.resolver.UnresolvableException;
-import net.sf.json.JSONObject;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import static org.junit.Assert.assertTrue;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.interlok.resolver.UnresolvableException;
 
 public class SaferJSONResolverTest
 {
