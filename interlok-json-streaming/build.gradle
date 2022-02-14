@@ -16,7 +16,7 @@ dependencies {
   api("com.github.jsurfer:jsurfer-gson:$jsonSurferVersion") {
     exclude group: "com.google.code.gson", module: "gson"
   }
-  implementation ("com.google.code.gson:gson:2.8.9")
+  implementation ("com.google.code.gson:gson:2.9.0")
   api("com.github.jsurfer:jsurfer-jackson:$jsonSurferVersion") {
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-core"
