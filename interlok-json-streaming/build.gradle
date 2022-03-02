@@ -2,8 +2,8 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok Transform/JSON Streaming'
   componentDesc="Streaming JSON in a STaX-alike manner"
-  jacksonVersion='2.13.0'
-  jsonSurferVersion="1.6.2"
+  jacksonVersion='2.13.1'
+  jsonSurferVersion="1.6.3"
 }
 
 
@@ -30,7 +30,7 @@ dependencies {
   implementation ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
   implementation ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
   testImplementation("org.skyscreamer:jsonassert:1.5.0")
-  testImplementation ("com.jayway.jsonpath:json-path:2.6.0")
+  testImplementation ("com.jayway.jsonpath:json-path:2.7.0")
 
 }
 
@@ -90,6 +90,7 @@ publishing {
       pom.withXml {
         asNode().appendNode("name", componentName)
         asNode().appendNode("description", componentDesc)
+		asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/")
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.8.2+")
         properties.appendNode("tags", "json")

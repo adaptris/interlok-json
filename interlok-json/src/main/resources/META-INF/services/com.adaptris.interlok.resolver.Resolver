@@ -1,1 +1,2 @@
 com.adaptris.core.json.resolver.FromPayloadUsingJSONPath
+com.adaptris.core.json.resolver.SaferJSONResolver

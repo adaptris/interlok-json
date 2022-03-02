@@ -2,14 +2,14 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok Transform/JSLT'
   componentDesc="Support for JSON transforms via JSLT"
-  jacksonVersion='2.13.0'
+  jacksonVersion='2.13.1'
 }
 
 
 dependencies {
   api ("com.schibsted.spt.data:jslt:0.1.11")
   api ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-  testImplementation ("com.jayway.jsonpath:json-path:2.6.0")
+  testImplementation ("com.jayway.jsonpath:json-path:2.7.0")
 }
 
 
@@ -57,6 +57,7 @@ publishing {
       pom.withXml {
         asNode().appendNode("name", componentName)
         asNode().appendNode("description", componentDesc)
+		asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/")
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.12.0+")
         properties.appendNode("tags", "jslt,json")
