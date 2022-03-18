@@ -127,7 +127,6 @@ subprojects {
     }
     maven { url "$nexusBaseUrl/content/groups/public" }
     maven { url "$nexusBaseUrl/content/groups/interlok" }
-    maven { url 'https://jitpack.io' }
   }
 
   configurations {
