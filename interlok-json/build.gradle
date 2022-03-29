@@ -23,7 +23,7 @@ dependencies {
   api ("com.bazaarvoice.jolt:jolt-core:0.1.6")
   api ("com.bazaarvoice.jolt:json-utils:0.1.6")
   // Dependency to platform/BOM
-  implementation (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+  api (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
   api ("com.fasterxml.jackson.core:jackson-annotations")
   api ("com.fasterxml.jackson.core:jackson-databind")
   api ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
