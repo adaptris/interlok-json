@@ -20,7 +20,7 @@ dependencies {
   }
   api ("org.json:json:$jsonOrgVersion")
   api ("com.jayway.jsonpath:json-path:2.7.0")
-  api ("com.bazaarvoice.jolt:jolt-core:0.1.6")
+  api ("com.bazaarvoice.jolt:jolt-core:0.1.7")
   api ("com.bazaarvoice.jolt:json-utils:0.1.6") {
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-core"
