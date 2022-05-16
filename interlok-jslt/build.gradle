@@ -2,7 +2,7 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JSLT'
   componentDesc = "Support for JSON transforms via JSLT"
-  jacksonVersion = "2.13.2.20220328"
+  jacksonVersion = "2.13.3"
 }
 
 
