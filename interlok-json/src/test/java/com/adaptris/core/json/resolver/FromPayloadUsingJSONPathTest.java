@@ -51,6 +51,7 @@ public class FromPayloadUsingJSONPathTest
     @Override public boolean headersContainsKey(String key) { return false; }
     @Override public String resolve(String s, boolean multiline) { return null; }
     @Override public Object resolveObject(String s) { return null; }
+    @Override public void clearMessageHeaders() { }
 
     private String payload = DATA;
     private String encoding = "UTF-8";
