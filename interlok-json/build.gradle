@@ -40,7 +40,7 @@ dependencies {
   api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.12")
   testImplementation ("org.skyscreamer:jsonassert:1.5.0")
   testImplementation ("org.apache.derby:derby:10.15.2.0")
-  testImplementation ("org.apache.derby:derbytools:10.15.2.0")
+  testImplementation ("org.apache.derby:derbytools:10.16.1.1")
 }
 
 jar {
