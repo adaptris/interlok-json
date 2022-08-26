@@ -6,4 +6,11 @@
     ]]></notes>
     <cpe>cpe:/a:json-ptr_project:json-ptr</cpe>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+    file name: javax.security.auth.message-1.0.0.v201108011116.jar. False positive.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.orbit/javax\.security\.auth\.message@.*$</packageUrl>
+    <cve>CVE-2011-5034</cve>
+  </suppress>
 </suppressions>
