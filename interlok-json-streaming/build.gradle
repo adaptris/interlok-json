@@ -2,7 +2,7 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JSON Streaming'
   componentDesc = "Streaming JSON in a STaX-alike manner"
-  jacksonVersion = "2.13.3"
+  jacksonVersion = "2.13.4.20221013"
   jsonSurferVersion = "1.6.3"
 }
 
@@ -16,7 +16,7 @@ dependencies {
   api("com.github.jsurfer:jsurfer-gson:$jsonSurferVersion") {
     exclude group: "com.google.code.gson", module: "gson"
   }
-  implementation ("com.google.code.gson:gson:2.9.0")
+  implementation ("com.google.code.gson:gson:2.9.1")
   api("com.github.jsurfer:jsurfer-jackson:$jsonSurferVersion") {
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-core"
@@ -31,7 +31,7 @@ dependencies {
   implementation ("com.fasterxml.jackson.core:jackson-databind")
   implementation ("com.fasterxml.jackson.core:jackson-core")
   implementation ("com.fasterxml.jackson.core:jackson-annotations")
-  testImplementation("org.skyscreamer:jsonassert:1.5.0")
+  testImplementation("org.skyscreamer:jsonassert:1.5.1")
   testImplementation ("com.jayway.jsonpath:json-path:2.7.0")
 
 }

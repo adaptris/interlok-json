@@ -2,12 +2,12 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JSLT'
   componentDesc = "Support for JSON transforms via JSLT"
-  jacksonVersion = "2.13.3"
+  jacksonVersion = "2.13.4.20221013"
 }
 
 
 dependencies {
-  api ("com.schibsted.spt.data:jslt:0.1.12")
+  api ("com.schibsted.spt.data:jslt:0.1.13")
   // Dependency to platform/BOM
   api (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
   api ("com.fasterxml.jackson.core:jackson-databind")

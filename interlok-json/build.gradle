@@ -5,8 +5,8 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok Transform/JSON'
   componentDesc="Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting"
-  jacksonVersion = "2.13.3"
-  jsonOrgVersion = "20220320"
+  jacksonVersion = "2.13.4.20221013"
+  jsonOrgVersion = "20220924"
 }
 
 
@@ -14,7 +14,7 @@ dependencies {
   implementation ("net.sf.json-lib:json-lib:2.4:jdk15") {
     exclude group: 'xerces', module: 'xercesImpl'
   }
-  implementation ("xom:xom:1.3.7") {
+  implementation ("xom:xom:1.3.8") {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xerces', module: 'xercesImpl'
   }
@@ -38,7 +38,7 @@ dependencies {
   api ("com.github.erosb:everit-json-schema:1.14.1")
   implementation ("com.google.guava:guava:31.1-jre")
   api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.12")
-  testImplementation ("org.skyscreamer:jsonassert:1.5.0")
+  testImplementation ("org.skyscreamer:jsonassert:1.5.1")
   testImplementation ("org.apache.derby:derby:10.15.2.0")
   testImplementation ("org.apache.derby:derbytools:10.15.2.0")
 }
