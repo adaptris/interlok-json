@@ -7,7 +7,7 @@ ext {
 
 
 dependencies {
-  api ("com.schibsted.spt.data:jslt:0.1.13")
+  api ("com.schibsted.spt.data:jslt:0.1.14")
   // Dependency to platform/BOM
   api (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
   api ("com.fasterxml.jackson.core:jackson-databind")
