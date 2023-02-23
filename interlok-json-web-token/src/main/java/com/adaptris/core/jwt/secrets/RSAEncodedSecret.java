@@ -54,7 +54,7 @@ public class RSAEncodedSecret implements SecretConfigurator {
   @Setter
   private RSAAlgorithms algorithm;
 
-  private enum RSAAlgorithms {
+  public enum RSAAlgorithms {
     /**
      * JWA algorithm name for {@code RSASSA-PKCS-v1_5 using SHA-256}
      */
