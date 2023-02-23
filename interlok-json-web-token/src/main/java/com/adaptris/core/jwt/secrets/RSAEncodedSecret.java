@@ -22,6 +22,8 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.adaptris.annotation.InputFieldHint;
+import com.adaptris.security.password.Password;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -45,6 +47,7 @@ public class RSAEncodedSecret implements SecretConfigurator {
 
   @Setter
   @Getter
+  @InputFieldHint(style = "PASSWORD", external=true)
   private String privateKeyPassphrase;
 
   @Getter
@@ -71,7 +74,7 @@ public class RSAEncodedSecret implements SecretConfigurator {
   @Override
   public JwtBuilder configure(JwtBuilder builder) throws InvalidSecretException {
     try {
-      PrivateKey pk = readPrivateKey(getPrivateKeyFilePath(), getPrivateKeyPassphrase());
+      PrivateKey pk = readPrivateKey(getPrivateKeyFilePath(), Password.decode(getPrivateKeyPassphrase()));
       return builder.signWith(pk, SignatureAlgorithm.valueOf(getAlgorithm().name()));
     } catch (Exception ex) {
       log.error("Error loading private key.", ex);

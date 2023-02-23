@@ -26,6 +26,10 @@ public class Base64EncodedSecret implements SecretConfigurator {
 
   private enum RSAAlgorithms {
     /**
+    * If selected use first available hashing algorithm
+    */
+    ANY,
+    /**
      * JWA algorithm name for {@code HMAC using SHA-256}
      */
     HS256,
@@ -42,18 +46,27 @@ public class Base64EncodedSecret implements SecretConfigurator {
   }
 
   @Override
-  public JwtBuilder configure(JwtBuilder builder) {    
-    SignatureAlgorithm algorithmToUse = SignatureAlgorithm.valueOf(getAlgorithm().name());
+  public JwtBuilder configure(JwtBuilder builder) {
+    SignatureAlgorithm algorithmToUse = null;
+    if (getAlgorithm() == null || getAlgorithm() == RSAAlgorithms.ANY) {
+      algorithmToUse = SignatureAlgorithm.HS256;
+    } else {
+      algorithmToUse = SignatureAlgorithm.valueOf(getAlgorithm().name());
+    }
     SecretKey hmacShaKeyFor = new SecretKeySpec(Decoders.BASE64.decode(secret), algorithmToUse.getJcaName());
-
     return builder.signWith(hmacShaKeyFor);
   }
 
   @Override
   public JwtParserBuilder configure(JwtParserBuilder builder) {
-    SignatureAlgorithm algorithmToUse = SignatureAlgorithm.valueOf(getAlgorithm().name());
+    SignatureAlgorithm algorithmToUse = null;
+    if (getAlgorithm() == null || getAlgorithm() == RSAAlgorithms.ANY) {
+      algorithmToUse = SignatureAlgorithm.HS256;
+    } else {
+      algorithmToUse = SignatureAlgorithm.valueOf(getAlgorithm().name());
+    }
     SecretKey hmacShaKeyFor = new SecretKeySpec(Decoders.BASE64.decode(secret), algorithmToUse.getJcaName());
-    
+
     return builder.setSigningKey(hmacShaKeyFor);
   }
 }
