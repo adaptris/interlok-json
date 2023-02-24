@@ -1,17 +1,14 @@
 package com.adaptris.core.jwt.secrets;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.validation.constraints.NotBlank;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParserBuilder;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
 
 @XStreamAlias("base64-encoded-secret")
 public class Base64EncodedSecret implements SecretConfigurator {
@@ -20,53 +17,13 @@ public class Base64EncodedSecret implements SecretConfigurator {
   @NotBlank
   private String secret;
 
-  @Getter
-  @Setter
-  private RSAAlgorithms algorithm;
-
-  private enum RSAAlgorithms {
-    /**
-    * If selected use first available hashing algorithm
-    */
-    ANY,
-    /**
-     * JWA algorithm name for {@code HMAC using SHA-256}
-     */
-    HS256,
-
-    /**
-     * JWA algorithm name for {@code HMAC using SHA-384}
-     */
-    HS384,
-
-    /**
-     * JWA algorithm name for {@code HMAC using SHA-512}
-     */
-    HS512;
-  }
-
   @Override
   public JwtBuilder configure(JwtBuilder builder) {
-    SignatureAlgorithm algorithmToUse = null;
-    if (getAlgorithm() == null || getAlgorithm() == RSAAlgorithms.ANY) {
-      algorithmToUse = SignatureAlgorithm.HS256;
-    } else {
-      algorithmToUse = SignatureAlgorithm.valueOf(getAlgorithm().name());
-    }
-    SecretKey hmacShaKeyFor = new SecretKeySpec(Decoders.BASE64.decode(secret), algorithmToUse.getJcaName());
-    return builder.signWith(hmacShaKeyFor);
+    return builder.signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)));
   }
 
   @Override
   public JwtParserBuilder configure(JwtParserBuilder builder) {
-    SignatureAlgorithm algorithmToUse = null;
-    if (getAlgorithm() == null || getAlgorithm() == RSAAlgorithms.ANY) {
-      algorithmToUse = SignatureAlgorithm.HS256;
-    } else {
-      algorithmToUse = SignatureAlgorithm.valueOf(getAlgorithm().name());
-    }
-    SecretKey hmacShaKeyFor = new SecretKeySpec(Decoders.BASE64.decode(secret), algorithmToUse.getJcaName());
-
-    return builder.setSigningKey(hmacShaKeyFor);
+    return builder.setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)));
   }
 }

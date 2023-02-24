@@ -29,7 +29,9 @@ public class RSAEncodedSecretTest {
   private static final String VALIDATE_JWT_REGEX = "(^[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*$)";
 
   private static final String INVALID_PRIVATE_KEY = "./src/test/resources/privateKey.pkk";
-
+  private static final String INVALID_PUBLIC_KEY = "./src/test/resources/publicKey.pkk";
+  private static final String INVALID_PRIVATE_KEY_CLASS_PATH = "./src/test/resources/rsaPkcs8.private";
+  
   private static final String JWT_HEADER = "{\r\n" + "  \"typ\": \"JWT\"\r\n" + "}";
 
   private static final String JWT_CLAIMS = "{\r\n" + "  \"sub\": \"1234567890\",\r\n" + "  \"name\": \"John Doe\",\r\n"
@@ -172,8 +174,6 @@ public class RSAEncodedSecretTest {
     }
   }
 
-  // TODO: Password test with correct and incorrect passwords.
-
   @Test
   public void testInvalidPrivateKeys() {
     secret.setPrivateKeyFilePath(INVALID_PRIVATE_KEY);
@@ -185,5 +185,31 @@ public class RSAEncodedSecretTest {
       // this is a test pass
     }
   }
+  
+  @Test
+  public void testInvalidPrivateKeysClass() {
+    secret.setPrivateKeyFilePath(INVALID_PRIVATE_KEY_CLASS_PATH); 
+
+    try {
+      encoder.doService(message);
+      fail("Should have thrown an exception with an invalid private key class.");
+    } catch (ServiceException ex) {
+      // this is a test pass
+    }
+  }
+  
+  @Test
+  public void testInvalidPublicKeys() {
+    secret.setPublicKeyFilePath(INVALID_PUBLIC_KEY);
+
+    try {
+      encoder.doService(message);
+      decoder.doService(message);
+      fail("Should have thrown an exception with an invalid private key.");
+    } catch (ServiceException ex) {
+      // this is a test pass
+    }
+  }
+  
 
 }
