@@ -19,7 +19,8 @@ dependencies {
     exclude group: 'xerces', module: 'xercesImpl'
   }
   api ("org.json:json:$jsonOrgVersion")
-  api ("com.jayway.jsonpath:json-path:2.7.0")
+  implementation ("net.minidev:json-smart:2.4.10")
+  api ("com.jayway.jsonpath:json-path:2.8.0")
   api ("com.bazaarvoice.jolt:jolt-core:0.1.7")
   api ("com.bazaarvoice.jolt:json-utils:0.1.7") {
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
