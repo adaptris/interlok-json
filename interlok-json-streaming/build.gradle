@@ -2,7 +2,7 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JSON Streaming'
   componentDesc = "Streaming JSON in a STaX-alike manner"
-  jacksonVersion = "2.14.2"
+  jacksonVersion = "2.15.0"
   jsonSurferVersion = "1.6.4"
 }
 
