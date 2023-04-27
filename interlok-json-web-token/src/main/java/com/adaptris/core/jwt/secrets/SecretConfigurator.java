@@ -10,4 +10,5 @@ public interface SecretConfigurator
   JwtBuilder configure(JwtBuilder builder) throws InvalidSecretException;
 
   JwtParserBuilder configure(JwtParserBuilder builder) throws InvalidSecretException;
+
 }

@@ -47,7 +47,7 @@ import javax.validation.constraints.NotNull;
  */
 @XStreamAlias("jwt-decode")
 @AdapterComponent
-@ComponentProfile(summary = "Encode a header and body to a JSON Web Token", tag = "jwt,decode,json,web,token", since="3.11.1")
+@ComponentProfile(summary = "Decode a header and body from a JSON Web Token", tag = "jwt,decode,json,web,token", since="3.11.1")
 @DisplayOrder(order = { "jwtString", "secret", "header", "claims" })
 public class JWTDecoder extends ServiceImp
 {
