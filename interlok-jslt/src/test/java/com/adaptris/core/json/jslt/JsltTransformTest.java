@@ -1,11 +1,15 @@
 package com.adaptris.core.json.jslt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.util.EnumSet;
+
+
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -49,12 +53,14 @@ public class JsltTransformTest extends ExampleServiceCase {
   }
 
 
-  @Test(expected = ServiceException.class)
+  @Test
   public void testTransform_NotJson() throws Exception {
     JsltTransformService service =
         new JsltTransformService().withUrl(PROPERTIES.getProperty(JSLT_TRANSFORM_KEY));
     AdaptrisMessage msg = new DefaultMessageFactory().newMessage("hello world", "UTF-8");
-    execute(service, msg);
+    assertThrows(ServiceException.class, ()->{
+      execute(service, msg);
+    }, "Failed, not Json"); 
   }
 
   @Test

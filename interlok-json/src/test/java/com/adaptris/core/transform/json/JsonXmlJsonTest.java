@@ -1,11 +1,14 @@
 package com.adaptris.core.transform.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.EnumSet;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.common.ConstantDataInputParameter;
@@ -49,13 +52,13 @@ public class JsonXmlJsonTest {
 
   private Configuration jsonConfig;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
 
   }
@@ -84,11 +87,12 @@ public class JsonXmlJsonTest {
 
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void testDefaultTransform() throws Exception {
-    AdaptrisMessage msg =
-        AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
-    new TransformationDriver() {}.transform(msg, TransformationDirection.JSON_TO_XML);
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JsonXmlJsonTest.JSON_INPUT);
+    assertThrows(UnsupportedOperationException.class, ()->{
+      new TransformationDriver() {}.transform(msg, TransformationDirection.JSON_TO_XML);
+    }, "Failed with unsupported operation.");
   }
 
 }
