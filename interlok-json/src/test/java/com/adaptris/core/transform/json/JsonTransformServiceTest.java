@@ -1,9 +1,9 @@
 package com.adaptris.core.transform.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -28,7 +28,7 @@ public class JsonTransformServiceTest extends TransformServiceExample {
   private AdaptrisMessage message;
 
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     service = new JsonTransformService();
     payloadInput = new StringPayloadDataInputParameter();

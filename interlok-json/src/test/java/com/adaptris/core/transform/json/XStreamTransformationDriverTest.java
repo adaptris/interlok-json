@@ -1,9 +1,9 @@
 package com.adaptris.core.transform.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.util.concurrent.ThreadLocalRandom;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.SerializableAdaptrisMessage;
 import com.adaptris.core.ServiceException;

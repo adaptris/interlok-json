@@ -1,14 +1,16 @@
 package com.adaptris.core.json.aggregator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -39,7 +41,7 @@ public class JsonArrayAggregatorTest extends ExampleServiceCase {
 
   private Configuration jsonConfig;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
@@ -106,12 +108,14 @@ public class JsonArrayAggregatorTest extends ExampleServiceCase {
     assertEquals("[]", StringUtils.deleteWhitespace(original.getContent()));
   }
 
-  @Test(expected = CoreException.class)
+  @Test
   public void testAggregator_WithException() throws Exception {
     AdaptrisMessage original = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
     List<AdaptrisMessage> msgs = create(OBJECT_CONTENT_1, OBJECT_CONTENT_2, OBJECT_CONTENT_3);
     JsonArrayAggregator aggr = new JsonArrayAggregator();
-    aggr.aggregate(original, msgs);
+    assertThrows(CoreException.class, ()->{
+      aggr.aggregate(original, msgs);
+    }, "Message aggregator failed.");
   }
 
   @Override

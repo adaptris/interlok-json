@@ -21,7 +21,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBu
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
 import org.json.JSONObject;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.jwt.secrets.PGPSecret;
@@ -49,7 +49,7 @@ public abstract class JWTCommonTest extends ExampleServiceCase
     return message;
   }
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception
   {
     Security.addProvider(new BouncyCastleProvider());

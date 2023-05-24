@@ -1,14 +1,15 @@
 package com.adaptris.core.transform.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.Reader;
 import java.util.EnumSet;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -41,7 +42,7 @@ public class JsonLinesTest {
 
   private Configuration jsonConfig;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class))
@@ -64,12 +65,14 @@ public class JsonLinesTest {
     assertEquals("black", context.read("$[3].colour"));
   }
 
-  @Test(expected = ServiceException.class)
+  @Test
   public void testJsonLines_NotJson() throws Exception {
     JsonLinesToJsonArray service = new JsonLinesToJsonArray();
     AdaptrisMessage msg =
         AdaptrisMessageFactory.getDefaultInstance().newMessage("hello world\nhello world");
-    ExampleServiceCase.execute(service, msg);
+    assertThrows(ServiceException.class, ()->{
+      ExampleServiceCase.execute(service, msg);
+    }, "Failed, not Json");
   }
 
 
@@ -90,12 +93,14 @@ public class JsonLinesTest {
     }
   }
 
-  @Test(expected = ServiceException.class)
+  @Test
   public void testJsonArray_NotJson() throws Exception {
     JsonArrayToJsonLines service = new JsonArrayToJsonLines();
     AdaptrisMessage msg =
         AdaptrisMessageFactory.getDefaultInstance().newMessage("hello world\nhello world");
-    ExampleServiceCase.execute(service, msg);
+    assertThrows(ServiceException.class, ()->{
+      ExampleServiceCase.execute(service, msg);
+    }, "Failed, not Json");
   }
   
   // this proves issue#260  https://github.com/adaptris/interlok-json/issues/260

@@ -1,11 +1,14 @@
 package com.adaptris.core.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class BasicDeserializerTest extends DeserializerCase {
 
@@ -38,9 +41,11 @@ public class BasicDeserializerTest extends DeserializerCase {
     assertEquals(JSONArray.class, s.deserialize(jsonArray).getClass());
   }
 
-  @Test(expected = JSONException.class)
+  @Test
   public void testNotJson() throws Exception {
-    s.deserialize(notJson);
+    assertThrows(JSONException.class, ()->{
+      s.deserialize(notJson);
+    }, "Failed, not Json");
   }
 
 }

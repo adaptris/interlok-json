@@ -1,18 +1,21 @@
 package com.adaptris.core.json.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.ServiceException;
+import com.adaptris.core.transform.json.TransformationDirection;
 import com.adaptris.interlok.util.CloseableIterable;
 
 /**
@@ -75,20 +78,24 @@ public class JsonStreamingSplitterTest {
             list.get(2).getContent(), JSONCompareMode.STRICT_ORDER);
   }
 
-  @Test(expected = CoreException.class)
+  @Test
   public void testSplit_NotFound() throws Exception {
     JsonStreamingSplitter splitter = new JsonStreamingSplitter("/envelope/document/x");
     splitter.setSuppressPathNotFound(Boolean.FALSE);
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(payload());
-    splitter.splitMessage(msg);
+    assertThrows(CoreException.class, ()->{
+      splitter.splitMessage(msg);
+    }, "Failed split with not found");
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void testSplit_Remove() throws Exception {
     JsonStreamingSplitter splitter = new JsonStreamingSplitter("/envelope/document");
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(payload());
     try (CloseableIterable<AdaptrisMessage> i = CloseableIterable.ensureCloseable(splitter.splitMessage(msg))) {
-      i.iterator().remove();
+      assertThrows(UnsupportedOperationException.class, ()->{
+        i.iterator().remove();
+      }, "Failed split with unsupported operation");
     };
   }
 

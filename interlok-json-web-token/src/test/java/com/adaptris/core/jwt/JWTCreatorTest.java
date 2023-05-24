@@ -12,13 +12,13 @@ import com.adaptris.util.KeyValuePairSet;
 import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JWTCreatorTest extends JWTCommonTest
 {

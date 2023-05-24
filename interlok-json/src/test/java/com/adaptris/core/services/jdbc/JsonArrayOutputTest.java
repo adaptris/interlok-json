@@ -3,11 +3,11 @@ package com.adaptris.core.services.jdbc;
 import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createContext;
 import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.createJdbcResult;
 import static com.adaptris.core.services.jdbc.JsonResultSetTranslatorTest.execute;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
