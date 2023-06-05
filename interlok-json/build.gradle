@@ -5,7 +5,7 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok Transform/JSON'
   componentDesc="Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting"
-  jacksonVersion = "2.15.0"
+  jacksonVersion = "2.15.2"
   jsonOrgVersion = "20230227"
 }
 
