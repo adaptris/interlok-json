@@ -1,14 +1,15 @@
 package com.adaptris.core.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -72,20 +73,24 @@ public class JsonBlobListRendererTest {
     assertEquals("bucket", context.read("$.bucket"));
   }
 
-  @Test(expected = CoreException.class)
+  @Test
   public void testRender_Fail() throws Exception {
     JsonBlobListRenderer render = new JsonBlobListRenderer();
     AdaptrisMessage msg = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
     Collection<RemoteBlob> blobs = createBlobs(10);
-    render.render(blobs, msg);
+    assertThrows(CoreException.class, ()->{
+      render.render(blobs, msg);
+    }, "Failed to render lines");
   }
 
-  @Test(expected = CoreException.class)
+  @Test
   public void testRenderLines_Fail() throws Exception {
     JsonBlobListRenderer render = new JsonBlobListRendererLines();
     AdaptrisMessage msg = new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage();
     Collection<RemoteBlob> blobs = createBlobs(10);
-    render.render(blobs, msg);
+    assertThrows(CoreException.class, ()->{
+      render.render(blobs, msg);
+    }, "Failed to render lines");
   }
 
   private static Collection<RemoteBlob> createBlobs(int count) {

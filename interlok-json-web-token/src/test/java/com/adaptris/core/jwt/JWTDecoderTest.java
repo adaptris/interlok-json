@@ -8,9 +8,9 @@ import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.jwt.secrets.Base64EncodedSecret;
 import com.adaptris.core.jwt.secrets.PGPSecret;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 public class JWTDecoderTest extends JWTCommonTest

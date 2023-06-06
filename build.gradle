@@ -4,14 +4,14 @@ import org.apache.tools.ant.filters.*
 plugins {
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '7.0.0'
-  id 'com.github.spotbugs' version '5.0.13'
-  id 'org.owasp.dependencycheck' version '7.4.4'
+  id 'com.github.spotbugs' version '5.0.14'
+  id 'org.owasp.dependencycheck' version '8.2.1'
   id "io.freefair.lombok" version "6.5.1"
 }
 
 ext {
-  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.8-SNAPSHOT'
-  releaseVersion = project.findProperty('releaseVersion') ?: '4.8-SNAPSHOT'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '5.0-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '5.0-SNAPSHOT'
   nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -25,7 +25,7 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
 
-  slf4jVersion = '2.0.3'
+  slf4jVersion = '2.0.7'
   mockitoVersion = '5.2.0'
 }
 
@@ -109,8 +109,8 @@ subprojects {
   apply plugin: 'com.github.spotbugs'
   apply plugin: 'org.owasp.dependencycheck'
 
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
   group   = 'com.adaptris'
   version = releaseVersion
   def versionDir = "$buildDir/version"
@@ -158,7 +158,6 @@ subprojects {
 
     // INTERLOK-3740 switch from jcraft to com.github.mwiede jsch fork.
     all*.exclude group: 'com.jcraft', module: 'jsch'
-
   }
 
   configurations.all {
@@ -175,7 +174,8 @@ subprojects {
     offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
     offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
 
-    testImplementation ('junit:junit:4.13.2')
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.9.3")
     testImplementation ("org.slf4j:slf4j-simple:$slf4jVersion")
     testImplementation ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true }
     testImplementation ("org.mockito:mockito-core:$mockitoVersion")
@@ -183,7 +183,6 @@ subprojects {
 
     javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
     umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
-
   }
 
   sourceSets {
@@ -234,7 +233,7 @@ subprojects {
       taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
       options.addStringOption "tagletpath", configurations.javadoc.asPath
       options.addStringOption('Xdoclint:none', '-quiet')
-      options.addBooleanOption "-no-module-directories", true
+
       options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
         group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
         group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
@@ -257,7 +256,7 @@ subprojects {
       taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
       options.addStringOption "tagletpath", configurations.javadoc.asPath
       options.addStringOption('Xdoclint:none', '-quiet')
-      options.addBooleanOption "-no-module-directories", true
+
       options.docletpath = configurations.umlDoclet.files.asType(List)
       options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
       options.addStringOption "umlBasePath", destinationDir.getCanonicalPath()
@@ -308,14 +307,18 @@ subprojects {
       }
     }
   }
-
-  jacocoTestReport {
-      reports {
-          xml.required= true
-          html.required= true
-      }
+  
+  test {
+  jvmArgs = ['--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED']
+  useJUnitPlatform()
   }
 
+  jacocoTestReport {
+    reports {
+      xml.required= true
+      html.required= true
+    }
+  }
 
   // disable spotbugsTests which checks our test code..
   spotbugsTest.enabled = false
@@ -344,9 +347,9 @@ subprojects {
     failBuildOnCVSS = 7.0
     analyzers {
       assemblyEnabled=false
+      knownExploitedURL=project.findProperty('dependencyCheckKnownExploitedURL')
     }
   }
-
 
   task lgtmCompile(type: JavaCompile, dependsOn: delombok) {
     group 'Build'

@@ -5,8 +5,8 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName='Interlok Transform/JSON'
   componentDesc="Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting"
-  jacksonVersion = "2.14.2"
-  jsonOrgVersion = "20220924"
+  jacksonVersion = "2.15.2"
+  jsonOrgVersion = "20230227"
 }
 
 
@@ -19,9 +19,10 @@ dependencies {
     exclude group: 'xerces', module: 'xercesImpl'
   }
   api ("org.json:json:$jsonOrgVersion")
-  api ("com.jayway.jsonpath:json-path:2.7.0")
+  implementation ("net.minidev:json-smart:2.4.10")
+  api ("com.jayway.jsonpath:json-path:2.8.0")
   api ("com.bazaarvoice.jolt:jolt-core:0.1.7")
-  api ("com.bazaarvoice.jolt:json-utils:0.1.7") {
+  api ("com.bazaarvoice.jolt:json-utils:0.1.8") {
     exclude group: "com.fasterxml.jackson.core", module: "jackson-databind"
     exclude group: "com.fasterxml.jackson.core", module: "jackson-core"
   }
@@ -35,9 +36,9 @@ dependencies {
   api ("commons-beanutils:commons-beanutils:1.9.4")
   implementation ("xerces:xercesImpl:2.12.2")
 
-  api ("com.github.erosb:everit-json-schema:1.14.1")
+  api ("com.github.erosb:everit-json-schema:1.14.2")
   implementation ("com.google.guava:guava:31.1-jre")
-  api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.12")
+  api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.14")
   testImplementation ("org.skyscreamer:jsonassert:1.5.1")
   testImplementation ("org.apache.derby:derby:10.15.2.0")
   testImplementation ("org.apache.derby:derbytools:10.15.2.0")
