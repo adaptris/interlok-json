@@ -268,7 +268,7 @@ subprojects {
       options.addStringOption "umlExcludedTypeReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum,java.lang.annotation.Annotation"
       options.addStringOption "umlJavaBeanPropertiesAsFields"
       options.addBooleanOption "failOnCyclicPackageDependencies", false
-	  title= componentName
+      title= componentName
       options.group ("Transformation/Validation", ["com.adaptris.core.transform.json.*" , "com.adaptris.core.transform.json", "com.adaptris.core.json.schema", "com.adaptris.core.json.schema.*"]).
         group ("JSON Path", ["com.adaptris.core.services.path.json", "com.adaptris.core.services.path.json.*", "com.adaptris.core.services.routing.json.*" , "com.adaptris.core.services.routing.json"])
         group ("Split and Aggregate", ["com.adaptris.core.services.splitter.json", "com.adaptris.core.services.splitter.json.*", "com.adaptris.core.json.aggregator.*" , "com.adaptris.core.json.aggregator"])
