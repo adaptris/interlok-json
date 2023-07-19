@@ -20,7 +20,7 @@ public interface TransformationDriver {
    * @implNote The default implementation throws an {@link UnsupportedOperationException}.
    */
   @Deprecated
-  @Removal(version = "4.0.0")
+  @Removal(version = "5.1.0")
   default String transform(String input, TransformationDirection direction)
       throws ServiceException {
     throw new UnsupportedOperationException("Use transform(AdaptrisMessage, direction) instead");
