@@ -5,7 +5,7 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JWT'
   componentDesc = "Handling JWT in Interlok"
-  bouncyCastleVersion = "1.70"
+  bouncyCastleVersion = "1.76"
   jwtVersion = "0.11.5"
   jacksonVersion = "2.15.2"
   jsonOrgVersion = "20230618"
@@ -14,8 +14,8 @@ ext {
 dependencies {
   api ("org.json:json:$jsonOrgVersion")
 
-  api ("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
-  api ("org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion")
+  api ("org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion")
+  api ("org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion")
 
   api ("io.jsonwebtoken:jjwt-api:$jwtVersion")
   runtimeOnly ("io.jsonwebtoken:jjwt-impl:$jwtVersion")
