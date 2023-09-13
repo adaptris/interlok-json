@@ -12,6 +12,7 @@ import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
+import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
@@ -62,6 +63,7 @@ public class JsonPathBuilder implements PathBuilder {
   @NotNull
   @AutoPopulated
   @XStreamImplicit(itemFieldName = "json-paths")
+  @InputFieldHint(expression = true)
   private List<String> paths;
 
   private Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
@@ -78,18 +80,17 @@ public class JsonPathBuilder implements PathBuilder {
     ReadContext context = JsonPath.parse(jsonString, jsonConfig);
     Map<String, String> pathKeyValuePairs = new LinkedHashMap<>();
     for (String jsonPath : this.getPaths()) {
+      String jsonPathToExecute = msg == null ? jsonPath : msg.resolve(jsonPath);
       try {
-        Object result = context.read(jsonPath);
+        Object result = context.read(jsonPathToExecute);
         if (Map.class.isAssignableFrom(result.getClass()) || List.class.isAssignableFrom(result.getClass())) {
-          System.out.println(result.getClass());
-          throw new ServiceException(String.format(JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE, jsonPath));
+          throw new ServiceException(String.format(JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE, jsonPathToExecute));
         }
-        System.out.println(result.getClass());
-        pathKeyValuePairs.put(jsonPath, result.toString());
+        pathKeyValuePairs.put(jsonPathToExecute, result.toString());
       } catch (PathNotFoundException e) {
-        throw new ServiceException(String.format(JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE, jsonPath));
+        throw new ServiceException(String.format(JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE, jsonPathToExecute));
       } catch (InvalidPathException e) {
-        throw new ServiceException(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, jsonPath));
+        throw new ServiceException(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, jsonPathToExecute));
       }
     }
     return pathKeyValuePairs;

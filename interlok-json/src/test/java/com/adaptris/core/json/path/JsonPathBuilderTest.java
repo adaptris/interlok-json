@@ -2,6 +2,7 @@ package com.adaptris.core.json.path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.booleanThat;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,6 +61,22 @@ public class JsonPathBuilderTest {
   public void testSingleObjectJsonPath() {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON);
     jsonPath.add(JSON_FIRSTNAME_PATH);
+    jsonPathProvider.setPaths(jsonPath);
+    try {
+      resultKeyValuePairs = jsonPathProvider.extract(msg);
+      jsonPathProvider.insert(msg, resultKeyValuePairs);
+    } catch (ServiceException e) {
+      e.printStackTrace();
+      fail();
+    }
+    assertEquals(JSON, msg.getContent());
+  }
+  
+  @Test
+  public void testSingleObjectJsonPathFromMetadata() {
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON);
+    msg.addMetadata("jsonPath", JSON_FIRSTNAME_PATH);
+    jsonPath.add("%message{jsonPath}");
     jsonPathProvider.setPaths(jsonPath);
     try {
       resultKeyValuePairs = jsonPathProvider.extract(msg);
