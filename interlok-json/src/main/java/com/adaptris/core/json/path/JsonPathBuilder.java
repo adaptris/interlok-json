@@ -64,14 +64,9 @@ public class JsonPathBuilder implements PathBuilder {
   @InputFieldHint(expression = true)
   private List<String> paths;
 
-  private Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+  private transient Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
       .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
 
-  @Override
-  public void prepare() throws CoreException {
-    Args.notNull(getPaths(), "json-paths");
-  }
-  
   @Override
   public Map<String, String> extract(AdaptrisMessage msg) throws ServiceException {
     String jsonString = msg.getContent();
