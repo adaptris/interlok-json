@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import com.adaptris.annotation.AdapterComponent;
-import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldHint;
@@ -61,7 +60,6 @@ public class JsonPathBuilder implements PathBuilder {
   @Getter
   @Setter
   @NotNull
-  @AutoPopulated
   @XStreamImplicit(itemFieldName = "json-paths")
   @InputFieldHint(expression = true)
   private List<String> paths;
@@ -93,6 +91,7 @@ public class JsonPathBuilder implements PathBuilder {
         throw new ServiceException(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, jsonPathToExecute));
       }
     }
+    
     return pathKeyValuePairs;
   }
 
@@ -107,5 +106,4 @@ public class JsonPathBuilder implements PathBuilder {
     }
     msg.setContent(jsonDoc.jsonString(), msg.getContentEncoding());
   }
-
 }
