@@ -2,7 +2,6 @@ package com.adaptris.core.json.path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.booleanThat;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

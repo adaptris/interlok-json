@@ -16,8 +16,10 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.security.PathBuilder;
+import com.adaptris.core.security.PayloadPathDecryptionService;
+import com.adaptris.core.security.PayloadPathEncryptionService;
 import com.adaptris.core.util.Args;
-
+import com.adaptris.core.util.DocumentBuilderFactoryBuilder;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -35,10 +37,24 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 /**
+ * Extracts and inserts values from message payload using defined Json Paths {@link String}.
+ * <p>
+ * This component simple extracts and inserts values from a JSON file using JSON paths.
+ * While not coupled with {@link PayloadPathEncryptionService} and {@link PayloadPathDecryptionService} 
+ * this component was built to be used with those two services.
  * 
- * @author jwickham
+ * <strong>It's important to note that to keep the JSON valid you can only configure a path to a single JSON object.
+ * for example in the simple example below: 
+ * <pre>
+ * {@code
+ * {"name":"James", "age":30, "car":"Vauxhall"}
+ * }
+ * </pre>
+ * You could define the following JSON path: "$.name".
+ * </strong>
+ * </p>
  * 
- *         Imp that expects a JSON path to be provided.
+ * @config json-path-builder
  *
  */
 
@@ -73,17 +89,16 @@ public class JsonPathBuilder implements PathBuilder {
     ReadContext context = JsonPath.parse(jsonString, jsonConfig);
     Map<String, String> pathKeyValuePairs = new LinkedHashMap<>();
     for (String jsonPath : this.getPaths()) {
-      String jsonPathToExecute = msg == null ? jsonPath : msg.resolve(jsonPath);
       try {
-        Object result = context.read(jsonPathToExecute);
+        Object result = context.read(msg.resolve(jsonPath));
         if (Map.class.isAssignableFrom(result.getClass()) || List.class.isAssignableFrom(result.getClass())) {
-          throw new ServiceException(String.format(JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE, jsonPathToExecute));
+          throw new ServiceException(String.format(JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE, msg.resolve(jsonPath)));
         }
-        pathKeyValuePairs.put(jsonPathToExecute, result.toString());
+        pathKeyValuePairs.put(msg.resolve(jsonPath), result.toString());
       } catch (PathNotFoundException e) {
-        throw new ServiceException(String.format(JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE, jsonPathToExecute));
+        throw new ServiceException(String.format(JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE, msg.resolve(jsonPath)));
       } catch (InvalidPathException e) {
-        throw new ServiceException(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, jsonPathToExecute));
+        throw new ServiceException(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, msg.resolve(jsonPath)));
       }
     }
     
