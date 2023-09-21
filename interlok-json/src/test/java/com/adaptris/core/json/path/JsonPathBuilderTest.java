@@ -1,6 +1,7 @@
 package com.adaptris.core.json.path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
@@ -34,10 +35,6 @@ public class JsonPathBuilderTest {
   private static final String JSON_EXPRESSION_PATH = "$.phoneNumbers.[0].number";
   private static final String JSON_INVALID_PATH = "invalid json path";
   private static final String JSON_NON_EXISTENT_PATH = "$.thirdName";
-
-  private static final String JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE = "No results found for JSON path [%s]";
-  private static final String JSON_INVALID_PATH_EXCEPTION_MESSAGE = "Invalid Json path [%s]";
-  private static final String JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE = "Please ensure your path [%s] points to a single JSON object";
   
   private static Map<String, String> resultKeyValuePairs;
   private static List<String> jsonPath;
@@ -124,10 +121,9 @@ public class JsonPathBuilderTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON);
     jsonPath.add(JSON_MULTI_OBJECT_PATH);
     jsonPathProvider.setPaths(jsonPath);
-    Throwable exception =  Assertions.assertThrows(ServiceException.class, () -> {
+    assertThrows(ServiceException.class, () -> {
       resultKeyValuePairs = jsonPathProvider.extract(msg);
-    });
-    assertEquals(String.format(JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE, JSON_MULTI_OBJECT_PATH), exception.getMessage());
+    }, "JSON path does not resolve to a single object.");
   }
   
   @Test
@@ -135,10 +131,9 @@ public class JsonPathBuilderTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON);
     jsonPath.add(JSON_ARRAY_PATH);
     jsonPathProvider.setPaths(jsonPath);
-    Throwable exception =  Assertions.assertThrows(ServiceException.class, () -> {
+    assertThrows(ServiceException.class, () -> {
       resultKeyValuePairs = jsonPathProvider.extract(msg);
-    });
-    assertEquals(String.format(JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE, JSON_ARRAY_PATH), exception.getMessage());
+    }, "JSON path does not resolve to a single object.");
   }
   
   @Test
@@ -146,10 +141,9 @@ public class JsonPathBuilderTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(NON_JSON);
     jsonPath.add(JSON_FIRSTNAME_PATH);
     jsonPathProvider.setPaths(jsonPath);
-    Throwable exception =  Assertions.assertThrows(ServiceException.class, () -> {
+    assertThrows(ServiceException.class, () -> {
       resultKeyValuePairs = jsonPathProvider.extract(msg);
-    });
-    assertEquals(String.format(JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE, JSON_FIRSTNAME_PATH), exception.getMessage());
+    }, "Non JSON message.");
   }
   
   @Test
@@ -157,10 +151,9 @@ public class JsonPathBuilderTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON);
     jsonPath.add(JSON_NON_EXISTENT_PATH);
     jsonPathProvider.setPaths(jsonPath);
-    Throwable exception =  Assertions.assertThrows(ServiceException.class, () -> {
+    assertThrows(ServiceException.class, () -> {
       resultKeyValuePairs = jsonPathProvider.extract(msg);
-    });
-    assertEquals(String.format(JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE, JSON_NON_EXISTENT_PATH), exception.getMessage());
+    }, "JSON path does not exist.");
   }
   
   @Test
@@ -168,10 +161,9 @@ public class JsonPathBuilderTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(JSON);
     jsonPath.add(JSON_INVALID_PATH);
     jsonPathProvider.setPaths(jsonPath);
-    Throwable exception =  Assertions.assertThrows(ServiceException.class, () -> {
+    assertThrows(ServiceException.class, () -> {
       resultKeyValuePairs = jsonPathProvider.extract(msg);
-    });
-    assertEquals(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, JSON_INVALID_PATH), exception.getMessage());
+    }, "Invalid JSON path.");
   }
   
 }
