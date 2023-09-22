@@ -60,7 +60,7 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 @XStreamAlias("json-path-builder")
 @AdapterComponent
-@ComponentProfile(summary = "json builder to extract and insert", tag = "service,security,path", since = "4.8.9")
+@ComponentProfile(summary = "json builder to extract and insert", tag = "service,security,path", since = "5.0.0")
 @DisplayOrder(order = { "json-paths" })
 public class JsonPathBuilder implements PathBuilder {
 
