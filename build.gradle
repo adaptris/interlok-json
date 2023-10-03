@@ -305,8 +305,8 @@ subprojects {
   }
   
   test {
-  jvmArgs = ['--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED']
-  useJUnitPlatform()
+    jvmArgs = ['--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED']
+    useJUnitPlatform()
   }
 
   jacocoTestReport {
