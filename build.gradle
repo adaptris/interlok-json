@@ -349,7 +349,7 @@ subprojects {
 
   sonar {
     properties {
-      property "sonar.projectKey", "adaptris_interlok-json"
+      property "sonar.projectKey", "adaptris_${project.name}"
       property "sonar.organization", "adaptris-org"
       property "sonar.host.url", "https://sonarcloud.io"
     }
