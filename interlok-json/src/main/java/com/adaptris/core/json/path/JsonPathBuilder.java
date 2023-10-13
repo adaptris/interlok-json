@@ -13,19 +13,10 @@ import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.CoreException;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.security.PathBuilder;
 import com.adaptris.core.security.PayloadPathDecryptionService;
 import com.adaptris.core.security.PayloadPathEncryptionService;
-import com.adaptris.core.util.Args;
-import com.adaptris.core.util.DocumentBuilderFactoryBuilder;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-import lombok.Getter;
-import lombok.Setter;
-
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.InvalidPathException;
@@ -35,25 +26,31 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Extracts and inserts values from message payload using defined Json Paths {@link String}.
  * <p>
- * This component simple extracts and inserts values from a JSON file using JSON paths.
- * While not coupled with {@link PayloadPathEncryptionService} and {@link PayloadPathDecryptionService} 
- * this component was built to be used with those two services.
- * 
- * <strong>It's important to note that to keep the JSON valid you can only configure a path to a single JSON object.
- * for example in the simple example below: 
+ * This component simple extracts and inserts values from a JSON file using JSON paths. While not coupled with
+ * {@link PayloadPathEncryptionService} and {@link PayloadPathDecryptionService} this component was built to be used with those two
+ * services.
+ *
+ * <strong>It's important to note that to keep the JSON valid you can only configure a path to a single JSON object. for example in the
+ * simple example below:
+ *
  * <pre>
  * {@code
  * {"name":"James", "age":30, "car":"Vauxhall"}
  * }
  * </pre>
- * You could define the following JSON path: "$.name".
- * </strong>
+ *
+ * You could define the following JSON path: "$.name". </strong>
  * </p>
- * 
+ *
  * @config json-path-builder
  *
  */
@@ -61,24 +58,23 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 @XStreamAlias("json-path-builder")
 @AdapterComponent
 @ComponentProfile(summary = "json builder to extract and insert", tag = "service,security,path", since = "5.0.0")
-@DisplayOrder(order = { "json-paths" })
+@DisplayOrder(order = { "json-path" })
 public class JsonPathBuilder implements PathBuilder {
 
   private static final String JSON_PATH_NOT_FOUND_EXCEPTION_MESSAGE = "No results found for JSON path [%s]";
   private static final String JSON_INVALID_PATH_EXCEPTION_MESSAGE = "Invalid Json path [%s]";
   private static final String JSON_NON_OBJECT_PATH_EXCEPTION_MESSAGE = "Please ensure your path [%s] points to a single JSON object";
-  
 
   public JsonPathBuilder() {
-    this.setPaths(new ArrayList<String>());
+    setJsonPaths(new ArrayList<>());
   }
 
   @Getter
   @Setter
   @NotNull
-  @XStreamImplicit(itemFieldName = "json-paths")
+  @XStreamImplicit(itemFieldName = "json-path")
   @InputFieldHint(expression = true)
-  private List<String> paths;
+  private List<String> jsonPaths;
 
   private transient Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
       .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
@@ -88,7 +84,7 @@ public class JsonPathBuilder implements PathBuilder {
     String jsonString = msg.getContent();
     ReadContext context = JsonPath.parse(jsonString, jsonConfig);
     Map<String, String> pathKeyValuePairs = new LinkedHashMap<>();
-    for (String jsonPath : this.getPaths()) {
+    for (String jsonPath : getJsonPaths()) {
       try {
         Object result = context.read(msg.resolve(jsonPath));
         if (Map.class.isAssignableFrom(result.getClass()) || List.class.isAssignableFrom(result.getClass())) {
@@ -101,7 +97,7 @@ public class JsonPathBuilder implements PathBuilder {
         throw new ServiceException(String.format(JSON_INVALID_PATH_EXCEPTION_MESSAGE, msg.resolve(jsonPath)));
       }
     }
-    
+
     return pathKeyValuePairs;
   }
 
@@ -116,4 +112,5 @@ public class JsonPathBuilder implements PathBuilder {
     }
     msg.setContent(jsonDoc.jsonString(), msg.getContentEncoding());
   }
+
 }
