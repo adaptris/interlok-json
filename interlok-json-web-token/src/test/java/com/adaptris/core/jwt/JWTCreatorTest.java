@@ -23,13 +23,13 @@ import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 
 public class JWTCreatorTest extends JWTCommonTest {
-  private SimpleDateFormat PARSER = new SimpleDateFormat("yyyy-MM-dd");
+  private SimpleDateFormat PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
   @Test
   public void testCreate() throws Exception {
     JWTCreator service = (JWTCreator) retrieveObjectForSampleConfig();
     service.setId("4f044322-5db3-44d2-a698-15b754bd7a05");
-    service.setIssuedAt(PARSER.parse("2020-01-01"));
+    service.setIssuedAt(PARSER.parse("2020-01-01T00:00:00.0-0000"));
     Base64EncodedSecret secret = new Base64EncodedSecret();
     secret.setSecret(KEY);
     service.setSecret(secret);
@@ -103,8 +103,8 @@ public class JWTCreatorTest extends JWTCommonTest {
     creator.setIssuer("me");
     creator.setSubject("Bob");
     creator.setAudience("you");
-    creator.setExpiration(PARSER.parse("2040-12-31"));
-    creator.setNotBefore(PARSER.parse("2020-01-01"));
+    creator.setExpiration(PARSER.parse("2040-12-31T00:00:00.0-0000"));
+    creator.setNotBefore(PARSER.parse("2020-01-01T00:00:00.0-0000"));
     creator.setSecret(getPGPSecret());
     return creator;
   }
