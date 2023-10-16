@@ -1,5 +1,9 @@
 package com.adaptris.core.jwt;
 
+import java.text.SimpleDateFormat;
+
+import org.json.JSONObject;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.MetadataDataOutputParameter;
@@ -9,6 +13,7 @@ import com.adaptris.core.jwt.secrets.Base64EncodedSecret;
 import com.adaptris.core.jwt.secrets.PGPSecret;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
+
 import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
@@ -20,14 +25,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class JWTCreatorTest extends JWTCommonTest
-{
+public class JWTCreatorTest extends JWTCommonTest {
   private SimpleDateFormat PARSER = new SimpleDateFormat("yyyy-MM-dd");
 
   @Test
-  public void testCreate() throws Exception
-  {
-    JWTCreator service = (JWTCreator)retrieveObjectForSampleConfig();
+  public void testCreate() throws Exception {
+    JWTCreator service = (JWTCreator) retrieveObjectForSampleConfig();
     service.setId("4f044322-5db3-44d2-a698-15b754bd7a05");
     service.setIssuedAt(PARSER.parse("2020-01-01"));
     Base64EncodedSecret secret = new Base64EncodedSecret();
@@ -42,9 +45,8 @@ public class JWTCreatorTest extends JWTCommonTest
   }
 
   @Test
-  public void testCreateClaims() throws Exception
-  {
-    JWTCreator service = (JWTCreator)retrieveObjectForSampleConfig();
+  public void testCreateClaims() throws Exception {
+    JWTCreator service = (JWTCreator) retrieveObjectForSampleConfig();
 
     KeyValuePairSet claims = new KeyValuePairSet();
     claims.addKeyValuePair(new KeyValuePair("custom-claim-1", "value-1"));
@@ -68,7 +70,7 @@ public class JWTCreatorTest extends JWTCommonTest
     JSONObject json = new JSONObject(message.getContent());
 
     assertEquals(CLAIMS.get(Claims.SUBJECT), json.get(Claims.SUBJECT));
-    assertEquals(CLAIMS.get(Claims.AUDIENCE), json.get(Claims.AUDIENCE));
+    assertEquals(CLAIMS.get(Claims.AUDIENCE).toString(), json.get(Claims.AUDIENCE).toString());
     assertEquals(CLAIMS.get(Claims.ISSUER), json.get(Claims.ISSUER));
     assertEquals(CLAIMS.get(Claims.EXPIRATION), json.get(Claims.EXPIRATION));
     assertEquals(CLAIMS.get(Claims.NOT_BEFORE), json.get(Claims.NOT_BEFORE));
@@ -80,11 +82,9 @@ public class JWTCreatorTest extends JWTCommonTest
   }
 
   @Test
-  public void testException()
-  {
-    try
-    {
-      JWTCreator service = (JWTCreator)retrieveObjectForSampleConfig();
+  public void testException() {
+    try {
+      JWTCreator service = (JWTCreator) retrieveObjectForSampleConfig();
       PGPSecret secret = getPGPSecret();
       secret.setPath(wrongKey);
       service.setSecret(secret);
@@ -94,17 +94,14 @@ public class JWTCreatorTest extends JWTCommonTest
       service.doService(message);
 
       fail();
-    }
-    catch (ServiceException e)
-    {
+    } catch (ServiceException e) {
       /* expected */
     }
   }
 
   @SneakyThrows
   @Override
-  protected Object retrieveObjectForSampleConfig()
-  {
+  protected Object retrieveObjectForSampleConfig() {
     JWTCreator creator = new JWTCreator();
     creator.setIssuer("me");
     creator.setSubject("Bob");

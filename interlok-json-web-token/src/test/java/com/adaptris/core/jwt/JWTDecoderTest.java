@@ -1,5 +1,11 @@
 package com.adaptris.core.jwt;
 
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+
+import java.util.Calendar;
+
+import org.json.JSONObject;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
@@ -13,13 +19,12 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
-public class JWTDecoderTest extends JWTCommonTest
-{
+public class JWTDecoderTest extends JWTCommonTest {
 
   @Test
-  public void testDecode() throws Exception
-  {
-    JWTDecoder service = (JWTDecoder)retrieveObjectForSampleConfig();
+  public void testDecode() throws Exception {
+    System.out.println(Calendar.getInstance().getTimeZone());
+    JWTDecoder service = (JWTDecoder) retrieveObjectForSampleConfig();
     AdaptrisMessage message = message();
 
     service.doService(message);
@@ -29,11 +34,9 @@ public class JWTDecoderTest extends JWTCommonTest
   }
 
   @Test
-  public void testInvalidKey()
-  {
-    try
-    {
-      JWTDecoder service = (JWTDecoder)retrieveObjectForSampleConfig();
+  public void testInvalidKey() {
+    try {
+      JWTDecoder service = (JWTDecoder) retrieveObjectForSampleConfig();
       PGPSecret secret = getPGPSecret();
       secret.setPath(wrongKey);
       service.setSecret(secret);
@@ -42,16 +45,13 @@ public class JWTDecoderTest extends JWTCommonTest
       service.doService(message);
 
       fail();
-    }
-    catch (ServiceException e)
-    {
+    } catch (ServiceException e) {
       // expected
     }
   }
 
   @Override
-  protected Object retrieveObjectForSampleConfig()
-  {
+  protected Object retrieveObjectForSampleConfig() {
     JWTDecoder decoder = new JWTDecoder();
     decoder.setJwtString(new ConstantDataInputParameter(JWT));
     Base64EncodedSecret secret = new Base64EncodedSecret();
@@ -61,4 +61,5 @@ public class JWTDecoderTest extends JWTCommonTest
     decoder.setClaims(new StringPayloadDataOutputParameter());
     return decoder;
   }
+
 }

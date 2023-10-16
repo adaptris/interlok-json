@@ -2,6 +2,7 @@ package com.adaptris.core.jwt.secrets;
 
 import java.io.File;
 import java.io.FileReader;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -28,7 +29,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParserBuilder;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SecureDigestAlgorithm;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,7 +49,7 @@ public class RSAEncodedSecret implements SecretConfigurator {
 
   @Setter
   @Getter
-  @InputFieldHint(style = "PASSWORD", external=true)
+  @InputFieldHint(style = "PASSWORD", external = true)
   private String privateKeyPassphrase;
 
   @Getter
@@ -75,7 +77,9 @@ public class RSAEncodedSecret implements SecretConfigurator {
   public JwtBuilder configure(JwtBuilder builder) throws InvalidSecretException {
     try {
       PrivateKey pk = readPrivateKey(getPrivateKeyFilePath(), Password.decode(getPrivateKeyPassphrase()));
-      return builder.signWith(pk, SignatureAlgorithm.valueOf(getAlgorithm().name()));
+      SecureDigestAlgorithm<Key, Key> secureDigestAlgorithm = (SecureDigestAlgorithm<Key, Key>) Jwts.SIG
+          .<SecureDigestAlgorithm<Key, Key>> get().get(getAlgorithm().name());
+      return builder.signWith(pk, secureDigestAlgorithm);
     } catch (Exception ex) {
       log.error("Error loading private key.", ex);
       throw new InvalidSecretException(ex);
@@ -85,7 +89,7 @@ public class RSAEncodedSecret implements SecretConfigurator {
   @Override
   public JwtParserBuilder configure(JwtParserBuilder builder) throws InvalidSecretException {
     try {
-      return builder.setSigningKey(readPublicKey(getPublicKeyFilePath()));
+      return builder.verifyWith(readPublicKey(getPublicKeyFilePath()));
     } catch (Exception e) {
       log.error("Error loading public key.", e);
       throw new InvalidSecretException(e);
@@ -101,8 +105,7 @@ public class RSAEncodedSecret implements SecretConfigurator {
 
       if (pemObject instanceof PKCS8EncryptedPrivateKeyInfo) {
         PKCS8EncryptedPrivateKeyInfo epki = (PKCS8EncryptedPrivateKeyInfo) pemObject;
-        JcePKCSPBEInputDecryptorProviderBuilder builder = new JcePKCSPBEInputDecryptorProviderBuilder()
-            .setProvider("BC");
+        JcePKCSPBEInputDecryptorProviderBuilder builder = new JcePKCSPBEInputDecryptorProviderBuilder().setProvider("BC");
 
         InputDecryptorProvider idp = builder.build(passphrase.toCharArray());
 
@@ -136,4 +139,5 @@ public class RSAEncodedSecret implements SecretConfigurator {
       return (RSAPublicKey) factory.generatePublic(pubKeySpec);
     }
   }
+
 }

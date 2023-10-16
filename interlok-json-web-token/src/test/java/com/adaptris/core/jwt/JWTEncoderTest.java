@@ -10,14 +10,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class JWTEncoderTest extends JWTCommonTest
-{
-
+public class JWTEncoderTest extends JWTCommonTest {
 
   @Test
-  public void testEncode() throws Exception
-  {
-    JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
+  public void testEncode() throws Exception {
+    JWTEncoder service = (JWTEncoder) retrieveObjectForSampleConfig();
     AdaptrisMessage message = message();
 
     service.doService(message);
@@ -27,27 +24,16 @@ public class JWTEncoderTest extends JWTCommonTest
   }
 
   @Test
-  public void testBadSecret()
-  {
-    try
-    {
-      JWTEncoder service = (JWTEncoder)retrieveObjectForSampleConfig();
-      service.setSecret(new Base64EncodedSecret());
-      AdaptrisMessage message = message();
+  public void testBadSecret() {
+    JWTEncoder service = (JWTEncoder) retrieveObjectForSampleConfig();
+    service.setSecret(new Base64EncodedSecret());
+    AdaptrisMessage message = message();
 
-      service.doService(message);
-
-      fail();
-    }
-    catch (ServiceException e)
-    {
-      /* expected */
-    }
+    assertThrows(ServiceException.class, () -> service.doService(message));
   }
 
   @Override
-  protected Object retrieveObjectForSampleConfig()
-  {
+  protected Object retrieveObjectForSampleConfig() {
     JWTEncoder encoder = new JWTEncoder();
     Base64EncodedSecret secret = new Base64EncodedSecret();
     secret.setSecret(KEY);
@@ -57,4 +43,5 @@ public class JWTEncoderTest extends JWTCommonTest
     encoder.setJwtOutput(new StringPayloadDataOutputParameter());
     return encoder;
   }
+
 }
