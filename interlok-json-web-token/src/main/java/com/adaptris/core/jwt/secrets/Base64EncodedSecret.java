@@ -1,6 +1,9 @@
 package com.adaptris.core.jwt.secrets;
 
+import javax.validation.constraints.NotBlank;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.io.Decoders;
@@ -8,10 +11,9 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-
 @XStreamAlias("base64-encoded-secret")
 public class Base64EncodedSecret implements SecretConfigurator {
+
   @Getter
   @Setter
   @NotBlank
@@ -24,6 +26,7 @@ public class Base64EncodedSecret implements SecretConfigurator {
 
   @Override
   public JwtParserBuilder configure(JwtParserBuilder builder) {
-    return builder.setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)));
+    return builder.verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)));
   }
+
 }
