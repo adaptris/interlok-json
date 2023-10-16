@@ -37,7 +37,7 @@ public abstract class JWTCommonTest extends ExampleServiceCase {
 
   private static final String ID = "email@example.com";
 
-  protected static final String JWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJCb2IiLCJhdWQiOlsieW91Il0sIm5iZiI6MTU3NzgwNDQwMCwiaXNzIjoibWUiLCJleHAiOjIyNDA1MjQ4MDAsImlhdCI6MTU3NzgwNDQwMCwianRpIjoiNGYwNDQzMjItNWRiMy00NGQyLWE2OTgtMTViNzU0YmQ3YTA1In0.OjwX7M62IPcCL4wZcR_HJHrIiPX6EVEnyWF_GaqTFVz9Bm1tksLTiTwtYmECooFTUbYtxXoI37R_JHhi7cZksg";
+  protected static final String JWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJCb2IiLCJhdWQiOlsieW91Il0sIm5iZiI6MTU3NzgzNjgwMCwiaXNzIjoibWUiLCJleHAiOjIyNDA1MjQ4MDAsImlhdCI6MTU3NzgzNjgwMCwianRpIjoiNGYwNDQzMjItNWRiMy00NGQyLWE2OTgtMTViNzU0YmQ3YTA1In0.-HZlEDmHJwgg3cVxfcV13I7nx-hjoDJ-kxxCV_M94ONk_n2yjJujneo1x1waa28rfpeeR_1Hej3Yn-ieEfYhLw";
   protected static final String KEY = "lJMnnsrA5PhBnRXE/QnVzoIACiiUMwGNKVVDtvuAcEQR7MMXVFAceSnZPubva1n5xOxPe/O8f0AO3DBHokky3A==";
 
   protected static final JSONObject HEADER = new JSONObject("{\"alg\": \"HS512\"}");
