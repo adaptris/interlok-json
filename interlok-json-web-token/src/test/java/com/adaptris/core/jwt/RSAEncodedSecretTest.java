@@ -1,8 +1,8 @@
 package com.adaptris.core.jwt;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;

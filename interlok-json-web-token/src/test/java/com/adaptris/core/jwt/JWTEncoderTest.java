@@ -1,14 +1,15 @@
 package com.adaptris.core.jwt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
+import org.junit.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.jwt.secrets.Base64EncodedSecret;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class JWTEncoderTest extends JWTCommonTest {
 

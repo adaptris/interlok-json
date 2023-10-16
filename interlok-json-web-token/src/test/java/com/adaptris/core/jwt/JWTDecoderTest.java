@@ -1,10 +1,12 @@
 package com.adaptris.core.jwt;
 
+import static org.junit.Assert.fail;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 import java.util.Calendar;
 
 import org.json.JSONObject;
+import org.junit.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
@@ -13,11 +15,6 @@ import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.adaptris.core.jwt.secrets.Base64EncodedSecret;
 import com.adaptris.core.jwt.secrets.PGPSecret;
-import org.json.JSONObject;
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 public class JWTDecoderTest extends JWTCommonTest {
 

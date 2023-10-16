@@ -1,8 +1,13 @@
 package com.adaptris.core.jwt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.text.SimpleDateFormat;
 
 import org.json.JSONObject;
+import org.junit.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
@@ -16,14 +21,6 @@ import com.adaptris.util.KeyValuePairSet;
 
 import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
-import org.json.JSONObject;
-import org.junit.Test;
-
-import java.text.SimpleDateFormat;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class JWTCreatorTest extends JWTCommonTest {
   private SimpleDateFormat PARSER = new SimpleDateFormat("yyyy-MM-dd");
