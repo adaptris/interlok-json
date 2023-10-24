@@ -1,5 +1,12 @@
 package com.adaptris.core.jwt;
 
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
@@ -12,15 +19,11 @@ import com.adaptris.core.jwt.secrets.SecretConfigurator;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * This service provides a way to create a JSON Web Token from the given data.
@@ -50,10 +53,9 @@ import java.util.UUID;
  */
 @XStreamAlias("jwt-creator")
 @AdapterComponent
-@ComponentProfile(summary = "Create a JSON Web Token", tag = "jwt,create,json,web,token", since="3.11.1")
+@ComponentProfile(summary = "Create a JSON Web Token", tag = "jwt,create,json,web,token", since = "3.11.1")
 @DisplayOrder(order = { "id", "issuer", "subject", "audience", "issuedAt", "expiration", "notBefore", "secret", "customClaims" })
-public class JWTCreator extends ServiceImp
-{
+public class JWTCreator extends ServiceImp {
   @Getter
   @Setter
   @Valid
@@ -118,48 +120,52 @@ public class JWTCreator extends ServiceImp
    * Apply the service to the message.
    * </p>
    *
-   * @param message the <code>AdaptrisMessage</code> to process
-   * @throws ServiceException wrapping any underlying <code>Exception</code>s
+   * @param message
+   *          the <code>AdaptrisMessage</code> to process
+   * @throws ServiceException
+   *           wrapping any underlying <code>Exception</code>s
    */
   @Override
-  public void doService(AdaptrisMessage message) throws ServiceException
-  {
-    try
-    {
+  public void doService(AdaptrisMessage message) throws ServiceException {
+    try {
       JwtBuilder builder = Jwts.builder()
-              .setSubject(message.resolve(subject))
-              .setAudience(message.resolve(audience))
-              .setNotBefore(notBefore)
-              .setIssuer(message.resolve(issuer))
-              .setExpiration(expiration)
-              .setIssuedAt(issuedAt != null ? issuedAt : new Date())
-              .setId(id != null ? id : UUID.randomUUID().toString());
+          .subject(message.resolve(subject))
+          .audience().add(message.resolve(audience))
+          .and()
+          .notBefore(notBefore)
+          .issuer(message.resolve(issuer))
+          .expiration(expiration)
+          .issuedAt(jwtIssuedAt())
+          .id(jwtId());
 
       builder = secret.configure(builder);
 
-      if (customClaims != null)
-      {
-        for (KeyValuePair claim : customClaims)
-        {
+      if (customClaims != null) {
+        for (KeyValuePair claim : customClaims) {
           builder.claim(claim.getKey(), message.resolve(claim.getValue()));
         }
       }
 
       message.setContent(builder.compact(), message.getContentEncoding());
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       log.error("Could not create JSON Web Token", e);
       throw new ServiceException(e);
     }
+  }
+  
+  private Date jwtIssuedAt() {
+    return Optional.ofNullable(issuedAt).orElseGet(() -> new Date());
+  }
+  
+  private String jwtId() {
+    return Optional.ofNullable(id).orElseGet(() -> UUID.randomUUID().toString());
   }
 
   /**
    * {@inheritDoc}.
    */
   @Override
-  protected void initService()
-  {
+  protected void initService() {
     /* unused */
   }
 
@@ -167,8 +173,7 @@ public class JWTCreator extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  protected void closeService()
-  {
+  protected void closeService() {
     /* unused */
   }
 
@@ -176,8 +181,7 @@ public class JWTCreator extends ServiceImp
    * Prepare for initialisation.
    */
   @Override
-  public void prepare()
-  {
+  public void prepare() {
     /* unused */
   }
 }

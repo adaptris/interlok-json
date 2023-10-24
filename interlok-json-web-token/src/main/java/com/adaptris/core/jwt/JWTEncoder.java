@@ -1,5 +1,10 @@
 package com.adaptris.core.jwt;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.json.JSONObject;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
@@ -10,16 +15,11 @@ import com.adaptris.core.jwt.secrets.SecretConfigurator;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * This service provides a way to encode data as a JSON Web Token.
@@ -47,12 +47,9 @@ import javax.validation.constraints.NotNull;
  */
 @XStreamAlias("jwt-encode")
 @AdapterComponent
-@ComponentProfile(summary = "Encode a header and body to a JSON Web Token", tag = "jwt,encode,json,web,token", since="3.11.1")
+@ComponentProfile(summary = "Encode a header and body to a JSON Web Token", tag = "jwt,encode,json,web,token", since = "3.11.1")
 @DisplayOrder(order = { "header", "claims", "secret", "generateKey", "keyOutput", "jwtOutput" })
-public class JWTEncoder extends ServiceImp
-{
-  private static transient Logger log = LoggerFactory.getLogger(JWTEncoder.class);
-
+public class JWTEncoder extends ServiceImp {
   @NotNull
   @Valid
   @Getter
@@ -81,22 +78,18 @@ public class JWTEncoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  public void doService(AdaptrisMessage message) throws ServiceException
-  {
-    try
-    {
+  public void doService(AdaptrisMessage message) throws ServiceException {
+    try {
       // might as well ensure we've got valid JSON
       JSONObject head = new JSONObject(header.extract(message));
       JSONObject body = new JSONObject(claims.extract(message));
 
-      JwtBuilder builder = Jwts.builder().setClaims(body.toMap()).setHeader(head.toMap());
+      JwtBuilder builder = Jwts.builder().header().add(head.toMap()).and().claims(body.toMap());
       builder = secret.configure(builder);
       String jwt = builder.compact();
 
       jwtOutput.insert(jwt, message);
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       log.error("An error occurred during JWT encoding", e);
       throw new ServiceException(e);
     }
@@ -106,8 +99,7 @@ public class JWTEncoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  protected void initService()
-  {
+  protected void initService() {
     /* unused */
   }
 
@@ -115,8 +107,7 @@ public class JWTEncoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  protected void closeService()
-  {
+  protected void closeService() {
     /* unused */
   }
 
@@ -124,8 +115,7 @@ public class JWTEncoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  public void prepare()
-  {
+  public void prepare() {
     /* unused */
   }
 }
