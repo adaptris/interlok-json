@@ -1,7 +1,9 @@
 package com.adaptris.core.json;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.json.DeserializerCase.TypeKey;
@@ -18,11 +20,13 @@ public class VerifyIsJsonTest extends ExampleServiceCase {
     execute(service, msg);
   }
 
-  @Test(expected = ServiceException.class)
+  @Test
   public void testService_NotJson() throws Exception {
     AdaptrisMessage msg = messageTypes.get(TypeKey.Invalid_Array);
     VerifyIsJson service = new VerifyIsJson();
-    execute(service, msg);
+    assertThrows(ServiceException.class, ()->{
+      execute(service, msg);
+    }, "Failed, not Json");
   }
 
   @Test

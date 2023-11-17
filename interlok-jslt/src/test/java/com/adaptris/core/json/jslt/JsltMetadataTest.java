@@ -1,9 +1,10 @@
 package com.adaptris.core.json.jslt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -25,15 +26,16 @@ public class JsltMetadataTest extends ExampleServiceCase {
         new JsltQueryToObjectMetadata().withKey("dest-object-key").withExpression(".jslt.expression"));
   }
 
-  @Test(expected = ServiceException.class)
+  @Test
   public void testTransform_NotJson() throws Exception {
     JsltMetadataService service = new JsltMetadataService().withQueries(
         new JsltQueryToMetadata().withKey("value").withExpression(JSLT_QUERY_ELEMENT),
         new JsltQueryToMetadata().withKey("array").withExpression(JSLT_QUERY_ARRAY));
     AdaptrisMessage msg = new DefaultMessageFactory().newMessage("hello world", "UTF-8");
-    execute(service, msg);
+    assertThrows(ServiceException.class, ()->{
+      execute(service, msg);
+    }, "Failed, not Json"); 
   }
-
 
   @Test
   public void testExtractMetadata() throws Exception {

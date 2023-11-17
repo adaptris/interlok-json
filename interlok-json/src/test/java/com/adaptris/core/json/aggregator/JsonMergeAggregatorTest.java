@@ -1,16 +1,17 @@
 package com.adaptris.core.json.aggregator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.CoreException;
@@ -41,7 +42,7 @@ public class JsonMergeAggregatorTest extends ExampleServiceCase {
 
   private Configuration jsonConfig;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
         .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
@@ -198,7 +199,7 @@ public class JsonMergeAggregatorTest extends ExampleServiceCase {
         StringUtils.deleteWhitespace(original.getContent()));
   }
 
-  @Test(expected = CoreException.class)
+  @Test
   public void testAggregator_WithException() throws Exception {
     AdaptrisMessage original =
         new DefectiveMessageFactory(WhenToBreak.OUTPUT).newMessage("[" + PARENT_CONTENT + "]");
@@ -211,7 +212,9 @@ public class JsonMergeAggregatorTest extends ExampleServiceCase {
 
     JsonMergeAggregator aggr = new JsonMergeAggregator();
     aggr.setMergeMetadataKey(mergeMetadataKey);
-    aggr.aggregate(original, msgs);
+    assertThrows(CoreException.class, ()->{
+      aggr.aggregate(original, msgs);
+    }, "Message aggregator failed.");
   }
 
 

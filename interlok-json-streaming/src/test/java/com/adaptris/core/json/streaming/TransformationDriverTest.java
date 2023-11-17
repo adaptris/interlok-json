@@ -3,10 +3,13 @@ package com.adaptris.core.json.streaming;
 import static com.adaptris.core.json.streaming.JsonConversionTest.JSON_MESSAGE;
 import static com.adaptris.core.json.streaming.JsonConversionTest.XML_MESSAGE;
 import static com.adaptris.core.json.streaming.JsonConversionTest.unwrap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.EnumSet;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -26,11 +29,13 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 
 public class TransformationDriverTest {
 
-  @Test(expected = ServiceException.class)
+  @Test
   public void testDefault_Exception() throws Exception {
     AdaptrisMessage msg = new DefectiveMessageFactory(WhenToBreak.INPUT).newMessage(XML_MESSAGE);
     DefaultStreamingTransformationDriver driver = new DefaultStreamingTransformationDriver();
-    driver.transform(msg, TransformationDirection.XML_TO_JSON);
+    assertThrows(ServiceException.class, ()->{
+      driver.transform(msg, TransformationDirection.XML_TO_JSON);
+    }, "Failed with default exception");
   }
 
 

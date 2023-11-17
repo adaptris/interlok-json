@@ -1,13 +1,14 @@
 package com.adaptris.core.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -21,10 +22,10 @@ public class JsonUtilTest extends JsonUtil {
   private static final String NESTED_CONTENT =
       " { \"firstname\":\"alice\", \"lastname\":\"smith\", \"address\": { \"address\" : \"Buckingham Palace\", \"postcode\":\"SW1A 1AA\"}}";
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {}
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {}
 
   @Test
@@ -53,13 +54,15 @@ public class JsonUtilTest extends JsonUtil {
         mapifyJson(nested, new NullToEmptyStringConverter()).get("address"));
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void testMapifyJson_WithNullNotSupported() throws IOException {
     AdaptrisMessage basic = AdaptrisMessageFactory.getDefaultInstance().newMessage(OBJECT_CONTENT);
     AdaptrisMessage nested = AdaptrisMessageFactory.getDefaultInstance().newMessage(NESTED_CONTENT);
     assertEquals("{\"address\":\"Buckingham Palace\",\"postcode\":\"SW1A 1AA\"}",
         mapifyJson(nested, new NullsNotSupportedConverter()).get("address"));
     // Should throw UOE.
-    mapifyJson(basic, new NullsNotSupportedConverter());
+    assertThrows(UnsupportedOperationException.class, ()->{
+      mapifyJson(basic, new NullsNotSupportedConverter());
+    }, "Failed, null, not supported");
   }
 }

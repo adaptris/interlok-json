@@ -1,8 +1,9 @@
 package com.adaptris.core.json.resolver;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.adaptris.core.AdaptrisMessage;
@@ -68,29 +69,37 @@ public class SaferJSONResolverTest
 		JSONAssert.assertEquals(JSON_RESOLVED, result, false);
 	}
 
-	@Test(expected = UnresolvableException.class)
+	@Test
 	public void testResolveNoValue()
 	{
 		AdaptrisMessage message = AdaptrisMessageFactory.getDefaultInstance().newMessage();
 		SaferJSONResolver resolver = new SaferJSONResolver();
-		resolver.resolve(JSON_SOURCE, message);
+		assertThrows(UnresolvableException.class, ()->{
+		  resolver.resolve(JSON_SOURCE, message);
+	      }, "Unresolvable, no value");
 	}
 
-	@Test(expected = UnresolvableException.class)
+	@Test
 	public void testNoMessage()
 	{
-		new SaferJSONResolver().resolve(JSON_SOURCE);
+	  assertThrows(UnresolvableException.class, ()->{
+	    new SaferJSONResolver().resolve(JSON_SOURCE);
+	  }, "Unresolvable, no message");
 	}
 
-	@Test(expected = UnresolvableException.class)
+	@Test
 	public void testNullMessage()
 	{
-		new SaferJSONResolver().resolve(JSON_SOURCE, null);
+	  assertThrows(UnresolvableException.class, ()->{
+	    new SaferJSONResolver().resolve(JSON_SOURCE, null);
+      }, "Unresolvable, null message");	
 	}
 
-	@Test(expected = UnresolvableException.class)
+	@Test
 	public void testNullExpression()
 	{
-		new SaferJSONResolver().resolve(null, null);
+	  assertThrows(UnresolvableException.class, ()->{
+	    new SaferJSONResolver().resolve(null, null);
+      }, "Unresolvable, null expression"); 
 	}
 }

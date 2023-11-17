@@ -1,5 +1,10 @@
 package com.adaptris.core.jwt;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.json.JSONObject;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
@@ -10,18 +15,13 @@ import com.adaptris.core.jwt.secrets.SecretConfigurator;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * This service provides a way to decode a JSON Web Token.
@@ -47,11 +47,9 @@ import javax.validation.constraints.NotNull;
  */
 @XStreamAlias("jwt-decode")
 @AdapterComponent
-@ComponentProfile(summary = "Decode a header and body from a JSON Web Token", tag = "jwt,decode,json,web,token", since="3.11.1")
+@ComponentProfile(summary = "Decode a header and body from a JSON Web Token", tag = "jwt,decode,json,web,token", since = "3.11.1")
 @DisplayOrder(order = { "jwtString", "secret", "header", "claims" })
-public class JWTDecoder extends ServiceImp
-{
-  private static transient Logger log = LoggerFactory.getLogger(JWTDecoder.class);
+public class JWTDecoder extends ServiceImp {
 
   @NotNull
   @Valid
@@ -81,24 +79,20 @@ public class JWTDecoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  public void doService(AdaptrisMessage message) throws ServiceException
-  {
-    try
-    {
+  public void doService(AdaptrisMessage message) throws ServiceException {
+    try {
       String jwt = jwtString.extract(message);
 
-      JwtParserBuilder builder = Jwts.parserBuilder();
+      JwtParserBuilder builder = Jwts.parser();
       builder = secret.configure(builder);
-      Jws<Claims> jws = builder.build().parseClaimsJws(jwt);
+      Jws<Claims> jws = builder.build().parseSignedClaims(jwt);
 
-      JSONObject head = new JSONObject(jws.getHeader());
-      header.insert(head.toString(), message);
+      JSONObject jwtHeader = new JSONObject(jws.getHeader());
+      header.insert(jwtHeader.toString(), message);
 
-      JSONObject body = new JSONObject(jws.getBody());
-      claims.insert(body.toString(), message);
-    }
-    catch (Exception e)
-    {
+      JSONObject jwtPayload = new JSONObject(jws.getPayload());
+      claims.insert(jwtPayload.toString(), message);
+    } catch (Exception e) {
       log.error("An error occurred during JWT decoding", e);
       throw new ServiceException(e);
     }
@@ -108,8 +102,7 @@ public class JWTDecoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  protected void initService()
-  {
+  protected void initService() {
     /* unused */
   }
 
@@ -117,8 +110,7 @@ public class JWTDecoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  protected void closeService()
-  {
+  protected void closeService() {
     /* unused */
   }
 
@@ -126,8 +118,7 @@ public class JWTDecoder extends ServiceImp
    * {@inheritDoc}.
    */
   @Override
-  public void prepare()
-  {
+  public void prepare() {
     /* unused */
   }
 }

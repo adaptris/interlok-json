@@ -1,8 +1,10 @@
 package com.adaptris.core.json.jslt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.DefaultMessageFactory;
@@ -72,13 +74,15 @@ public class JsltVariableTest {
     assertEquals(0, vars.size());
   }
 
-  @Test(expected = ClassCastException.class)
+  @Test
   public void testObjectVariables_BadCast() throws Exception {
     JsltObjectVariables builder =
         new JsltObjectVariables().withObjectMetadataKeyRegexp("^.*_metadata$");
     AdaptrisMessage msg = factory.newMessage();
     msg.addObjectHeader("obj_metadata", new Object());
-    Map<String, JsonNode> vars = builder.build(msg);
+    assertThrows(ClassCastException.class, ()->{
+      Map<String, JsonNode> vars = builder.build(msg);
+    }, "Failed, bad cast");
   }
 
   @Test

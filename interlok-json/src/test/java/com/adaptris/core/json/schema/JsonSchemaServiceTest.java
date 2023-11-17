@@ -1,15 +1,17 @@
 package com.adaptris.core.json.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.core.ServiceException;
@@ -265,14 +267,16 @@ public class JsonSchemaServiceTest extends TransformServiceExample {
 
   // Should throw a service exception even though we've said ignore since it will be a parse
   // error. If it parsed, it would become a validation exception.
-  @Test(expected = ServiceException.class)
+  @Test
   public void testJacksonDeserializer_Failure() throws Exception {
     AdaptrisMessage message =
         AdaptrisMessageFactory.getDefaultInstance().newMessage(INVALID_JSON_STRICT);
     JsonSchemaService service = createService();
     service.setDeserializer(new JacksonJsonDeserializer());
     service.setOnValidationException(new IgnoreValidationException());
-    execute(service, message);
+    assertThrows(ServiceException.class, ()->{
+      execute(service, message);
+    }, "Invalid Json");
   }
 
 

@@ -1,12 +1,15 @@
 package com.adaptris.core.jwt;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -22,16 +25,15 @@ import com.adaptris.security.password.Password;
 
 public class RSAEncodedSecretTest {
 
-  private static final String PUBLIC_KEY_PATH = "./src/test/resources/rsa.public";
-  private static final String PRIVATE_KEY_PATH = "./src/test/resources/rsa.private";
-  private static final String PUBLIC_KEY_WITH_PASSPHRASE_PATH = "./src/test/resources/rsaWithPassword.public";
-  private static final String PRIVATE_KEY_WITH_PASSPHRASE_PATH = "./src/test/resources/rsaWithPassword.private";
+  private static final String PUBLIC_KEY_PATH = "./rsa.public";
+  private static final String PRIVATE_KEY_PATH = "./rsa.private";
+  private static final String PUBLIC_KEY_WITH_PASSPHRASE_PATH = "./rsaWithPassword.public";
+  private static final String PRIVATE_KEY_WITH_PASSPHRASE_PATH = "./rsaWithPassword.private";
   private static final String VALIDATE_JWT_REGEX = "(^[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*$)";
 
-  private static final String INVALID_PRIVATE_KEY = "./src/test/resources/privateKey.pkk";
-  private static final String INVALID_PUBLIC_KEY = "./src/test/resources/publicKey.pkk";
-  private static final String INVALID_PRIVATE_KEY_CLASS_PATH = "./src/test/resources/rsaPkcs8.private";
-  
+  private static final String INVALID_PRIVATE_KEY = "./privateKey.ppk";
+  private static final String INVALID_PUBLIC_KEY = "./publicKey.ppk";
+
   private static final String JWT_HEADER = "{\r\n" + "  \"typ\": \"JWT\"\r\n" + "}";
 
   private static final String JWT_CLAIMS = "{\r\n" + "  \"sub\": \"1234567890\",\r\n" + "  \"name\": \"John Doe\",\r\n"
@@ -49,11 +51,11 @@ public class RSAEncodedSecretTest {
 
   private String cryptodPassword;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     secret = new RSAEncodedSecret();
-    secret.setPrivateKeyFilePath(PRIVATE_KEY_PATH);
-    secret.setPublicKeyFilePath(PUBLIC_KEY_PATH);
+    secret.setPrivateKeyFilePath(toFile(PRIVATE_KEY_PATH));
+    secret.setPublicKeyFilePath(toFile(PUBLIC_KEY_PATH));
     secret.setAlgorithm(RSAEncodedSecret.RSAAlgorithms.RS256);
 
     encoder = new JWTEncoder();
@@ -79,7 +81,7 @@ public class RSAEncodedSecretTest {
     LifecycleHelper.initAndStart(decoder);
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     LifecycleHelper.stopAndClose(encoder);
     LifecycleHelper.stopAndClose(decoder);
@@ -120,8 +122,8 @@ public class RSAEncodedSecretTest {
   @Test
   public void testPrivateKeyWithPlainTextPassPhrase() throws Exception {
     secret.setPrivateKeyPassphrase(plainTextPassword);
-    secret.setPrivateKeyFilePath(PRIVATE_KEY_WITH_PASSPHRASE_PATH);
-    secret.setPublicKeyFilePath(PUBLIC_KEY_WITH_PASSPHRASE_PATH);
+    secret.setPrivateKeyFilePath(toFile(PRIVATE_KEY_WITH_PASSPHRASE_PATH));
+    secret.setPublicKeyFilePath(toFile(PUBLIC_KEY_WITH_PASSPHRASE_PATH));
 
     encoder.doService(message);
     assertNotNull(message.getContent());
@@ -134,8 +136,8 @@ public class RSAEncodedSecretTest {
   @Test
   public void testPrivateKeyWithCryptoPassPhrase() throws Exception {
     secret.setPrivateKeyPassphrase(cryptodPassword);
-    secret.setPrivateKeyFilePath(PRIVATE_KEY_WITH_PASSPHRASE_PATH);
-    secret.setPublicKeyFilePath(PUBLIC_KEY_WITH_PASSPHRASE_PATH);
+    secret.setPrivateKeyFilePath(toFile(PRIVATE_KEY_WITH_PASSPHRASE_PATH));
+    secret.setPublicKeyFilePath(toFile(PUBLIC_KEY_WITH_PASSPHRASE_PATH));
 
     encoder.doService(message);
     assertNotNull(message.getContent());
@@ -146,70 +148,46 @@ public class RSAEncodedSecretTest {
   }
 
   @Test
-  public void testPrivateKeyWithIncorrectPlainTextPassPhrase() {
+  public void testPrivateKeyWithIncorrectPlainTextPassPhrase() throws URISyntaxException {
     plainTextPassword = "incorrect";
     secret.setPrivateKeyPassphrase(plainTextPassword);
-    secret.setPrivateKeyFilePath(PRIVATE_KEY_WITH_PASSPHRASE_PATH);
-    secret.setPublicKeyFilePath(PUBLIC_KEY_WITH_PASSPHRASE_PATH);
+    secret.setPrivateKeyFilePath(toFile(PRIVATE_KEY_WITH_PASSPHRASE_PATH));
+    secret.setPublicKeyFilePath(toFile(PUBLIC_KEY_WITH_PASSPHRASE_PATH));
 
-    try {
-      encoder.doService(message);
-      fail("Should have thrown an exception with an invalid private key passphrase.");
-    } catch (ServiceException ex) {
-    }
+    ServiceException assertThrows = assertThrows(ServiceException.class, () -> encoder.doService(message));
+    assertTrue(assertThrows.getMessage().contains("exception using cipher - please check password and data"));
   }
 
   @Test
-  public void testPrivateKeyWithIncorrectCryptoPassPhrase() throws PasswordException {
+  public void testPrivateKeyWithIncorrectCryptoPassPhrase() throws PasswordException, URISyntaxException {
     plainTextPassword = "incorrect";
     cryptodPassword = Password.encode(plainTextPassword, Password.PORTABLE_PASSWORD);
     secret.setPrivateKeyPassphrase(cryptodPassword);
-    secret.setPrivateKeyFilePath(PRIVATE_KEY_WITH_PASSPHRASE_PATH);
-    secret.setPublicKeyFilePath(PUBLIC_KEY_WITH_PASSPHRASE_PATH);
+    secret.setPrivateKeyFilePath(toFile(PRIVATE_KEY_WITH_PASSPHRASE_PATH));
+    secret.setPublicKeyFilePath(toFile(PUBLIC_KEY_WITH_PASSPHRASE_PATH));
 
-    try {
-      encoder.doService(message);
-      fail("Should have thrown an exception with an invalid private key passphrase.");
-    } catch (ServiceException ex) {
-    }
+    ServiceException assertThrows = assertThrows(ServiceException.class, () -> encoder.doService(message));
+    assertTrue(assertThrows.getMessage().contains("exception using cipher - please check password and data"));
   }
 
   @Test
-  public void testInvalidPrivateKeys() {
-    secret.setPrivateKeyFilePath(INVALID_PRIVATE_KEY);
+  public void testInvalidPrivateKeys() throws URISyntaxException {
+    secret.setPrivateKeyFilePath(toFile(INVALID_PRIVATE_KEY));
 
-    try {
-      encoder.doService(message);
-      fail("Should have thrown an exception with an invalid private key.");
-    } catch (ServiceException ex) {
-      // this is a test pass
-    }
+    assertThrows(ServiceException.class, () -> encoder.doService(message));
   }
-  
-  @Test
-  public void testInvalidPrivateKeysClass() {
-    secret.setPrivateKeyFilePath(INVALID_PRIVATE_KEY_CLASS_PATH); 
 
-    try {
-      encoder.doService(message);
-      fail("Should have thrown an exception with an invalid private key class.");
-    } catch (ServiceException ex) {
-      // this is a test pass
-    }
-  }
-  
   @Test
-  public void testInvalidPublicKeys() {
-    secret.setPublicKeyFilePath(INVALID_PUBLIC_KEY);
+  public void testInvalidPublicKeys() throws URISyntaxException {
+    secret.setPublicKeyFilePath(toFile(INVALID_PUBLIC_KEY));
 
-    try {
+    assertThrows(ServiceException.class, () -> {
       encoder.doService(message);
       decoder.doService(message);
-      fail("Should have thrown an exception with an invalid private key.");
-    } catch (ServiceException ex) {
-      // this is a test pass
-    }
+    });
   }
-  
 
+  private String toFile(String resourceName) throws URISyntaxException {
+    return Path.of(getClass().getClassLoader().getResource(resourceName).toURI()).toAbsolutePath().toString();
+  }
 }

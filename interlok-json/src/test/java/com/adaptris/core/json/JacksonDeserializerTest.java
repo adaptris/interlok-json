@@ -1,8 +1,11 @@
 package com.adaptris.core.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,9 +21,11 @@ public class JacksonDeserializerTest extends DeserializerCase {
 
   }
 
-  @Test(expected = JsonProcessingException.class)
+  @Test
   public void testInvalidObject() throws Exception {
-    s.deserialize(invalidJsonObj);
+    assertThrows(JsonProcessingException.class, ()->{
+      s.deserialize(invalidJsonObj);
+    }, "Failed, invalid Json object");
   }
 
   @Test
@@ -30,14 +35,18 @@ public class JacksonDeserializerTest extends DeserializerCase {
 
   }
 
-  @Test(expected = JsonProcessingException.class)
+  @Test
   public void testInvalidArray() throws Exception {
-    s.deserialize(invalidJsonArray);
+    assertThrows(JsonProcessingException.class, ()->{
+      s.deserialize(invalidJsonArray);
+    }, "Failed, invalid Json Array");
   }
 
-  @Test(expected = JsonProcessingException.class)
+  @Test
   public void testNotJson() throws Exception {
-    s.deserialize(notJson);
+    assertThrows(JsonProcessingException.class, ()->{
+      s.deserialize(notJson);
+    }, "Failed, not Json");
   }
 
 }
