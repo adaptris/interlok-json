@@ -38,7 +38,7 @@ dependencies {
 
   api ("com.github.erosb:everit-json-schema:1.14.3")
   implementation ("com.google.guava:guava:32.1.3-jre")
-  api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.14")
+  api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.16")
   testImplementation ("org.skyscreamer:jsonassert:1.5.1")
   testImplementation ("org.apache.derby:derby:10.15.2.0")
   testImplementation ("org.apache.derby:derbytools:10.15.2.0")
