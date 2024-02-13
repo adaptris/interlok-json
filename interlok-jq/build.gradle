@@ -10,7 +10,7 @@ dependencies {
   // Dependency to platform/BOM
   api (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
   api ("com.fasterxml.jackson.core:jackson-databind")
-  api ("net.thisptr:jackson-jq:1.0.0-preview.20230409")
+  api ("net.thisptr:jackson-jq:1.0.0-preview.20240207")
   api ("net.thisptr:jackson-jq-extra:1.0.0-preview.20240207")
   testImplementation ("com.jayway.jsonpath:json-path:2.9.0")
 }
