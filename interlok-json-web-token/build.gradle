@@ -7,7 +7,7 @@ ext {
   componentDesc = "Handling JWT in Interlok"
   bouncyCastleVersion = "1.77"
   jwtVersion = "0.12.5"
-  jacksonVersion = "2.16.1"
+  jacksonVersion = "2.16.2"
   jsonOrgVersion = "20240303"
 }
 
