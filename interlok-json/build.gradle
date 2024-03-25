@@ -19,7 +19,7 @@ dependencies {
     exclude group: 'xerces', module: 'xercesImpl'
   }
   api ("org.json:json:$jsonOrgVersion")
-  implementation ("net.minidev:json-smart:2.5.0")
+  implementation ("net.minidev:json-smart:2.5.1")
   api ("com.jayway.jsonpath:json-path:2.9.0")
   api ("com.bazaarvoice.jolt:jolt-core:0.1.8")
   api ("com.bazaarvoice.jolt:json-utils:0.1.8") {
