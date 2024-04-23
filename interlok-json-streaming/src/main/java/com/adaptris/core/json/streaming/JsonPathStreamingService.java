@@ -143,7 +143,7 @@ import lombok.Setter;
 @XStreamAlias("json-path-streaming-service")
 @AdapterComponent
 @ComponentProfile(summary = "Extract a value from a large JSON document", tag = "service,transform,json,metadata,streaming,large")
-@DisplayOrder(order = {"surfer", "source", "executions", "unwrapJson"})
+@DisplayOrder(order = { "surfer", "source", "executions", "unwrapJson" })
 @NoArgsConstructor
 public class JsonPathStreamingService extends JsonPathServiceImpl {
   /**
@@ -161,8 +161,6 @@ public class JsonPathStreamingService extends JsonPathServiceImpl {
    */
   @Getter
   @Setter
-  @NonNull
-  @NotNull
   private Surfer surfer;
 
   private transient JsonSurfer jsonSurfer;
