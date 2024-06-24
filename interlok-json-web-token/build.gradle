@@ -24,7 +24,7 @@ dependencies {
   runtimeOnly (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
   runtimeOnly ("com.fasterxml.jackson.core:jackson-databind")
 
-  testImplementation ("org.skyscreamer:jsonassert:1.5.1")
+  testImplementation ("org.skyscreamer:jsonassert:1.5.2")
 }
 
 jar {
