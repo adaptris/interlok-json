@@ -9,6 +9,7 @@ import com.adaptris.core.Service;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.ServiceImp;
 import com.adaptris.core.util.ExceptionHelper;
+import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.config.DataInputParameter;
 import com.adaptris.interlok.config.DataOutputParameter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -70,14 +71,28 @@ public class ForEachJsonArrayElementService extends ServiceImp {
   
   @Override
   public void prepare() throws CoreException {
+    LifecycleHelper.prepare(getForEachElementService());
   }
 
   @Override
   protected void initService() throws CoreException {
+    LifecycleHelper.init(getForEachElementService());
   }
+  
+  @Override
+  public void start() throws CoreException {
+    LifecycleHelper.start(getForEachElementService());
+  }
+  
+  @Override
+  public void stop() {
+    LifecycleHelper.stop(getForEachElementService());
+  }
+  
 
   @Override
   protected void closeService() {
+    LifecycleHelper.close(getForEachElementService());
   }
 
 }
