@@ -9,6 +9,7 @@ import java.security.PublicKey;
 
 import javax.validation.constraints.NotBlank;
 
+import com.adaptris.core.fs.FsHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
@@ -84,7 +85,7 @@ public class PGPSecret implements SecretConfigurator {
   }
 
   private PGPSecretKey readSecretKey() throws IOException, PGPException {
-    try (InputStream inputStream = new FileInputStream(new File(path))) {
+    try (InputStream inputStream = new FileInputStream(FsHelper.toFile(path, new File(path)))) {
       PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(inputStream, new JcaKeyFingerprintCalculator());
       /*
        * we just loop through the collection till we find a key suitable for signing, in the real world you would probably want to be a bit
