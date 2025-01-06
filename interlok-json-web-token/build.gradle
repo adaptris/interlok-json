@@ -8,7 +8,7 @@ ext {
   bouncyCastleVersion = "1.79"
   jwtVersion = "0.12.6"
   jacksonVersion = "2.18.2"
-  jsonOrgVersion = "20240303"
+  jsonOrgVersion = "20241224"
 }
 
 dependencies {
