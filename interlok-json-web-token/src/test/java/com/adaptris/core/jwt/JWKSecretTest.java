@@ -32,7 +32,7 @@ public class JWKSecretTest {
   private static final String VALIDATE_JWT_REGEX = "(^[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*$)";
 
 
-  private static final String VALID_STRING_SOURCE = """
+  private static final String VALID_STRING_SOURCE_PRIVATE_KEY = """
     {"keys":
       [{
         "kty": "RSA",
@@ -50,6 +50,22 @@ public class JWKSecretTest {
        }]
      }
   """;
+
+  private static final String VALID_STRING_SOURCE_PUBLIC_KEY = """
+    {"keys":
+      [
+        {
+          "kty": "RSA",
+          "use": "sig",
+          "alg": "RS256",
+          "kid": "8d77a483-7616-4279-9449-300f80946b3b",
+          "n": "0G6IMmIhBmEfHHYMiaWCdizVJwy0FH0CMNYzCzcQ4iFd7EC2VEpSoeS_TfwYe5Tb94Q8wqLMjh6-fGwYCqiAlugHJDKjxW92t0mxoVIR9QSypGP6vxATfvxsL7wDbgrIV7lJgvDp1fbpe5kVwi5nxB6rDeORrmmmi3LasVgmfE2JJqux1oiUyQcm-G0gRPpM5-niTgutwoHfnuXOAIYHYvTz-FJv8WmmI0GDohZb6p4jgMT37jN59yrv_fsxiTcNn__i6HJc1ZWr8lKS0pwGmEmxOnN-YXZpT_41FH2RSul29d_3Ig1OVXFJGxNt2bniQOcWlvQjLDI6s7mPBz9Tgw",
+          "e": "AQAB"
+        }
+      ]
+    }
+  """;
+
   private static final String INVALID_STRING_SOURCE = "{}";
 
   private static final String JWT_HEADER = """
@@ -128,8 +144,8 @@ public class JWKSecretTest {
   }
 
   @Test
-  public void testValidStringSource() throws Exception {
-    secret.setSource(VALID_STRING_SOURCE);
+  public void testValidStringSourcePrivateKey() throws Exception {
+    secret.setSource(VALID_STRING_SOURCE_PRIVATE_KEY);
     encoder.doService(message);
     assertNotNull(message.getContent());
     assertTrue(message.getContent().matches(VALIDATE_JWT_REGEX));
@@ -137,6 +153,18 @@ public class JWKSecretTest {
     decoder.doService(message);
     assertTrue(message.getMetadataValue("header_out").contains("RS256"));
   }
+
+  @Test
+  public void testValidStringSourcePublicKey() throws Exception {
+    secret.setSource(VALID_STRING_SOURCE_PUBLIC_KEY);
+    encoder.doService(message);
+    assertNotNull(message.getContent());
+    assertTrue(message.getContent().matches(VALIDATE_JWT_REGEX));
+
+    decoder.doService(message);
+    assertTrue(message.getMetadataValue("header_out").contains("RS256"));
+  }
+
 
   @Test
   public void testInvalidStringSource() throws Exception {
@@ -154,7 +182,7 @@ public class JWKSecretTest {
   public void testValidUrlSource() throws Exception {
     final String VALID_URL_SOURCE = wm1.getRuntimeInfo().getHttpBaseUrl();
 
-    wm1.stubFor(get("/.well-known/jwks.json").willReturn(okJson(VALID_STRING_SOURCE)));
+    wm1.stubFor(get("/.well-known/jwks.json").willReturn(okJson(VALID_STRING_SOURCE_PUBLIC_KEY)));
     secret.setSource(VALID_URL_SOURCE);
     encoder.doService(message);
     assertNotNull(message.getContent());
