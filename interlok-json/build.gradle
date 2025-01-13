@@ -6,7 +6,7 @@ ext {
   componentName='Interlok Transform/JSON'
   componentDesc="Everything JSON related; transformations, schemas, json-path (xpath-alike), splitting"
   jacksonVersion = "2.18.2"
-  jsonOrgVersion = "20241224"
+  jsonOrgVersion = "20250107"
 }
 
 
