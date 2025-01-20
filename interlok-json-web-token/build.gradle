@@ -5,7 +5,7 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JWT'
   componentDesc = "Handling JWT in Interlok"
-  bouncyCastleVersion = "1.79"
+  bouncyCastleVersion = "1.80"
   jwtVersion = "0.12.6"
   jacksonVersion = "2.18.2"
   jsonOrgVersion = "20241224"
