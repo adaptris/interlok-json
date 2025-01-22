@@ -25,11 +25,11 @@ import com.adaptris.security.password.Password;
 
 public class RSAEncodedSecretTest {
 
-  private static final String PUBLIC_KEY_PATH = "./rsa.public";
-  private static final String PRIVATE_KEY_PATH = "./rsa.private";
-  private static final String PUBLIC_KEY_WITH_PASSPHRASE_PATH = "./rsaWithPassword.public";
-  private static final String PRIVATE_KEY_WITH_PASSPHRASE_PATH = "./rsaWithPassword.private";
-  private static final String VALIDATE_JWT_REGEX = "(^[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*$)";
+  protected static final String PUBLIC_KEY_PATH = "./rsa.public";
+  protected static final String PRIVATE_KEY_PATH = "./rsa.private";
+  protected static final String PUBLIC_KEY_WITH_PASSPHRASE_PATH = "./rsaWithPassword.public";
+  protected static final String PRIVATE_KEY_WITH_PASSPHRASE_PATH = "./rsaWithPassword.private";
+  protected static final String VALIDATE_JWT_REGEX = "(^[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]*$)";
 
   private static final String INVALID_PRIVATE_KEY = "./privateKey.ppk";
   private static final String INVALID_PUBLIC_KEY = "./publicKey.ppk";
@@ -187,7 +187,8 @@ public class RSAEncodedSecretTest {
     });
   }
 
-  private String toFile(String resourceName) throws URISyntaxException {
-    return Path.of(getClass().getClassLoader().getResource(resourceName).toURI()).toAbsolutePath().toString();
+  protected static String toFile(String resourceName) throws URISyntaxException {
+
+    return Path.of(Thread.currentThread().getContextClassLoader().getResource(resourceName).toURI()).toAbsolutePath().toString();
   }
 }
