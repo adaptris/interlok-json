@@ -36,7 +36,7 @@ dependencies {
   api ("commons-beanutils:commons-beanutils:1.9.4")
   implementation ("xerces:xercesImpl:2.12.2")
 
-  api ("com.github.erosb:everit-json-schema:1.14.4")
+  api ("com.github.erosb:everit-json-schema:1.14.5")
   implementation ("com.google.guava:guava:33.4.0-jre")
   api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.16")
   testImplementation ("org.skyscreamer:jsonassert:1.5.3")
