@@ -8,6 +8,7 @@ import java.security.PrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
+import com.adaptris.core.fs.FsHelper;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
@@ -99,7 +100,8 @@ public class RSAEncodedSecret implements SecretConfigurator {
   private PrivateKey readPrivateKey(String filePath, String passphrase) throws Exception {
     PrivateKeyInfo pki;
 
-    try (PEMParser pemParser = new PEMParser(new FileReader(new File(filePath)))) {
+    File file = FsHelper.toFile(filePath, new File(filePath));
+    try (PEMParser pemParser = new PEMParser(new FileReader(file))) {
 
       Object pemObject = pemParser.readObject();
 
