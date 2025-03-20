@@ -80,20 +80,21 @@ public class JsonJqTransform extends ServiceImp {
   public void doService(AdaptrisMessage msg) throws ServiceException {
     log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
     ObjectMapper mapper = new ObjectMapper();
-    try (Reader reader = msg.getReader();
-        Writer w = msg.getWriter();
-        JsonGenerator generator = mapper.getFactory().createGenerator(w).useDefaultPrettyPrinter()) {
+    try (Reader reader = msg.getReader()) {
       JsonQuery q = JsonQuery.compile(querySource.extract(msg), Version.LATEST);
       JsonNode jsonNode = mapper.readTree(reader);
 
       final List<JsonNode> result = new ArrayList<>();
       q.apply(createScope(mapper, msg), jsonNode, out -> result.add(out));
 
-      if (result.size() == 1) {
-        generator.writeObject(result.get(0));
-      }
-      else {
-        generator.writeObject(result);
+      try (Writer w = msg.getWriter();
+           JsonGenerator generator = mapper.getFactory().createGenerator(w).useDefaultPrettyPrinter()) {
+        if (result.size() == 1) {
+          generator.writeObject(result.get(0));
+        }
+        else {
+          generator.writeObject(result);
+        }
       }
     }
     catch (Exception e) {

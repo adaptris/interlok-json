@@ -3,11 +3,15 @@ package com.adaptris.core.json.jq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.EnumSet;
+
+import com.adaptris.core.*;
+import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import com.adaptris.core.AdaptrisMessage;
-import com.adaptris.core.AdaptrisMessageFactory;
-import com.adaptris.core.MetadataElement;
 import com.adaptris.core.common.ConstantDataInputParameter;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
@@ -18,6 +22,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.adaptris.core.AdaptrisMessage;
 
 public class JsonJqTransformTest extends ExampleServiceCase {
 
@@ -44,6 +49,20 @@ public class JsonJqTransformTest extends ExampleServiceCase {
     assertNotNull(ctx.read("$.status-description"));
     assertNotNull(ctx.read("$.status-code"));
     assertNotNull(ctx.read("$.status-id"));
+  }
+
+  @Test
+  public void testWithMultiPayload() throws Exception {
+    AdaptrisMessage msg = new MultiPayloadMessageFactory().newMessage("json", SAMPLE_DATA.getBytes());
+    JsonJqTransform service = new JsonJqTransform().withQuerySource(new StringPayloadDataInputParameter());
+    ((MultiPayloadAdaptrisMessageImp)msg).switchPayload("json");
+
+    execute(service,msg);
+    assertNotNull(msg.getContent());
+    ObjectMapper om = new ObjectMapper();
+    try (JsonParser parser1 = om.createParser(msg.getContent()); JsonParser parser2 = om.createParser(SAMPLE_DATA.getBytes())) {
+      assertEquals((TreeNode) parser1.readValueAsTree(), parser2.readValueAsTree());
+    }
   }
 
   @Test
