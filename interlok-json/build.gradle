@@ -33,7 +33,7 @@ dependencies {
   api ("com.fasterxml.jackson.core:jackson-databind")
   api ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
   api ("commons-collections:commons-collections:3.2.2")
-  api ("commons-beanutils:commons-beanutils:1.9.4")
+  api ("commons-beanutils:commons-beanutils:1.11.0")
   implementation ("xerces:xercesImpl:2.12.2")
 
   api ("com.github.erosb:everit-json-schema:1.14.5")
