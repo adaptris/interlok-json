@@ -27,8 +27,11 @@ import com.adaptris.core.metadata.RemoveAllMetadataFilter;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.LoggingHelper;
+import com.adaptris.interlok.InterlokException;
 import com.adaptris.interlok.config.DataInputParameter;
+import com.adaptris.interlok.config.DataOutputParameter;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -40,8 +43,7 @@ import net.thisptr.jackson.jq.Version;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,14 @@ public class JsonJqTransform extends ServiceImp {
 
   @Valid
   @AdvancedConfig
+  private DataInputParameter<String> queryTarget;
+
+  @Valid
+  @AdvancedConfig
+  private DataOutputParameter<String> outputTarget;
+
+  @Valid
+  @AdvancedConfig
   private MetadataFilter metadataFilter;
 
   public JsonJqTransform() {
@@ -80,24 +90,33 @@ public class JsonJqTransform extends ServiceImp {
   public void doService(AdaptrisMessage msg) throws ServiceException {
     log.trace("Beginning doService in {}", LoggingHelper.friendlyName(this));
     ObjectMapper mapper = new ObjectMapper();
-    try (Reader reader = msg.getReader();
-        Writer w = msg.getWriter();
-        JsonGenerator generator = mapper.getFactory().createGenerator(w).useDefaultPrettyPrinter()) {
-      JsonQuery q = JsonQuery.compile(querySource.extract(msg), Version.LATEST);
-      JsonNode jsonNode = mapper.readTree(reader);
+    final List<JsonNode> result = new ArrayList<>();
+    try {
+      try (Reader reader = buildReader(msg)) {
+        JsonQuery q = JsonQuery.compile(querySource.extract(msg), Version.LATEST);
+        JsonNode jsonNode = mapper.readTree(reader);
 
-      final List<JsonNode> result = new ArrayList<>();
-      q.apply(createScope(mapper, msg), jsonNode, out -> result.add(out));
-
-      if (result.size() == 1) {
-        generator.writeObject(result.get(0));
+        q.apply(createScope(mapper, msg), jsonNode, out -> result.add(out));
       }
-      else {
-        generator.writeObject(result);
-      }
+      Object _result = result.size() == 1 ? result.get(0) : result;
+      writeResult(msg, _result, mapper);
     }
     catch (Exception e) {
       throw ExceptionHelper.wrapServiceException(e);
+    }
+  }
+
+  protected Reader buildReader(AdaptrisMessage msg) throws InterlokException, IOException {
+    return queryTarget != null ? new StringReader(queryTarget.extract(msg)) : msg.getReader();
+  }
+
+  protected void writeResult(AdaptrisMessage msg, Object result, ObjectMapper mapper) throws InterlokException, IOException {
+    try (Writer w = outputTarget != null ? new StringWriter() : msg.getWriter();
+      JsonGenerator generator = mapper.getFactory().createGenerator(w).useDefaultPrettyPrinter()) {
+      generator.writeObject(result);
+      if (outputTarget != null) {
+        outputTarget.insert(w.toString(), msg);
+      }
     }
   }
 
@@ -133,8 +152,35 @@ public class JsonJqTransform extends ServiceImp {
     this.querySource = Args.notNull(query, "querySource");
   }
 
+
+  public DataInputParameter<String> getQueryTarget() {
+    return queryTarget;
+  }
+
+  public void setQueryTarget(DataInputParameter<String> queryTarget) {
+    this.queryTarget = queryTarget;
+  }
+
+  public DataOutputParameter<String> getOutputTarget() {
+    return outputTarget;
+  }
+
+  public void setOutputTarget(DataOutputParameter<String> outputTarget) {
+    this.outputTarget = outputTarget;
+  }
+
   public JsonJqTransform withQuerySource(DataInputParameter<String> query) {
     setQuerySource(query);
+    return this;
+  }
+
+  public JsonJqTransform withQueryTarget(DataInputParameter<String> target) {
+    setQueryTarget(target);
+    return this;
+  }
+
+  public JsonJqTransform withOutputTarget(DataOutputParameter<String> outputTarget) {
+    setOutputTarget(outputTarget);
     return this;
   }
 
