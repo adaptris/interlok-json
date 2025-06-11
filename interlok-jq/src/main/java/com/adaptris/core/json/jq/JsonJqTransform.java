@@ -106,11 +106,11 @@ public class JsonJqTransform extends ServiceImp {
     }
   }
 
-  private Reader buildReader(AdaptrisMessage msg) throws InterlokException, IOException {
+  protected Reader buildReader(AdaptrisMessage msg) throws InterlokException, IOException {
     return queryTarget != null ? new StringReader(queryTarget.extract(msg)) : msg.getReader();
   }
 
-  private void writeResult(AdaptrisMessage msg, Object result, ObjectMapper mapper) throws InterlokException, IOException {
+  protected void writeResult(AdaptrisMessage msg, Object result, ObjectMapper mapper) throws InterlokException, IOException {
     try (Writer w = outputTarget != null ? new StringWriter() : msg.getWriter();
       JsonGenerator generator = mapper.getFactory().createGenerator(w).useDefaultPrettyPrinter()) {
       generator.writeObject(result);
