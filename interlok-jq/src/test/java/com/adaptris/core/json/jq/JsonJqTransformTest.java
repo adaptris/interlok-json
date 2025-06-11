@@ -1,11 +1,15 @@
 package com.adaptris.core.json.jq;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+
 import java.util.EnumSet;
 
+import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.*;
+import com.adaptris.interlok.InterlokException;
 import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
@@ -19,6 +23,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import org.mockito.Mockito;
 
 public class JsonJqTransformTest extends ExampleServiceCase {
 
@@ -45,6 +50,19 @@ public class JsonJqTransformTest extends ExampleServiceCase {
     assertNotNull(ctx.read("$.status-description"));
     assertNotNull(ctx.read("$.status-code"));
     assertNotNull(ctx.read("$.status-id"));
+  }
+
+
+  @Test
+  public void testServiceException() throws Exception {
+    JsonJqTransform service = spy(JsonJqTransform.class).withQuerySource(new ConstantDataInputParameter(METADATA_QUERY));
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance()
+            .newMessage(SAMPLE_DATA);
+    msg.addMetadata(new MetadataElement("greeting", "Hello World"));
+    doThrow(new InterlokException()).when(service).buildReader(any());
+    assertThrows(ServiceException.class, () -> {
+      execute(service, msg);
+    });
   }
 
   @Test
