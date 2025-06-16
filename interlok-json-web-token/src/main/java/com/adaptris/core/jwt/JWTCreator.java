@@ -1,6 +1,9 @@
 package com.adaptris.core.jwt;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -88,19 +91,22 @@ public class JWTCreator extends ServiceImp {
   @Setter
   @Valid
   @AdvancedConfig(rare = true)
-  private Date issuedAt;
+  @InputFieldHint(expression = true, friendly = "dd/mm/yyyy")
+  private String issuedAt;
 
   @Getter
   @Setter
   @NotNull
   @Valid
-  private Date expiration;
+  @InputFieldHint(expression = true, friendly = "dd/mm/yyyy")
+  private String expiration;
 
   @Getter
   @Setter
   @NotNull
   @Valid
-  private Date notBefore;
+  @InputFieldHint(expression = true, friendly = "dd/mm/yyyy")
+  private String notBefore;
 
   @NotNull
   @Valid
@@ -115,6 +121,8 @@ public class JWTCreator extends ServiceImp {
   @InputFieldHint(expression = true)
   private KeyValuePairSet customClaims;
 
+  final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SZ";
+
   /**
    * <p>
    * Apply the service to the message.
@@ -128,14 +136,17 @@ public class JWTCreator extends ServiceImp {
   @Override
   public void doService(AdaptrisMessage message) throws ServiceException {
     try {
+      final Date notBeforeDate = parseOrResolveDateField(notBefore, message);
+      final Date expirationDate = parseOrResolveDateField(expiration, message);
+
       JwtBuilder builder = Jwts.builder()
           .subject(message.resolve(subject))
           .audience().add(message.resolve(audience))
           .and()
-          .notBefore(notBefore)
+          .notBefore(notBeforeDate)
           .issuer(message.resolve(issuer))
-          .expiration(expiration)
-          .issuedAt(jwtIssuedAt())
+          .expiration(expirationDate)
+          .issuedAt(getJwtIssuedAt(message))
           .id(jwtId());
 
       builder = secret.configure(builder);
@@ -152,9 +163,25 @@ public class JWTCreator extends ServiceImp {
       throw new ServiceException(e);
     }
   }
-  
-  private Date jwtIssuedAt() {
-    return Optional.ofNullable(issuedAt).orElseGet(() -> new Date());
+
+  private Date parseOrResolveDateField(String inputString, AdaptrisMessage message) throws ParseException {
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+    dateFormat.setLenient(false);
+
+    final String resolvedString = message.resolve(inputString);
+
+    if (!resolvedString.equals(inputString)) {
+      return dateFormat.parse(resolvedString);
+    }
+
+    return dateFormat.parse(inputString);
+  }
+
+  private Date getJwtIssuedAt(AdaptrisMessage message) throws ParseException {
+    if (issuedAt == null) {
+      issuedAt = new SimpleDateFormat(DATE_FORMAT).format(new Date());
+    }
+    return parseOrResolveDateField(issuedAt, message);
   }
   
   private String jwtId() {
