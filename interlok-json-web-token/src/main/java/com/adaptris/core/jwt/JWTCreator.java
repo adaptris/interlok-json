@@ -1,9 +1,7 @@
 package com.adaptris.core.jwt;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +19,7 @@ import com.adaptris.core.ServiceImp;
 import com.adaptris.core.jwt.secrets.SecretConfigurator;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
+import com.adaptris.util.text.DateFormatUtil;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -91,21 +90,21 @@ public class JWTCreator extends ServiceImp {
   @Setter
   @Valid
   @AdvancedConfig(rare = true)
-  @InputFieldHint(expression = true, friendly = "dd/mm/yyyy")
+  @InputFieldHint(expression = true)
   private String issuedAt;
 
   @Getter
   @Setter
   @NotNull
   @Valid
-  @InputFieldHint(expression = true, friendly = "dd/mm/yyyy")
+  @InputFieldHint(expression = true)
   private String expiration;
 
   @Getter
   @Setter
   @NotNull
   @Valid
-  @InputFieldHint(expression = true, friendly = "dd/mm/yyyy")
+  @InputFieldHint(expression = true)
   private String notBefore;
 
   @NotNull
@@ -120,8 +119,6 @@ public class JWTCreator extends ServiceImp {
   @AdvancedConfig
   @InputFieldHint(expression = true)
   private KeyValuePairSet customClaims;
-
-  final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SZ";
 
   /**
    * <p>
@@ -165,21 +162,18 @@ public class JWTCreator extends ServiceImp {
   }
 
   private Date parseOrResolveDateField(String inputString, AdaptrisMessage message) throws ParseException {
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-    dateFormat.setLenient(false);
-
     final String resolvedString = message.resolve(inputString);
 
     if (!resolvedString.equals(inputString)) {
-      return dateFormat.parse(resolvedString);
+      return DateFormatUtil.parse(resolvedString);
     }
 
-    return dateFormat.parse(inputString);
+    return DateFormatUtil.parse(inputString);
   }
 
   private Date getJwtIssuedAt(AdaptrisMessage message) throws ParseException {
     if (issuedAt == null) {
-      issuedAt = new SimpleDateFormat(DATE_FORMAT).format(new Date());
+      issuedAt = new Date().toString();
     }
     return parseOrResolveDateField(issuedAt, message);
   }
