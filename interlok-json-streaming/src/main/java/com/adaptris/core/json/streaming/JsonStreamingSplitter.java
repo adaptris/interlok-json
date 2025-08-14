@@ -3,7 +3,7 @@ package com.adaptris.core.json.streaming;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.OutputStream;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;

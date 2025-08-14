@@ -3,7 +3,7 @@ package com.adaptris.core.json.aggregator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;

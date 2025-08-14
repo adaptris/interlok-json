@@ -1,6 +1,6 @@
 package com.adaptris.core.json.streaming;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import org.apache.commons.lang3.ObjectUtils;

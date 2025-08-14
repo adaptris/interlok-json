@@ -1,7 +1,7 @@
 package com.adaptris.core.json.schema;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ObjectUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;

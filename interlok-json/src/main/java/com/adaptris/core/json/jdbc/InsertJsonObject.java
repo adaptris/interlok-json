@@ -3,7 +3,7 @@ package com.adaptris.core.json.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
