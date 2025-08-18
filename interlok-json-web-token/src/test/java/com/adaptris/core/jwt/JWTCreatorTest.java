@@ -28,7 +28,7 @@ public class JWTCreatorTest extends JWTCommonTest {
   public void testCreate() throws Exception {
     JWTCreator service = (JWTCreator) retrieveObjectForSampleConfig();
     service.setId("4f044322-5db3-44d2-a698-15b754bd7a05");
-    service.setIssuedAt("2020-01-01T00:00:00.0-0000");
+    service.setIssuedAt("2020-01-01T00:00:00-0000");
     Base64EncodedSecret secret = new Base64EncodedSecret();
     secret.setSecret(KEY);
     service.setSecret(secret);
@@ -119,8 +119,8 @@ public class JWTCreatorTest extends JWTCommonTest {
     creator.setIssuer("me");
     creator.setSubject("Bob");
     creator.setAudience("you");
-    creator.setExpiration("2040-12-31T00:00:00.000-0000");
-    creator.setNotBefore("2020-01-01T00:00:00.0-0000");
+    creator.setExpiration("2040-12-31T00:00:00-0000");
+    creator.setNotBefore("2020-01-01T00:00:00-0000");
     creator.setSecret(getPGPSecret());
     return creator;
   }
