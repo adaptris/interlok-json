@@ -4,10 +4,10 @@ import org.apache.tools.ant.filters.*
 plugins {
   // Manage optional dependencies in maven pom.
   id "nebula.optional-base" version "7.0.0"
-  id "com.github.spotbugs" version "6.2.0"
-  id "org.sonarqube" version "6.2.0.5505"
-  id "org.owasp.dependencycheck" version "12.1.9"
-  id "io.freefair.lombok" version "8.13.1"
+  id "com.github.spotbugs" version "6.4.8"
+  id "org.sonarqube" version "6.3.1.5724"
+  id "org.owasp.dependencycheck" version "12.2.0"
+  id "io.freefair.lombok" version "8.14.2"
 }
 
 ext {
@@ -188,9 +188,9 @@ subprojects {
     offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
     offlineJavadocPackages ("com.adaptris:interlok-common:$interlokCoreVersion:javadoc@jar") { changing= true}
 
-    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.13.1")
-    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.13.1")
-    testImplementation ("org.junit.platform:junit-platform-launcher:1.12.1")
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.13.4")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+    testImplementation ("org.junit.platform:junit-platform-launcher:1.13.3")
     testImplementation ("org.slf4j:slf4j-simple:$slf4jVersion")
     testImplementation ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true }
     testImplementation ("org.mockito:mockito-core:$mockitoVersion")
