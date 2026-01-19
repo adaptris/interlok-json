@@ -352,6 +352,7 @@ subprojects {
     formats = [ "HTML", "JUNIT" ]
     junitFailOnCVSS = 7.0
     failBuildOnCVSS = 7.0
+    autoUpdate = false
     nvd {
       apiKey = System.getenv("NVD_API_KEY")
       delay=project.findProperty("dependencyCheckNvdDelay")
@@ -363,6 +364,9 @@ subprojects {
         username = System.getenv("OSS_INDEX_USERNAME")
         password = System.getenv("OSS_INDEX_PASSWORD")
       }
+    }
+    data {
+        directory = "${buildDir}/dependency-check-data"
     }
   }
 
