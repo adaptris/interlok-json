@@ -276,7 +276,7 @@ subprojects {
       options.docletpath = configurations.umlDoclet.files.asType(List)
       options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
       // Create class & package use pages
-      options.addStringOption "use"    
+      options.addStringOption "use"
       options.addStringOption "umlImageFormat", "SVG"
       options.addStringOption "umlExcludedTypeReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum,java.lang.annotation.Annotation"
       options.addStringOption "umlJavaBeanPropertiesAsFields"
@@ -314,7 +314,7 @@ subprojects {
       }
     }
   }
-  
+
   test {
     jvmArgs = ['--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED']
     useJUnitPlatform()
@@ -346,16 +346,22 @@ subprojects {
     excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
   }
 
-  dependencyCheck  {
-    suppressionFiles= [ "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml", "$rootDir/gradle/owasp-exclude.xml" ]
+  dependencyCheck {
+    suppressionFiles = [
+      "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml",
+      "$rootDir/gradle/owasp-exclude.xml"
+    ]
     scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
     formats = [ "HTML", "JUNIT" ]
     junitFailOnCVSS = 7.0
     failBuildOnCVSS = 7.0
     nvd {
-        apiKey = project.findProperty("nvdApiKey") ?: System.getenv("NVD_API_KEY")
-      delay=project.findProperty("dependencyCheckNvdDelay")
-      datafeedUrl=project.findProperty("dependencyCheckNvdDatafeedUrl")
+      def key = project.findProperty("nvdApiKey") ?: System.getenv("NVD_API_KEY")
+      println "DEBUG: nvdApiKey property = ${project.findProperty('nvdApiKey') ? 'SET' : 'NOT SET'}"
+      println "DEBUG: NVD_API_KEY env = ${System.getenv('NVD_API_KEY') ? 'SET' : 'NOT SET'}"
+      println "DEBUG: Final key = ${key ? 'SET (length: ' + key.length() + ')' : 'NOT SET'}"
+      apiKey = key
+      delay = 4000
     }
     analyzers {
       assemblyEnabled=false
