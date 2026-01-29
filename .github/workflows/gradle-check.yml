@@ -11,7 +11,7 @@ jobs:
   gradle-check:
     name: Gradle Check
     needs: debug-nvd
-    uses: interlok-tooling/reusable-workflows/.github/workflows/gradle-check.yml@fix_nvd_api_key_bug
+    uses: interlok-tooling/reusable-workflows/.github/workflows/gradle-check.yml@main
     secrets:
       NEXUS_REPO_PASSWORD: ${{ secrets.NEXUS_REPO_PASSWORD }}
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}

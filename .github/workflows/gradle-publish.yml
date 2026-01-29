@@ -12,7 +12,7 @@ permissions: read-all
 jobs:
   gradle-publish:
     name: Gradle Publish
-    uses: interlok-tooling/reusable-workflows/.github/workflows/gradle-publish.yml@fix_nvd_api_key_bug
+    uses: interlok-tooling/reusable-workflows/.github/workflows/gradle-publish.yml@main
     secrets:
       NEXUS_REPO_PASSWORD: ${{ secrets.NEXUS_REPO_PASSWORD }}
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}

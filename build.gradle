@@ -6,7 +6,7 @@ plugins {
   id "nebula.optional-base" version "7.0.0"
   id "com.github.spotbugs" version "6.4.8"
   id "org.sonarqube" version "6.3.1.5724"
-  id "org.owasp.dependencycheck" version "12.2.0"
+  id "org.owasp.dependencycheck" version "12.1.6" apply false
   id "io.freefair.lombok" version "8.14.2"
 }
 
@@ -346,29 +346,50 @@ subprojects {
     excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
   }
 
-  dependencyCheck {
-    suppressionFiles = [
-      "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml",
-      "$rootDir/gradle/owasp-exclude.xml"
-    ]
-    scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
+//  dependencyCheck {
+//    suppressionFiles = [
+//      "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml",
+//      "$rootDir/gradle/owasp-exclude.xml"
+//    ]
+//    scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
+//    formats = [ "HTML", "JUNIT" ]
+//    junitFailOnCVSS = 7.0
+//    failBuildOnCVSS = 7.0
+//    nvd {
+//      def key = project.findProperty("nvdApiKey") ?: System.getenv("NVD_API_KEY")
+//      println "DEBUG: nvdApiKey property = ${project.findProperty('nvdApiKey') ? 'SET' : 'NOT SET'}"
+//      println "DEBUG: NVD_API_KEY env = ${System.getenv('NVD_API_KEY') ? 'SET' : 'NOT SET'}"
+//      println "DEBUG: Final key = ${key ? 'SET (length: ' + key.length() + ')' : 'NOT SET'}"
+//      apiKey = key
+//      delay = 4000
+//    }
+//    analyzers {
+//      assemblyEnabled=false
+//      ossIndex {
+//        username = System.getenv("OSS_INDEX_USERNAME")
+//        password = System.getenv("OSS_INDEX_PASSWORD")
+//      }
+//    }
+//  }
+
+  dependencyCheck  {
+    suppressionFiles= [ "$rootDir/gradle/owasp-exclude.xml" ]
+    scanConfigurations = ["api", "compileClasspath", "runtimeClasspath"]
+    // skipConfigurations = [ "mavenDeploy", "antSql", "spotbugs", "umlDoclet", "offlineJavadocPackages", "javadoc", "jacocoAnt", "jacocoAgent", "spotbugsPlugins", "spotbugsSlf4j" ]
     formats = [ "HTML", "JUNIT" ]
     junitFailOnCVSS = 7.0
     failBuildOnCVSS = 7.0
-    nvd {
-      def key = project.findProperty("nvdApiKey") ?: System.getenv("NVD_API_KEY")
-      println "DEBUG: nvdApiKey property = ${project.findProperty('nvdApiKey') ? 'SET' : 'NOT SET'}"
-      println "DEBUG: NVD_API_KEY env = ${System.getenv('NVD_API_KEY') ? 'SET' : 'NOT SET'}"
-      println "DEBUG: Final key = ${key ? 'SET (length: ' + key.length() + ')' : 'NOT SET'}"
-      apiKey = key
-      delay = 4000
-    }
     analyzers {
       assemblyEnabled=false
       ossIndex {
-        username = System.getenv("OSS_INDEX_USERNAME")
-        password = System.getenv("OSS_INDEX_PASSWORD")
+          username = System.getenv("OSS_INDEX_USERNAME")
+          password = System.getenv("OSS_INDEX_PASSWORD")
       }
+    }
+    nvd {
+      apiKey = System.getenv("NVD_API_KEY")
+      delay=project.findProperty("dependencyCheckNvdDelay")
+      datafeedUrl=project.findProperty("dependencyCheckNvdDatafeedUrl")
     }
   }
 
