@@ -346,32 +346,6 @@ subprojects {
     excludeFilter = new File("$rootDir/gradle/spotbugs-exclude.xml")
   }
 
-//  dependencyCheck {
-//    suppressionFiles = [
-//      "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml",
-//      "$rootDir/gradle/owasp-exclude.xml"
-//    ]
-//    scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
-//    formats = [ "HTML", "JUNIT" ]
-//    junitFailOnCVSS = 7.0
-//    failBuildOnCVSS = 7.0
-//    nvd {
-//      def key = project.findProperty("nvdApiKey") ?: System.getenv("NVD_API_KEY")
-//      println "DEBUG: nvdApiKey property = ${project.findProperty('nvdApiKey') ? 'SET' : 'NOT SET'}"
-//      println "DEBUG: NVD_API_KEY env = ${System.getenv('NVD_API_KEY') ? 'SET' : 'NOT SET'}"
-//      println "DEBUG: Final key = ${key ? 'SET (length: ' + key.length() + ')' : 'NOT SET'}"
-//      apiKey = key
-//      delay = 4000
-//    }
-//    analyzers {
-//      assemblyEnabled=false
-//      ossIndex {
-//        username = System.getenv("OSS_INDEX_USERNAME")
-//        password = System.getenv("OSS_INDEX_PASSWORD")
-//      }
-//    }
-//  }
-
   dependencyCheck  {
     suppressionFiles= [ "$rootDir/gradle/owasp-exclude.xml" ]
     scanConfigurations = ["api", "compileClasspath", "runtimeClasspath"]
