@@ -33,7 +33,7 @@
     Remediation requires upgrading to Derby 10.17.1.0, which in turn requires JDK 19+.
     Current project is limited to JDK 17, so cannot upgrade at this time.
     ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org.apache.derby/derby@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/org.apache.derby/.*$</packageUrl>
         <cve>CVE-2022-46337</cve>
     </suppress>
 </suppressions>
