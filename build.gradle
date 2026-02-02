@@ -6,7 +6,7 @@ plugins {
   id "nebula.optional-base" version "7.0.0"
   id "com.github.spotbugs" version "6.4.8"
   id "org.sonarqube" version "6.3.1.5724"
-  id "org.owasp.dependencycheck" version "12.2.0"
+  id "org.owasp.dependencycheck" version "12.1.6" apply false
   id "io.freefair.lombok" version "8.14.2"
 }
 
@@ -276,7 +276,7 @@ subprojects {
       options.docletpath = configurations.umlDoclet.files.asType(List)
       options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
       // Create class & package use pages
-      options.addStringOption "use"    
+      options.addStringOption "use"
       options.addStringOption "umlImageFormat", "SVG"
       options.addStringOption "umlExcludedTypeReferences", "java.lang.Exception,java.lang.Object,java.lang.Enum,java.lang.annotation.Annotation"
       options.addStringOption "umlJavaBeanPropertiesAsFields"
@@ -314,7 +314,7 @@ subprojects {
       }
     }
   }
-  
+
   test {
     jvmArgs = ['--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED']
     useJUnitPlatform()
@@ -347,18 +347,23 @@ subprojects {
   }
 
   dependencyCheck  {
-    suppressionFiles= [ "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml", "$rootDir/gradle/owasp-exclude.xml" ]
-    scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
+    suppressionFiles= [ "$rootDir/gradle/owasp-exclude.xml" ]
+    scanConfigurations = ["api", "compileClasspath", "runtimeClasspath"]
+    // skipConfigurations = [ "mavenDeploy", "antSql", "spotbugs", "umlDoclet", "offlineJavadocPackages", "javadoc", "jacocoAnt", "jacocoAgent", "spotbugsPlugins", "spotbugsSlf4j" ]
     formats = [ "HTML", "JUNIT" ]
     junitFailOnCVSS = 7.0
     failBuildOnCVSS = 7.0
+    analyzers {
+      assemblyEnabled=false
+      ossIndex {
+          username = System.getenv("OSS_INDEX_USERNAME")
+          password = System.getenv("OSS_INDEX_PASSWORD")
+      }
+    }
     nvd {
       apiKey = System.getenv("NVD_API_KEY")
       delay=project.findProperty("dependencyCheckNvdDelay")
       datafeedUrl=project.findProperty("dependencyCheckNvdDatafeedUrl")
-    }
-    analyzers {
-      assemblyEnabled=false
     }
   }
 
