@@ -37,6 +37,7 @@ public class JsonBlobListRenderer implements BlobListRenderer {
         mapInsert(obj, "lastModified", blob.getLastModified());
         mapInsert(obj, "name", blob.getName());
         mapInsert(obj, "size", blob.getSize());
+        mapInsert(obj, "errorSummary", blob.getErrorSummary());
         generator.writeObject(obj);
       }
       generator.writeEndArray();

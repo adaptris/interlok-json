@@ -41,6 +41,21 @@ public class JsonBlobListRendererTest {
   }
 
   @Test
+  public void testRender_WithErrorSummary() throws Exception {
+    JsonBlobListRenderer render = new JsonBlobListRenderer();
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
+    Collection<RemoteBlob> blobs = createBlobsWithErrorSummary(5);
+    render.render(blobs, msg);
+    Configuration jsonConfig = new Configuration.ConfigurationBuilder().jsonProvider(new JsonSmartJsonProvider())
+        .mappingProvider(new JacksonMappingProvider()).options(EnumSet.noneOf(Option.class)).build();
+    String content = msg.getContent();
+    ReadContext context = JsonPath.parse(content, jsonConfig);
+    assertEquals(Integer.valueOf(5), context.read("$.length()"));
+    assertEquals("bucket", context.read("$[0].bucket"));
+    assertEquals("Error details", context.read("$[0].errorSummary"));
+  }
+
+  @Test
   public void testRenderLines() throws Exception {
     JsonBlobListRenderer render = new JsonBlobListRendererLines();
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
@@ -98,6 +113,15 @@ public class JsonBlobListRendererTest {
     for (int i = 0; i < count; i++) {
       result.add(new RemoteBlob.Builder().setBucket("bucket").setLastModified(new Date().getTime()).setName("File_" + i)
           .setSize(10L).build());
+    }
+    return result;
+  }
+
+  private static Collection<RemoteBlob> createBlobsWithErrorSummary(int count) {
+    List<RemoteBlob> result = new ArrayList<>();
+    for (int i = 0; i < count; i++) {
+      result.add(new RemoteBlob.Builder().setBucket("bucket").setLastModified(new Date().getTime()).setName("File_" + i)
+          .setSize(10L).setErrorSummary("Error details").build());
     }
     return result;
   }
