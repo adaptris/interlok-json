@@ -1,10 +1,10 @@
 package com.adaptris.core.jwt;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -23,13 +23,12 @@ import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 
 public class JWTCreatorTest extends JWTCommonTest {
-  private SimpleDateFormat PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
   @Test
   public void testCreate() throws Exception {
     JWTCreator service = (JWTCreator) retrieveObjectForSampleConfig();
     service.setId("4f044322-5db3-44d2-a698-15b754bd7a05");
-    service.setIssuedAt(PARSER.parse("2020-01-01T00:00:00.0-0000"));
+    service.setIssuedAt("2020-01-01T00:00:00.0-0000");
     Base64EncodedSecret secret = new Base64EncodedSecret();
     secret.setSecret(KEY);
     service.setSecret(secret);
@@ -96,6 +95,23 @@ public class JWTCreatorTest extends JWTCommonTest {
     }
   }
 
+  @Test
+  void testParseOrResolveDateField_ResolvesDifferentString() throws Exception {
+    JWTCreator creator = new JWTCreator();
+    String input = "SOME_INPUT";
+    String resolved = "2020-01-01T00:00:00.0-0000";
+
+    AdaptrisMessage message = mock(AdaptrisMessage.class);
+    when(message.resolve(input)).thenReturn(resolved);
+
+    var method = JWTCreator.class.getDeclaredMethod("parseOrResolveDateField", String.class, AdaptrisMessage.class);
+    method.setAccessible(true);
+
+    Object result = method.invoke(creator, input, message);
+    assertNotNull(result);
+    assertInstanceOf(Date.class, result);
+  }
+
   @SneakyThrows
   @Override
   protected Object retrieveObjectForSampleConfig() {
@@ -103,8 +119,8 @@ public class JWTCreatorTest extends JWTCommonTest {
     creator.setIssuer("me");
     creator.setSubject("Bob");
     creator.setAudience("you");
-    creator.setExpiration(PARSER.parse("2040-12-31T00:00:00.0-0000"));
-    creator.setNotBefore(PARSER.parse("2020-01-01T00:00:00.0-0000"));
+    creator.setExpiration("2040-12-31T00:00:00.000-0000");
+    creator.setNotBefore("2020-01-01T00:00:00.0-0000");
     creator.setSecret(getPGPSecret());
     return creator;
   }
