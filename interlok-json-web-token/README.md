@@ -9,7 +9,7 @@ For more information about JSON Web Tokens [see here](https://github.com/jwtk/jj
 ## JSON Create
 
 The json-create service will create a JWT string from discreet values of
-***issuer***, ***subject***, ***audience***, ***expiration***, ***no
+***issuer***, ***subject***, ***audience***, ***expiration***, ***not
 before***. It can also include custom key/value pairs. The output will
 be a JWT string.
 

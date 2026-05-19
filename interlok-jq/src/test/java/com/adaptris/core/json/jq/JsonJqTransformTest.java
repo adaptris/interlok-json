@@ -2,17 +2,30 @@ package com.adaptris.core.json.jq;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 
 import java.util.EnumSet;
 
-import com.adaptris.core.*;
+import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.AdaptrisMessageFactory;
+import com.adaptris.core.MetadataElement;
+import com.adaptris.core.MultiPayloadAdaptrisMessageImp;
+import com.adaptris.core.MultiPayloadMessageFactory;
+import com.adaptris.core.ServiceException;
 import com.adaptris.core.common.StringPayloadDataInputParameter;
+import com.adaptris.core.common.StringPayloadDataOutputParameter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import com.adaptris.core.common.ConstantDataInputParameter;
+import com.adaptris.interlok.InterlokException;
+import com.adaptris.core.common.MetadataDataInputParameter;
+import com.adaptris.core.common.MetadataDataOutputParameter;
 import com.adaptris.core.metadata.NoOpMetadataFilter;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
 import com.jayway.jsonpath.Configuration;
@@ -22,7 +35,6 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.adaptris.core.AdaptrisMessage;
 
 public class JsonJqTransformTest extends ExampleServiceCase {
 
@@ -49,6 +61,19 @@ public class JsonJqTransformTest extends ExampleServiceCase {
     assertNotNull(ctx.read("$.status-description"));
     assertNotNull(ctx.read("$.status-code"));
     assertNotNull(ctx.read("$.status-id"));
+  }
+
+
+  @Test
+  public void testServiceException() throws Exception {
+    JsonJqTransform service = spy(JsonJqTransform.class).withQuerySource(new ConstantDataInputParameter(METADATA_QUERY));
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance()
+            .newMessage(SAMPLE_DATA);
+    msg.addMetadata(new MetadataElement("greeting", "Hello World"));
+    doThrow(new InterlokException()).when(service).buildReader(any());
+    assertThrows(ServiceException.class, () -> {
+      execute(service, msg);
+    });
   }
 
   @Test
@@ -81,6 +106,73 @@ public class JsonJqTransformTest extends ExampleServiceCase {
     assertNotFound(ctx, "$.status-id");
     assertNotNull(ctx.read("$.greeting"));
     assertEquals("Hello World", ctx.read("$.greeting"));
+  }
+
+  @Test
+  public void testService_WithPayloadQueryTargetAndPayloadOutputTarget() throws Exception {
+    JsonJqTransform service = new JsonJqTransform().withQuerySource(new ConstantDataInputParameter(METADATA_QUERY))
+            .withQueryTarget(new StringPayloadDataInputParameter())
+            .withOutputTarget(new StringPayloadDataOutputParameter())
+            .withMetadataFilter(new NoOpMetadataFilter());
+
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage(SAMPLE_DATA);
+    msg.addMetadata(new MetadataElement("greeting", "Hello World"));
+    execute(service, msg);
+    assertNotNull(msg.getContent());
+    System.err.println(msg.getContent());
+    ReadContext ctx = parse(msg);
+    assertNotFound(ctx, "$.status-description");
+    assertNotFound(ctx, "$.status-code");
+    assertNotFound(ctx, "$.status-id");
+    assertNotNull(ctx.read("$.greeting"));
+    assertEquals("Hello World", ctx.read("$.greeting"));
+  }
+
+  @Test
+  public void testService_WithMetadataQueryTargetAndPayloadOutputTarget() throws Exception {
+    MetadataDataInputParameter mip = new MetadataDataInputParameter();
+    JsonJqTransform service = new JsonJqTransform().withQuerySource(new ConstantDataInputParameter(SAMPLE_QUERY))
+            .withQueryTarget(mip)
+            .withOutputTarget(new StringPayloadDataOutputParameter())
+            .withMetadataFilter(new NoOpMetadataFilter());
+
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance()
+            .newMessage("{}");
+    msg.addMetadata(new MetadataElement(mip.getMetadataKey(), SAMPLE_DATA));
+    execute(service, msg);
+    assertNotNull(msg.getContent());
+    System.err.println(msg.getContent());
+    ReadContext ctx = parse(msg);
+    assertNotNull(ctx.read("$.status-description"));
+    assertNotNull(ctx.read("$.status-code"));
+    assertNotNull(ctx.read("$.status-id"));
+
+  }
+
+  @Test
+  public void testService_WithMetadataQueryTargetAndMetadataOutputTarget() throws Exception {
+    MetadataDataInputParameter mip = new MetadataDataInputParameter();
+    MetadataDataOutputParameter mop = new MetadataDataOutputParameter();
+    JsonJqTransform service = new JsonJqTransform().withQuerySource(new ConstantDataInputParameter(SAMPLE_QUERY))
+            .withQueryTarget(mip)
+            .withOutputTarget(mop)
+            .withMetadataFilter(new NoOpMetadataFilter());
+
+    AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance()
+            .newMessage("{}");
+    msg.addMetadata(new MetadataElement(mip.getMetadataKey(), SAMPLE_DATA));
+    execute(service, msg);
+    assertNotNull(msg.getContent());
+    System.err.println(msg.getContent());
+    ReadContext ctx = parse(msg);
+    assertNotFound(ctx, "$.status-description");
+    assertNotFound(ctx, "$.status-code");
+    assertNotFound(ctx, "$.status-id");
+
+    ReadContext  ctx2 = parse(msg.getMetadataValue(mop.getMetadataKey()));
+    assertNotNull(ctx2.read("$.status-description"));
+    assertNotNull(ctx2.read("$.status-code"));
+    assertNotNull(ctx2.read("$.status-id"));
   }
 
   private void assertNotFound(ReadContext ctx, String path) {
