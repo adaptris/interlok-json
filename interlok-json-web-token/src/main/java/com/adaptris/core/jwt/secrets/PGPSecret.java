@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 import com.adaptris.core.fs.FsHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

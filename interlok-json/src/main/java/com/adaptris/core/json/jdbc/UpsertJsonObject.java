@@ -2,7 +2,7 @@ package com.adaptris.core.json.jdbc;
 
 import java.sql.Connection;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;

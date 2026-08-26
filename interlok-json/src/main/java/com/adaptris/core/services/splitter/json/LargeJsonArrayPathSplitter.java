@@ -1,7 +1,7 @@
 package com.adaptris.core.services.splitter.json;
 
 import java.io.BufferedReader;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.BooleanUtils;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;

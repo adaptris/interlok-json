@@ -1,6 +1,6 @@
 package com.adaptris.core.jwt.secrets;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

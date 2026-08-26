@@ -18,7 +18,7 @@ package com.adaptris.core.json;
 
 import java.util.EnumSet;
 import java.util.Map;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;

@@ -1,6 +1,6 @@
 package com.adaptris.core.json;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;

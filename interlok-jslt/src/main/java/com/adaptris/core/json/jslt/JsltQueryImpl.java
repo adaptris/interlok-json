@@ -1,6 +1,6 @@
 package com.adaptris.core.json.jslt;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.interlok.util.Args;

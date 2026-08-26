@@ -3,7 +3,7 @@ package com.adaptris.core.json.jslt;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.util.KeyValuePair;
