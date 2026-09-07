@@ -40,8 +40,8 @@ dependencies {
   implementation ("com.google.guava:guava:33.6.0-jre")
   api ("com.flipkart.zjsonpatch:zjsonpatch:0.4.16")
   testImplementation ("org.skyscreamer:jsonassert:1.5.3")
-  testImplementation ("org.apache.derby:derby:10.15.2.0")
-  testImplementation ("org.apache.derby:derbytools:10.15.2.0")
+  testImplementation ("org.apache.derby:derby:10.17.1.0")
+  testImplementation ("org.apache.derby:derbytools:10.17.1.0")
 }
 
 jar {
