@@ -46,6 +46,14 @@
   </suppress>
   <suppress>
     <notes><![CDATA[
+      net.sf.json-lib:json-lib:2.4:jdk15 is the most recent json-lib release currently available,
+      so this CVE cannot be remediated with an in-line version bump at this time.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/net\.sf\.json-lib/json-lib@2\.4$</packageUrl>
+    <cve>CVE-2024-47855</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
       file name: spring-boot-loader-2.7.18.jar
       We are pinned to Spring Boot 2.7.x on Java 17. There is no newer 2.7.x release in Maven Central,
       so these CVEs cannot be remediated by an in-line version bump at the moment.
@@ -59,14 +67,29 @@
   </suppress>
   <suppress>
     <notes><![CDATA[
-      Jetty 10.0.26 is the newest Jetty 10 release available in Maven Central. Remediation for this CVE
-      requires moving off the Jetty 10 line, which is outside the current Java 17 / Jetty 10 constraints.
+      Jetty 10.0.26 is the newest Jetty 10 release available in Maven Central. Remediation for these CVEs
+      requires moving off the Jetty 10 line, which is outside the current Java 17 constraints. A Java upgrade
+      is on the roadmap, after which Jetty can be upgraded.
     ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty(\.http2|\.websocket)?/.+@10\.0\.26$</packageUrl>
     <cve>CVE-2026-2332</cve>
     <cve>CVE-2026-5795</cve>
     <cve>CVE-2025-11143</cve>
+    <cve>CVE-2025-1948</cve>
     <cve>CVE-2026-6790</cve>
     <cve>CVE-2026-10050</cve>
+    <cve>CVE-2026-19203</cve>
+    <cve>CVE-2026-12611</cve>
+    <cve>CVE-2026-19204</cve>
+    <cve>CVE-2023-36479</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      xerces:xercesImpl:2.12.2 is the most recent version currently available to this project, so these CVEs
+      cannot be remediated with an in-line version bump at this time.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/xerces/xercesImpl@2\.12\.2$</packageUrl>
+    <cve>CVE-2017-7503</cve>
+    <cve>CVE-2017-10355</cve>
   </suppress>
 </suppressions>
