@@ -5,26 +5,23 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JWT'
   componentDesc = "Handling JWT in Interlok"
-  bouncyCastleVersion = "1.86"
-  jwtVersion = "0.12.6"
-  jacksonVersion = "2.22.3"
-  jsonOrgVersion = "20250107"
 }
 
 dependencies {
-  api ("org.json:json:$jsonOrgVersion")
+  api platform(interlokCatalogPlatform)
+  api ("org.json:json")
 
-  api ("org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion")
-  api ("org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion")
+  api ("org.bouncycastle:bcprov-jdk18on")
+  api ("org.bouncycastle:bcpg-jdk18on")
 
-  api ("io.jsonwebtoken:jjwt-api:$jwtVersion")
-  runtimeOnly ("io.jsonwebtoken:jjwt-impl:$jwtVersion")
-  runtimeOnly ("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
+  api ("io.jsonwebtoken:jjwt-api")
+  runtimeOnly ("io.jsonwebtoken:jjwt-impl")
+  runtimeOnly ("io.jsonwebtoken:jjwt-jackson")
   // Dependency to platform/BOM
-  runtimeOnly (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+  runtimeOnly (platform("com.fasterxml.jackson:jackson-bom"))
   runtimeOnly ("com.fasterxml.jackson.core:jackson-databind")
 
-  testImplementation ("org.skyscreamer:jsonassert:1.5.3")
+  testImplementation ("org.skyscreamer:jsonassert")
 }
 
 jar {
