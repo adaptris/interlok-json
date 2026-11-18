@@ -2,17 +2,17 @@ ext {
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   componentName = 'Interlok Transform/JQ'
   componentDesc = "Transform JSON using JQ style syntax"
-  jacksonVersion = "2.22.3"
 }
 
 
 dependencies {
+  api platform(interlokCatalogPlatform)
   // Dependency to platform/BOM
-  api (platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+  api (platform("com.fasterxml.jackson:jackson-bom"))
   api ("com.fasterxml.jackson.core:jackson-databind")
-  api ("net.thisptr:jackson-jq:1.0.1")
-  api ("net.thisptr:jackson-jq-extra:1.0.1")
-  testImplementation ("com.jayway.jsonpath:json-path:2.9.0")
+  api ("net.thisptr:jackson-jq")
+  api ("net.thisptr:jackson-jq-extra")
+  testImplementation ("com.jayway.jsonpath:json-path")
 }
 
 
@@ -28,9 +28,17 @@ jar {
 }
 
 javadoc {
+  dependsOn "offlinePackageList"
   configure(options) {
-    options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
-    options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+    def coreJavadocDir = new File(offlineJavadocPackageDir, "interlok-core-${interlokCoreVersion}-javadoc.jar")
+    def commonJavadocDir = new File(offlineJavadocPackageDir, "interlok-common-${interlokCoreVersion}-javadoc.jar")
+
+    if (new File(coreJavadocDir, 'element-list').exists()) {
+        options.linksOffline(interlokJavadocs, coreJavadocDir.getCanonicalPath())
+    }
+    if (new File(commonJavadocDir, 'element-list').exists()) {
+        options.linksOffline(interlokCommonJavadocs, commonJavadocDir.getCanonicalPath())
+    }
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
   }
