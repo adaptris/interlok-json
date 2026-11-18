@@ -191,20 +191,20 @@ subprojects {
     api ("com.adaptris:interlok-core") { changing= true}
     api ("com.adaptris:interlok-common") { changing= true}
     implementation ("org.slf4j:slf4j-api")
-    implementation 'com.auth0:jwks-rsa:0.22.1'
+    implementation 'com.auth0:jwks-rsa'
 
     offlineJavadocPackages platform(interlokCatalogPlatform)
     offlineJavadocPackages ("com.adaptris:interlok-core:javadoc@jar") { changing= true}
     offlineJavadocPackages ("com.adaptris:interlok-common:javadoc@jar") { changing= true}
 
-    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.13.4")
-    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.13.4")
-    testImplementation ("org.junit.platform:junit-platform-launcher:1.13.3")
+    testImplementation ("org.junit.jupiter:junit-jupiter-api")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation ("org.junit.platform:junit-platform-launcher")
     testImplementation ("org.slf4j:slf4j-simple")
     testImplementation ("com.adaptris:interlok-stubs") { changing= true }
     testImplementation ("org.mockito:mockito-core")
     testImplementation ("org.mockito:mockito-inline")
-    testImplementation "org.wiremock:wiremock:3.13.0"
+    testImplementation "org.wiremock:wiremock"
 
     javadoc platform(interlokCatalogPlatform)
     javadoc("com.adaptris:interlok-core-apt") { changing= true}
