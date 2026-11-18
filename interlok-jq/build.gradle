@@ -28,9 +28,17 @@ jar {
 }
 
 javadoc {
+  dependsOn "offlinePackageList"
   configure(options) {
-    options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
-    options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
+    def coreJavadocDir = new File(offlineJavadocPackageDir, "interlok-core-${interlokCoreVersion}-javadoc.jar")
+    def commonJavadocDir = new File(offlineJavadocPackageDir, "interlok-common-${interlokCoreVersion}-javadoc.jar")
+
+    if (new File(coreJavadocDir, 'element-list').exists()) {
+        options.linksOffline(interlokJavadocs, coreJavadocDir.getCanonicalPath())
+    }
+    if (new File(commonJavadocDir, 'element-list').exists()) {
+        options.linksOffline(interlokCommonJavadocs, commonJavadocDir.getCanonicalPath())
+    }
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
   }
