@@ -18,7 +18,6 @@ dependencies {
   runtimeOnly ("io.jsonwebtoken:jjwt-impl")
   runtimeOnly ("io.jsonwebtoken:jjwt-jackson")
   // Dependency to platform/BOM
-  runtimeOnly (platform("com.fasterxml.jackson:jackson-bom"))
   runtimeOnly ("com.fasterxml.jackson.core:jackson-databind")
 
   testImplementation ("org.skyscreamer:jsonassert")
