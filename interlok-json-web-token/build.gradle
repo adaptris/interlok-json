@@ -9,7 +9,7 @@ ext {
 
 dependencies {
   api platform(interlokCatalogPlatform)
-  api ("org.json:json:20260719")
+  api ("org.json:json")
 
   api ("org.bouncycastle:bcprov-jdk18on")
   api ("org.bouncycastle:bcpg-jdk18on")
