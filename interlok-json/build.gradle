@@ -20,7 +20,7 @@ dependencies {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xerces', module: 'xercesImpl'
   }
-  api ("org.json:json:20260719")
+  api ("org.json:json:20260814")
   implementation ("net.minidev:json-smart")
   api ("com.jayway.jsonpath:json-path")
   api ("com.bazaarvoice.jolt:jolt-core")
